@@ -1,9 +1,11 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import session from 'express-session';
 import pg from 'pg';
 import env from "dotenv";
 
 env.config();
+
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -21,24 +23,36 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-// Step 1: Show tables for selection
+// Get available weekend dates (next 4 weeks)
+function getAvailableDays() {
+    const today = new Date();
+    const days = [];
+    
+    for (let i = 0; i < 4 * 7; i++) {
+        const date = new Date();
+        date.setDate(today.getDate() + i);
+        const dayOfWeek = date.getDay();
+
+        if (dayOfWeek === 6 || dayOfWeek === 0) { // Saturday (6) or Sunday (0)
+            days.push(date.toISOString().split("T")[0]); // YYYY-MM-DD format
+        }
+    }
+    return days;
+}
+
+// Step 1: Load all tables
 app.get("/", async (req, res) => {
     try {
-        const tablesResult = await db.query("SELECT id, tablename, places, roomname FROM tables ORDER BY id ASC");
-        res.render("index", { 
-            tables: tablesResult.rows, 
-            selectedTable: null, 
-            availableDates: [], 
-            availableTimes: [], 
-            selectedDate: null 
-        });
+        const result = await db.query("SELECT id, tablename, places, roomname FROM tables ORDER BY id ASC");
+        const tables = result.rows;
+        res.render("index", { tables, selectedTable: null, availableDates: [], availableTimes: [] });
     } catch (err) {
         console.error("Database error:", err);
         res.status(500).send("Internal Server Error");
     }
 });
 
-// Step 2: Show only dates where at least one time slot is available
+// Step 2: Fetch available dates when a table is selected
 app.post("/select-table", async (req, res) => {
     const tableId = req.body.tableId;
 
@@ -46,42 +60,26 @@ app.post("/select-table", async (req, res) => {
         const tableResult = await db.query("SELECT * FROM tables WHERE id = $1", [tableId]);
         if (tableResult.rows.length === 0) return res.redirect("/");
 
-        // Get all weekend dates
-        const allDates = getAvailableDays();
+        const selectedTable = tableResult.rows[0];
 
-        // Get all booked dates and times
-        const bookedResult = await db.query(`
-            SELECT date, time FROM booking WHERE table_id = $1
-        `, [tableId]);
+        // Get all weekend days for the next 4 weeks
+        const allAvailableDates = getAvailableDays();
 
-        const bookedData = bookedResult.rows.reduce((acc, row) => {
-            if (!acc[row.date]) acc[row.date] = [];
-            acc[row.date].push(row.time);
-            return acc;
-        }, {});
+        // Fetch already booked dates for the selected table
+        const bookingResult = await db.query("SELECT DISTINCT date FROM booking WHERE table_id = $1", [tableId]);
+        const bookedDates = bookingResult.rows.map(row => row.date.toISOString().split("T")[0]);
 
-        // Keep only dates where at least one time slot is free
-        const allTimes = ["13-15", "15-17"];
-        const availableDates = allDates.filter(date => {
-            const bookedTimes = bookedData[date] || [];
-            return allTimes.some(time => !bookedTimes.includes(time));
-        });
+        // Filter out booked dates
+        const availableDates = allAvailableDates.filter(date => !bookedDates.includes(date));
 
-        res.render("index", { 
-            tables: [], 
-            selectedTable: tableResult.rows[0], 
-            availableDates, 
-            availableTimes: [], 
-            selectedDate: null 
-        });
-
+        res.render("index", { tables: [], selectedTable, availableDates, availableTimes: [] });
     } catch (err) {
         console.error("Database error:", err);
-        res.status(500).send("Error fetching available dates");
+        res.status(500).send("Internal Server Error");
     }
 });
 
-// Step 3: Show only available times for the selected date
+// Step 3: Fetch available times when a date is selected
 app.post("/select-date", async (req, res) => {
     const { tableId, selectedDate } = req.body;
 
@@ -89,43 +87,45 @@ app.post("/select-date", async (req, res) => {
         const tableResult = await db.query("SELECT * FROM tables WHERE id = $1", [tableId]);
         if (tableResult.rows.length === 0) return res.redirect("/");
 
-        // Get all possible time slots
+        const selectedTable = tableResult.rows[0];
+
+        // Define time slots
         const allTimes = ["13-15", "15-17"];
 
-        // Get booked times for the selected date
-        const bookedTimesResult = await db.query(`
-            SELECT time FROM booking WHERE table_id = $1 AND date = $2
-        `, [tableId, selectedDate]);
+        // Fetch already booked times for the selected table and date
+        const bookingResult = await db.query("SELECT DISTINCT time FROM booking WHERE table_id = $1 AND date = $2", [tableId, selectedDate]);
+        const bookedTimes = bookingResult.rows.map(row => row.time);
 
-        const bookedTimes = bookedTimesResult.rows.map(row => row.time);
-
-        // Filter available times
+        // Filter out booked times
         const availableTimes = allTimes.filter(time => !bookedTimes.includes(time));
 
-        res.render("index", { 
-            tables: [], 
-            selectedTable: tableResult.rows[0], 
-            availableDates: [selectedDate], 
-            availableTimes, 
-            selectedDate 
-        });
-
+        // Reload with available times
+        res.render("index", { tables: [], selectedTable, availableDates: [selectedDate], availableTimes });
     } catch (err) {
         console.error("Database error:", err);
-        res.status(500).send("Error fetching available times");
+        res.status(500).send("Internal Server Error");
     }
 });
 
-// Step 4: Finalize reservation
+// Step 4: Handle final reservation submission
 app.post("/reserve", async (req, res) => {
     const { selectedTable, selectedDate, selectedTime, numPeople, name, email } = req.body;
 
     try {
+        // Check if the table is still available
+        const checkQuery = `SELECT * FROM booking WHERE table_id = $1 AND date = $2 AND time = $3`;
+        const checkResult = await db.query(checkQuery, [selectedTable, selectedDate, selectedTime]);
+
+        if (checkResult.rows.length > 0) {
+            return res.send(`Sorry, Table ${selectedTable} is already booked for ${selectedDate} at ${selectedTime}. Please choose another.`);
+        }
+
         // Insert into database
-        await db.query(`
+        const insertQuery = `
             INSERT INTO booking (table_id, date, time, places_selected, name, email)
             VALUES ($1, $2, $3, $4, $5, $6)
-        `, [selectedTable, selectedDate, selectedTime, numPeople, name, email]);
+        `;
+        await db.query(insertQuery, [selectedTable, selectedDate, selectedTime, numPeople, name, email]);
 
         res.send(`Reservation confirmed for ${name} at Table ${selectedTable} on ${selectedDate} at ${selectedTime} for ${numPeople} people.`);
     } catch (err) {
@@ -137,20 +137,3 @@ app.post("/reserve", async (req, res) => {
 app.listen(port, () => {
     console.log(`Server running on port http://localhost:${port}`);
 });
-
-// Function to get available weekend days
-function getAvailableDays() {
-    const today = new Date();
-    const days = [];
-    
-    for (let i = 0; i < 4 * 7; i++) {
-        const date = new Date();
-        date.setDate(today.getDate() + i);
-        const dayOfWeek = date.getDay();
-
-        if (dayOfWeek === 6 || dayOfWeek === 0) { // Saturday (6) or Sunday (0)
-            days.push(date.toISOString().split("T")[0]); // Format YYYY-MM-DD
-        }
-    }
-    return days;
-}
