@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table Reservation</title>
+</head>
+<body>
+
+    <h1>Table Reservation</h1>
+
+    <% if (!selectedTable) { %>
+        <form action="/select-table" method="POST">
+            <fieldset>
+                <legend>Choose a table:</legend>
+                <% tables.forEach(table => { %>
+                    <input type="radio" id="table_<%= table.id %>" name="tableId" value="<%= table.id %>" required>
+                    <label for="table_<%= table.id %>">
+                        <%= table.tablename %> - <%= table.places %> seats (Room: <%= table.roomname %>)
+                    </label><br>
+                <% }); %>
+            </fieldset>
+            <button type="submit">Next</button>
+        </form>
+    <% } %>
+
+    <% if (selectedTable && availableDates.length > 0) { %>
+        <h2>Table <%= selectedTable.tablename %> Selected</h2>
+
+        <form action="/select-date" method="POST">
+            <input type="hidden" name="tableId" value="<%= selectedTable.id %>">
+            <fieldset>
+                <legend>Select a Date:</legend>
+                <% availableDates.forEach(date => { %>
+                    <input type="radio" id="date_<%= date %>" name="selectedDate" value="<%= date %>" required>
+                    <label for="date_<%= date %>"><%= date %></label><br>
+                <% }); %>
+            </fieldset>
+            <button type="submit">Next</button>
+        </form>
+    <% } %>
+
+    <% if (availableTimes.length > 0) { %>
+        <h2>Select a Time</h2>
+
+        <form action="/reserve" method="POST">
+            <input type="hidden" name="selectedTable" value="<%= selectedTable.id %>">
+            <input type="hidden" name="selectedDate" value="<%= selectedDate %>">
+
+            <fieldset>
+                <legend>Select a Time:</legend>
+                <% availableTimes.forEach(time => { %>
+                    <input type="radio" id="time_<%= time %>" name="selectedTime" value="<%= time %>" required>
+                    <label for="time_<%= time %>"><%= time %></label><br>
+                <% }); %>
+            </fieldset>
+
+            <label>Name: <input type="text" name="name" required></label><br>
+            <label>Email: <input type="email" name="email" required></label><br>
+
+            <button type="submit">Reserve</button>
+        </form>
+    <% } %>
+
+</body>
+</html>
