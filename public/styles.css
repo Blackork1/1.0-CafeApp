@@ -1,44 +1,235 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 40px;
-    text-align: center;
+  font-family: Arial, sans-serif;
+  margin: 40px;
+  text-align: center;
 }
 
 form {
-    display: inline-block;
-    text-align: left;
-    background: #f8f8f8;
-    padding: 20px;
-    border-radius: 8px;
+  display: inline-block;
+  text-align: left;
+  background: #f8f8f8;
+  padding: 20px;
+  border-radius: 8px;
 }
 
 label {
-    font-weight: bold;
-    display: block;
-    margin-top: 10px;
+  font-weight: bold;
+  display: block;
+  margin-top: 10px;
 }
 
-.date-selection, .time-selection {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-bottom: 10px;
+.date-selection,
+.time-selection {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 10px;
 }
 
 .date-option {
-    margin: 5px;
+  margin: 5px;
 }
 
 button {
-    margin-top: 15px;
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 button:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
+
+.rotate {
+  animation: autoRotateAnimation;
+  animation-timeline: view(70% 5%);
+}
+
+@keyframes autoRotateAnimation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.space {
+  height: 120vh;
+}
+/* Content for Slide in Animation */
+
+.flex_einfliegen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* when we move boxes out of container, it doesnt create scroll */
+  margin: 5%;
+  padding: 5%;
+}
+
+.flex_einfliegen > button {
+  width: 40%;
+  transition: all 1s;
+  opacity: 0;
+}
+
+.flex_einfliegen:nth-child(odd) {
+  flex-direction: row-reverse;
+  background: rgb(244, 164, 96);
+}
+
+.flex_einfliegen:nth-child(even) {
+  background: #e53f71;
+}
+
+.flex_einfliegen:nth-child(odd) > button {
+  transform: translateX(100px);
+}
+
+.left-slide-in {
+  transform: translateX(100px);
+}
+
+.right-slide-in {
+  transform: translateX(-100px);
+}
+
+.flex_einfliegen:nth-child(even) > button {
+  transform: translateX(-100px);
+}
+
+@media (max-width: 950px) {
+  .flex_einfliegen,
+  .flex_einfliegen:nth-child(odd) {
+    flex-direction: column-reverse;
+  }
+
+  .flex_einfliegen > button {
+    width: 84%;
+  }
+}
+
+.section {
+  padding: 0 60px;
+}
+
+.container{
+  margin: 0 auto;
+  max-width: 1160px;
+}
+
+/* General nav bar styling */
+.navigation {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgb(246, 212, 142);
+  padding: 15px 20px;
+  position: relative; /* To help position the mobile dropdown */
+  border-radius: 8px;
+}
+
+.navigation a {
+  color: black;
+  text-decoration: none;
+}
+
+.navigation a:hover:not(.reserve-button){
+  border-bottom: 3px solid #ff9900;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+}
+
+/* Desktop styles */
+/* Hide the menu icon on larger screens */
+.menu-icon {
+  display: none;
+}
+
+.logo{
+  display: flex;
+  align-items: center;
+}
+
+/* Display the links inline on the right */
+.links {
+  display: flex;
+  align-items: center;
+}
+
+.links a {
+  margin-left: 20px;
+}
+
+.reserve-button {
+  background: #ff9900;
+  color: #fff;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+  max-width: 140px;
+}
+
+.reserve-button:hover {
+  background: #e68a00;
+}
+
+/* Mobile styles */
+@media screen and (max-width: 700px) {
+  /* Show the menu icon on mobile */
+  .menu-icon {
+    display: block;
+    width: 30px; /* Adjust the size as needed */
+    height: auto;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+
+  .navigation.active{
+    border-radius: 8px 8px 0px 0px;
+  }
+
+
+  /* Hide the inline links by default on mobile */
+  .links {
+    display: flex; /* Keep it as flex so that children layout correctly */
+    flex-direction: column;
+    background: #444;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 100%;
+    text-align: right;
+    overflow: hidden;
+    max-height: 0;  /* Collapsed by default */
+    opacity: 0;     /* Fully transparent by default */
+    transition: all 0.3s ease-out;
+  }
+
+  /* When active, display the links in a vertical list */
+  .links.active {
+    max-height: 300px; /* Set to a value that can contain all links */
+    opacity: 1;
+    align-items: end;
+    border-radius: 0px 0px 8px 8px; 
+  }
+
+  /* Mobile link styling */
+  .links a {
+    margin: 5px 20px;
+    padding: 5px 10px;
+    border-bottom: 1px solid #555;
+  }
+}
+

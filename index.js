@@ -48,6 +48,10 @@ app.get("/", async (req, res) => {
     }
 });
 
+app.get("/home", async (req, res) => {
+    res.render("home.ejs");
+});
+
 // Step 2: After table selection, compute available slots (dates with free times)
 app.post("/select-table", async (req, res) => {
     const tableId = req.body.tableId;
