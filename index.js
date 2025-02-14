@@ -19,7 +19,6 @@ const userData = {
     userEmail: "",
 }
 
-
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -61,82 +60,11 @@ app.get("/", async (req, res) => {
         const result = await db.query("SELECT id, tablename, places, roomname FROM tables ORDER BY id ASC");
         const tables = result.rows;
         console.log(userData.isAdmin);
-        res.render("index", { tables, selectedTable: null, availableSlots: {}, user: userData});
+        res.render("index", { tables, selectedTable: null, availableSlots: {}, user: userData });
     } catch (err) {
         console.error("Database error:", err);
         res.status(500).send("Internal Server Error");
     }
-});
-
-
-
-app.get("/newBlog", async (req, res) => {
-    if (isAdmin) {
-        res.render("newBlog.ejs");
-    }
-    else {
-        res.redirect("/");
-    }
-});
-
-
-app.get("/login", async (req, res) => {
-    res.render("login.ejs");
-});
-
-app.get("/register", async (req, res) => {
-    res.render("register.ejs");
-});
-
-app.post("/login",
-    passport.authenticate("local", {
-        successRedirect: "/",
-        failureRedirect: "/login",
-    })
-);
-
-app.post("/register", async (req, res) => {
-    const email = req.body.username;
-    const password = req.body.password;
-    const name = req.body.name;
-    try {
-        const checkResult = await db.query("SELECT * FROM users WHERE email = $1", [
-            email,
-        ]);
-
-        if (checkResult.rows.length > 0) {
-            req.redirect("/login");
-        } else {
-            bcrypt.hash(password, saltRounds, async (err, hash) => {
-                if (err) {
-                    console.error("Error hashing password:", err);
-                } else {
-                    const result = await db.query(
-                        "INSERT INTO users (email, password, name) VALUES ($1, $2, $3) RETURNING *",
-                        [email, hash, name]
-                    );
-                    const user = result.rows[0];
-                    req.login(user, (err) => {
-                        console.log("success");
-                        res.redirect("/");
-                    });
-                }
-            });
-        }
-    } catch (err) {
-        console.log(err);
-    }
-});
-
-app.get("/logout", (req, res) => {
-    req.logout(function (err) {
-        userData.isAdmin = false;
-        userData.isLoggedIn = false;
-        if (err) {
-            return next(err);
-        }
-        res.redirect("/");
-    });
 });
 
 // Step 2: After table selection, compute available slots (dates with free times)
@@ -214,6 +142,74 @@ app.post("/reserve", async (req, res) => {
     }
 });
 
+app.get("/newBlog", async (req, res) => {
+    if (isAdmin) {
+        res.render("newBlog.ejs");
+    }
+    else {
+        res.redirect("/");
+    }
+});
+
+//Log-In/ Register Area
+app.get("/login", async (req, res) => {
+    res.render("login.ejs");
+});
+
+app.get("/logout", (req, res) => {
+    req.logout(function (err) {
+        userData.isAdmin = false;
+        userData.isLoggedIn = false;
+        if (err) {
+            return next(err);
+        }
+        res.redirect("/");
+    });
+});
+
+app.get("/register", async (req, res) => {
+    res.render("register.ejs");
+});
+
+app.post("/login",
+    passport.authenticate("local", {
+        successRedirect: "/",
+        failureRedirect: "/login",
+    })
+);
+
+app.post("/register", async (req, res) => {
+    const email = req.body.username;
+    const password = req.body.password;
+    const name = req.body.name;
+    try {
+        const checkResult = await db.query("SELECT * FROM users WHERE email = $1", [
+            email,
+        ]);
+
+        if (checkResult.rows.length > 0) {
+            req.redirect("/login");
+        } else {
+            bcrypt.hash(password, saltRounds, async (err, hash) => {
+                if (err) {
+                    console.error("Error hashing password:", err);
+                } else {
+                    const result = await db.query(
+                        "INSERT INTO users (email, password, name) VALUES ($1, $2, $3) RETURNING *",
+                        [email, hash, name]
+                    );
+                    const user = result.rows[0];
+                    req.login(user, (err) => {
+                        console.log("success");
+                        res.redirect("/");
+                    });
+                }
+            });
+        }
+    } catch (err) {
+        console.log(err);
+    }
+});
 
 passport.use(
     "local",
@@ -262,6 +258,7 @@ passport.serializeUser((user, cb) => {
 passport.deserializeUser((user, cb) => {
     cb(null, user);
 });
+
 
 app.listen(port, () => {
     console.log(`Server running on port http://localhost:${port}`);

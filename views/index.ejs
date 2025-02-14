@@ -28,6 +28,9 @@
               <%}else{%>
                 <a href="/login">Log-In</a>
               <%}%>
+              <% if(user.isAdmin){%>
+                <a href="/newBlog">new Blog</a>
+              <%}%>
               <a href="#contact">Contact</a>
               <a href="#about">About</a>
               <a href="/reserve" class="reserve-button">Reservierung</a>
