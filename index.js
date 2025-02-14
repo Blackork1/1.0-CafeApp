@@ -2,10 +2,36 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import pg from 'pg';
 import env from "dotenv";
+import bcrypt from "bcrypt";
+import passport from "passport";
+import { Strategy } from "passport-local";
+import session from "express-session";
 
 env.config();
 const app = express();
 const port = process.env.PORT || 3000;
+const saltRounds = 10;
+
+const userData = {
+    isAdmin: false,
+    isLoggedIn: false,
+    userName: "",
+    userEmail: "",
+}
+
+
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+}));
+
+app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static("public"));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 const db = new pg.Client({
     user: process.env.PG_USER,
@@ -14,13 +40,7 @@ const db = new pg.Client({
     password: process.env.PG_PASSWORD,
     port: process.env.PG_PORT,
 });
-
 db.connect();
-
-app.set('view engine', 'ejs');
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static("public"));
-
 // Function to get weekend dates (next 4 weeks) in YYYY-MM-DD format
 function getAvailableDays() {
     const today = new Date();
@@ -35,21 +55,88 @@ function getAvailableDays() {
     }
     return days;
 }
-
 // Step 1: Show table selection
 app.get("/", async (req, res) => {
     try {
         const result = await db.query("SELECT id, tablename, places, roomname FROM tables ORDER BY id ASC");
         const tables = result.rows;
-        res.render("index", { tables, selectedTable: null, availableSlots: {} });
+        console.log(userData.isAdmin);
+        res.render("index", { tables, selectedTable: null, availableSlots: {}, user: userData});
     } catch (err) {
         console.error("Database error:", err);
         res.status(500).send("Internal Server Error");
     }
 });
 
-app.get("/home", async (req, res) => {
-    res.render("home.ejs");
+
+
+app.get("/newBlog", async (req, res) => {
+    if (isAdmin) {
+        res.render("newBlog.ejs");
+    }
+    else {
+        res.redirect("/");
+    }
+});
+
+
+app.get("/login", async (req, res) => {
+    res.render("login.ejs");
+});
+
+app.get("/register", async (req, res) => {
+    res.render("register.ejs");
+});
+
+app.post("/login",
+    passport.authenticate("local", {
+        successRedirect: "/",
+        failureRedirect: "/login",
+    })
+);
+
+app.post("/register", async (req, res) => {
+    const email = req.body.username;
+    const password = req.body.password;
+    const name = req.body.name;
+    try {
+        const checkResult = await db.query("SELECT * FROM users WHERE email = $1", [
+            email,
+        ]);
+
+        if (checkResult.rows.length > 0) {
+            req.redirect("/login");
+        } else {
+            bcrypt.hash(password, saltRounds, async (err, hash) => {
+                if (err) {
+                    console.error("Error hashing password:", err);
+                } else {
+                    const result = await db.query(
+                        "INSERT INTO users (email, password, name) VALUES ($1, $2, $3) RETURNING *",
+                        [email, hash, name]
+                    );
+                    const user = result.rows[0];
+                    req.login(user, (err) => {
+                        console.log("success");
+                        res.redirect("/");
+                    });
+                }
+            });
+        }
+    } catch (err) {
+        console.log(err);
+    }
+});
+
+app.get("/logout", (req, res) => {
+    req.logout(function (err) {
+        userData.isAdmin = false;
+        userData.isLoggedIn = false;
+        if (err) {
+            return next(err);
+        }
+        res.redirect("/");
+    });
 });
 
 // Step 2: After table selection, compute available slots (dates with free times)
@@ -87,10 +174,15 @@ app.post("/select-table", async (req, res) => {
             }
         });
 
-        res.render("index", { 
-            tables: [], 
-            selectedTable, 
-            availableSlots 
+        if (req.user) {
+            userData.userName = req.user.name;
+            userData.userEmail = req.user.email;
+        }
+        res.render("index", {
+            tables: [],
+            selectedTable,
+            availableSlots,
+            user: userData,
         });
     } catch (err) {
         console.error("Database error:", err);
@@ -103,6 +195,7 @@ app.post("/reserve", async (req, res) => {
     // The radio button value is in the format "YYYY-MM-DD|time"
     const { selectedTable, slot, numPeople, name, email } = req.body;
     const [selectedDate, selectedTime] = slot.split("|");
+
     try {
         const checkQuery = `SELECT * FROM booking WHERE table_id = $1 AND date = $2 AND time = $3`;
         const checkResult = await db.query(checkQuery, [selectedTable, selectedDate, selectedTime]);
@@ -119,6 +212,55 @@ app.post("/reserve", async (req, res) => {
         console.error("Database error:", err);
         res.status(500).send("An error occurred while processing your reservation.");
     }
+});
+
+
+passport.use(
+    "local",
+    new Strategy(async function verify(username, password, cb) {
+        try {
+            const result = await db.query("SELECT * FROM users WHERE email = $1 ", [
+                username,
+            ]);
+            console.log("username is: ", result.rows[0]);
+
+            if (result.rows[0].email === "admin@admin") {
+                userData.isAdmin = true;
+            }
+            if (result.rows.length > 0) {
+                const user = result.rows[0];
+                const storedHashedPassword = user.password;
+                bcrypt.compare(password, storedHashedPassword, (err, valid) => {
+                    if (err) {
+                        console.error("Error comparing passwords:", err);
+                        return cb(err);
+                    } else {
+                        if (valid) {
+                            userData.isLoggedIn = true;
+                            userData.userName = user.name;
+                            userData.userEmail = user.email;
+                            console.log("user is: ", user);
+                            return cb(null, user);
+                        } else {
+                            return cb(null, false);
+                        }
+                    }
+                });
+            } else {
+                return cb("User not found");
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    })
+);
+
+passport.serializeUser((user, cb) => {
+    cb(null, user);
+});
+
+passport.deserializeUser((user, cb) => {
+    cb(null, user);
 });
 
 app.listen(port, () => {
