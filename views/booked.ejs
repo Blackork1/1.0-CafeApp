@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Table Reservation</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <h1>Hello</h1>
+    <div class="section">
+      <div class="container">
+        <div class="navigation" id="navigation">
+          <div class="logo">
+            <a href="/">Home</a>
+          </div>
+          <div class="nav-right">
+            <img
+              src="/images/Nav-Bar-Icon.svg"
+              alt="Menu Icon"
+              class="menu-icon"
+              id="menu-icon"
+            />
+            <div class="links" id="nav-links">
+              <a> <%= user.isAdmin ? 'Admin' : '' %> </a>
+              <% if(user.isLoggedIn){%>
+              <a>Hallo <%= user.userName%></a>
+              <a href="/logout">Log-Out</a>
+              <%}else{%>
+              <a href="/login">Log-In</a>
+              <%}%> <% if(user.isAdmin){%>
+              <a href="/newBlog">new Blog</a>
+              <%}%>
+              <a href="#contact">Contact</a>
+              <a href="#about">About</a>
+              <a href="/reserve" class="reserve-button">Reservierung</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="Booked">
+      <h1>
+        Deine Reservierung von Tisch <%=user.selectedTable%> war erfolgreich.
+      </h1>
+      <p>
+        Dein Termin ist am <%=user.selectedDate%> zwischen
+        <%=user.selectedTime%>.
+      </p>
+      <p>Wir freuen uns auf deinen Besuch <%=user.selectedName%>.</p>
+      <!-- Button to download calendar event -->
+      <button
+        id="download-ics"
+        data-name="<%= user.selectedName %>"
+        data-date="<%= user.selectedDate %>"
+        data-time="<%= user.selectedTime %>"
+      >
+        Termin in Kalender speichern
+      </button>
+    </div>
+
+    <script src="/js/slide.js"></script>
+    <script src="/js/navToggle.js"></script>
+    <script src="/js/downloadICS.js"></script>
+  </body>
+</html>

@@ -6,6 +6,8 @@ import bcrypt from "bcrypt";
 import passport from "passport";
 import { Strategy } from "passport-local";
 import session from "express-session";
+import nodemailer from 'nodemailer';
+
 
 env.config();
 const app = express();
@@ -17,7 +19,20 @@ const userData = {
     isLoggedIn: false,
     userName: "",
     userEmail: "",
+    selectedTable: null,
+    selectedDate: null,
+    selectedTime: null,
+    selectedName: null,
 }
+
+// Configure the transporter (make sure to set EMAIL_USER and EMAIL_PASS in your .env file)
+const transporter = nodemailer.createTransport({
+    service: 'Gmail', // or use another email service
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+    },
+});
 
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -135,15 +150,51 @@ app.post("/reserve", async (req, res) => {
             VALUES ($1, $2, $3, $4, $5, $6)
         `;
         await db.query(insertQuery, [selectedTable, selectedDate, selectedTime, numPeople, name, email]);
-        res.send(`Reservation confirmed for ${name} at Table ${selectedTable} on ${selectedDate} at ${selectedTime} for ${numPeople} people.`);
+        // Compose the email content
+
+        userData.selectedTable = selectedTable;
+        userData.selectedDate = selectedDate;
+        userData.selectedTime = selectedTime;
+        userData.selectedName = name;
+
+        console.log('EMAIL_USER:', process.env.EMAIL_USER);
+        console.log('EMAIL_PASS:', process.env.EMAIL_PASS);
+
+        const mailOptions = {
+            from: process.env.EMAIL_USER, // Sender address
+            to: email,                      // Recipient's email
+            cc: process.env.EMAIL_USER,     // Copy to sender
+            subject: 'Reservierung Bestätigt',
+            text: `Hallo ${name},
+  
+  Deine Reservierung wurde bestätigt!:
+  Tisch: ${selectedTable}
+  Tag: ${selectedDate}
+  Zeit: ${selectedTime}
+  Anzahl an Gästen: ${numPeople}
+  
+  Vielen Dank für die Reservierung
+
+  Ich freue mich auf euch,
+  Zur alten Backstube`,
+        };
+
+        // Send the email
+        await transporter.sendMail(mailOptions);
+        res.redirect("/booked")
+        // res.send(`Reservation confirmed for ${name} at Table ${selectedTable} on ${selectedDate} at ${selectedTime} for ${numPeople} people.`);
     } catch (err) {
         console.error("Database error:", err);
         res.status(500).send("An error occurred while processing your reservation.");
     }
 });
 
+app.get("/booked", async (req, res) => {
+    res.render("booked.ejs", { user: userData });
+});
+
 app.get("/newBlog", async (req, res) => {
-    if (isAdmin) {
+    if (userData.isAdmin) {
         res.render("newBlog.ejs");
     }
     else {
