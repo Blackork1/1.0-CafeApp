@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      /* Basic styling for the cards */
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        padding: 20px;
+      }
+      h1 {
+        text-align: center;
+      }
+      .card-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+      }
+      .card {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        width: 300px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      .card img {
+        width: 100%;
+        display: block;
+      }
+      .card-content {
+        padding: 15px;
+      }
+      .card h2 {
+        font-size: 1.25em;
+        margin: 0 0 10px;
+      }
+      .card .date {
+        font-size: 0.9em;
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <%- include('partials/header') %>
+    <h1>Veranstaltungen & Events</h1>
+    <div class="card-container">
+      <% posts.forEach(post => { %>
+      <div class="card" onclick="location.href='/blog/<%= post.id%>';" style="cursor: pointer;">
+        <% if (user.isAdmin) { %>
+        <form action="/blog/<%= post.id%>/delete" method="post">
+          <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+        </form>
+        <a href="/blog/<%= post.id%>/edit">Edit Post</a>
+        <% } %>
+
+        <!-- The image is loaded via the /image/:id route -->
+        <img src="/image/<%= post.id %>" alt="<%= post.title %>" />
+        <div class="card-content">
+          <h2><%= post.heading %></h2>
+          <div class="date">
+            <%= new Date(post.date).toLocaleString('de-DE', {weekday: 'long',
+            year: 'numeric', month: 'numeric',day: 'numeric'}) %>
+          </div>
+        </div>
+      </div>
+
+      <% }); %>
+    </div>
+
+    <script src="/js/slide.js"></script>
+    <script src="/js/navToggle.js"></script>
+  </body>
+</html>

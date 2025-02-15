@@ -1,12 +1,32 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-
-<head>
-  <meta charset="utf-8">
-  <title>Cafe Rosenthal</title>
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-  <link rel="stylesheet" href="css/styles.css">
-</head>
-
-<body>
+<div class="section">
+  <div class="container">
+    <div class="navigation" id="navigation">
+      <div class="logo">
+        <a href="/">Home</a>
+      </div>
+      <div class="nav-right">
+        <img
+          src="/images/Nav-Bar-Icon.svg"
+          alt="Menu Icon"
+          class="menu-icon"
+          id="menu-icon"
+        />
+        <div class="links" id="nav-links">
+          <a> <%= user.isAdmin ? 'Admin' : '' %> </a>
+          <% if(user.isLoggedIn){%>
+           <a>Hallo <%= user.userName%></a> 
+           <a href="/logout">Log-Out</a>
+          <%}else{%>
+            <a href="/login">Log-In</a>
+          <%}%>
+          <% if(user.isAdmin){%>
+            <a href="/newBlog">Neuer Blog</a>
+          <%}%>
+          <a href="/blog">Blog</a>
+          <a href="/register">Registrierung</a>
+          <a href="/reserve" class="reserve-button">Reservierung</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

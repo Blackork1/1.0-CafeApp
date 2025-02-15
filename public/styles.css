@@ -233,3 +233,15 @@ button:hover {
   }
 }
 
+.post-image{
+  max-width: 80%;
+  max-height: 400px; 
+}
+
+.card-clicker{
+  display: block;
+  height: 100%;
+  width: 100%;
+  text-decoration: none;
+  background-color: transparent;
+}

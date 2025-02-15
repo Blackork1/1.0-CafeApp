@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= post.heading%></title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <%- include('partials/header') %>
+    <h1><%= post.heading %></h1>
+    <p>
+      <%= new Date(post.date).toLocaleString('de-DE', {weekday: 'long', year:
+      'numeric', month: 'numeric',day: 'numeric'}) %>
+    </p>
+    <img
+      src="/image/<%= post.id %>"
+      alt="<%= post.title %>"
+      class="post-image"
+    />
+    <p><%= post.text %></p>
+    <a href="/blog" class="btn btn-primary">Zurück</a>
+
+    <script src="/js/slide.js"></script>
+    <script src="/js/navToggle.js"></script>
+  </body>
+</html>

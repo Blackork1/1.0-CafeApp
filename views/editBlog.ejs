@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog bearbeiten</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <%- include('partials/header') %>
+    <div>
+      <h1>Blog bearbeiten</h1>
+      <form
+        action="/editBlog/<%= post.id %>"
+        method="POST"
+        enctype="multipart/form-data"
+      >
+        <div class="form-group">
+          <label for="heading">Titel:</label>
+          <input
+            type="text"
+            class="form-control"
+            name="heading"
+            value="<%= post.heading %>"
+            required
+          />
+          <label for="text">Text:</label>
+          <textarea name="text" id="text" rows="6" cols="40" required>
+<%= post.text %></textarea
+          >
+          <label for="bild">Bild:</label>
+          <input type="file" name="bild" id="bild" accept="image/*" required />
+          <button type="submit">Post aktualisieren</button>
+        </div>
+      </form>
+    </div>
+    <script src="/js/slide.js"></script>
+    <script src="/js/navToggle.js"></script>
+  </body>
+</html>

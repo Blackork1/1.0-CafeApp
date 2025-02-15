@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Neuer Blog-Post</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <%- include('partials/header') %>
+    <div>
+      <h1>Neuer Blog-Post</h1>
+      <form action="/newBlog" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="heading">Titel:</label>
+          <input type="text" class="form-control" name="heading" required />
+          <label for="text">Text:</label>
+          <textarea
+            name="text"
+            id="text"
+            rows="6"
+            cols="40"
+            required
+          ></textarea>
+          <label for="bild">Bild:</label>
+          <input type="file" name="bild" id="bild" accept="image/*" required />
+          <button type="submit">Post erstellen</button>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

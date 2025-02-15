@@ -7,6 +7,8 @@ import passport from "passport";
 import { Strategy } from "passport-local";
 import session from "express-session";
 import nodemailer from 'nodemailer';
+import multer from 'multer';
+import e from 'express';
 
 
 env.config();
@@ -15,7 +17,7 @@ const port = process.env.PORT || 3000;
 const saltRounds = 10;
 
 const userData = {
-    isAdmin: false,
+    isAdmin: true,
     isLoggedIn: false,
     userName: "",
     userEmail: "",
@@ -55,7 +57,38 @@ const db = new pg.Client({
     port: process.env.PG_PORT,
 });
 db.connect();
+
+// Multer-Konfiguration: Dateien werden im Arbeitsspeicher gehalten
+const storage = multer.memoryStorage();
+const upload = multer({
+    storage: storage,
+    // Optional: Maximale Dateigröße z. B. 5 MB festlegen
+    limits: { fileSize: 5 * 1024 * 1024 },
+    fileFilter: function (req, file, cb) {
+        // Allow only jpeg and png files
+        if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+            cb(null, true);
+        } else {
+            cb(new Error('Only .jpeg and .png files are allowed!'), false);
+        }
+    },
+});
 // Function to get weekend dates (next 4 weeks) in YYYY-MM-DD format
+
+// Step 1: Show table selection
+app.get("/", async (req, res) => {
+    try {
+        const result = await db.query("SELECT id, tablename, places, roomname FROM tables ORDER BY id ASC");
+        const tables = result.rows;
+        console.log(userData.isAdmin);
+        res.render("index", { tables, selectedTable: null, availableSlots: {}, user: userData });
+    } catch (err) {
+        console.error("Database error:", err);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+//!!Reservation Area!!
 function getAvailableDays() {
     const today = new Date();
     const days = [];
@@ -70,12 +103,12 @@ function getAvailableDays() {
     return days;
 }
 // Step 1: Show table selection
-app.get("/", async (req, res) => {
+app.get("/reservation", async (req, res) => {
     try {
         const result = await db.query("SELECT id, tablename, places, roomname FROM tables ORDER BY id ASC");
         const tables = result.rows;
         console.log(userData.isAdmin);
-        res.render("index", { tables, selectedTable: null, availableSlots: {}, user: userData });
+        res.render("reservation", { tables, selectedTable: null, availableSlots: {}, user: userData });
     } catch (err) {
         console.error("Database error:", err);
         res.status(500).send("Internal Server Error");
@@ -121,7 +154,7 @@ app.post("/select-table", async (req, res) => {
             userData.userName = req.user.name;
             userData.userEmail = req.user.email;
         }
-        res.render("index", {
+        res.render("reservation", {
             tables: [],
             selectedTable,
             availableSlots,
@@ -163,7 +196,7 @@ app.post("/reserve", async (req, res) => {
         const mailOptions = {
             from: process.env.EMAIL_USER, // Sender address
             to: email,                      // Recipient's email
-            cc: process.env.EMAIL_USER,     // Copy to sender
+            bcc: process.env.EMAIL_USER,     // Copy to sender
             subject: 'Reservierung Bestätigt',
             text: `Hallo ${name},
   
@@ -189,22 +222,166 @@ app.post("/reserve", async (req, res) => {
     }
 });
 
+app.get("/allReservations", async (req, res) => {
+    try {
+        const result = await db.query("SELECT * FROM booking ORDER BY date ASC");
+        const bookings = result.rows;
+        if (userData.isAdmin) {
+            res.render("allReservations", { bookings, user: userData });
+        } else {
+            res.redirect("/");
+        }
+    } catch (err) {
+        console.error("Database error:", err);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
 app.get("/booked", async (req, res) => {
     res.render("booked.ejs", { user: userData });
 });
 
+//!!Blog Area!!
+// Route to serve image data for a given blog post
+app.get('/image/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        // Query to get image data for the specific post
+        const result = await db.query(
+            'SELECT image_data, image_name FROM blog WHERE id = $1',
+            [id]
+        );
+        if (result.rows.length === 0) {
+            return res.status(404).send('Image not found.');
+        }
+        const image = result.rows[0];
+
+        // Set the Content-Type header (assuming JPEG; adjust if needed)
+        res.set('Content-Type', 'image/jpeg');
+        res.send(image.image_data);
+    } catch (err) {
+        console.error('Error fetching image:', err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// Route to display all blog posts using blog.ejs
+app.get('/blog', async (req, res) => {
+    try {
+        // Query to get all posts ordered by creation date (newest first)
+        const result = await db.query(
+            'SELECT id, heading, date FROM blog ORDER BY date DESC'
+        );
+        const posts = result.rows;
+        //convert date to dd.mm.yyyy);
+
+        console.log(posts[0].date);
+
+
+        var fullDate = posts[0].date;
+        var dd = String(fullDate.getDate() - 1).padStart(1, '0');
+        var mm = String(fullDate.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = fullDate.getFullYear();
+        const date = dd + '.' + mm + '.' + yyyy;
+
+        res.render('blog', { posts, user: userData, date });
+    } catch (err) {
+        console.error('Error fetching blog posts:', err);
+        res.status(500).send('Error fetching blog posts');
+    }
+});
+
 app.get("/newBlog", async (req, res) => {
     if (userData.isAdmin) {
-        res.render("newBlog.ejs");
+        res.render("newBlog.ejs", { user: userData });
     }
     else {
         res.redirect("/");
     }
 });
 
-//Log-In/ Register Area
+app.get("/blog/:id", async (req, res) => {
+    const id = req.params.id;
+    try {
+        const result = await db.query("SELECT * FROM blog WHERE id = $1", [id]);
+        const post = result.rows[0];
+        res.render("blogPost", { post, user: userData });
+    } catch (err) {
+        console.log(err);
+    }
+});
+
+app.get("/blog/:id/edit", async (req, res) => {
+    const id = req.params.id;
+    try {
+        const result = await db.query("SELECT * FROM blog WHERE id = $1", [id]);
+        const post = result.rows[0];
+        res.render("editBlog", { post, user: userData });
+    } catch (err) {
+        console.log(err);
+    }
+});
+
+app.post("/newBlog", upload.single('bild'), async (req, res) => {
+    const heading = req.body.heading;
+    const text = req.body.text;
+    if (!req.file) {
+        return res.status(400).send('Kein Bild hochgeladen.');
+    }
+    const imageName = req.file.originalname;
+    const imageData = req.file.buffer;
+
+    var date = new Date();
+    var dd = String(date.getDate()).padStart(2, '0');
+    var mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = date.getFullYear();
+    date = mm + '/' + dd + '/' + yyyy;
+
+    try {
+        const result = await db.query(
+            "INSERT INTO blog (heading, text, image_name, image_data, date) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+            [heading, text, imageName, imageData, date]
+        );
+        res.redirect("/");
+    } catch (err) {
+        console.log(err);
+    }
+});
+
+app.post("/editBlog/:id", upload.single('bild'), async (req, res) => {
+    const id = req.params.id;
+    const heading = req.body.heading;
+    const text = req.body.text;
+    if (!req.file) {
+        return res.status(400).send('Kein Bild hochgeladen.');
+    }
+    const imageName = req.file.originalname;
+    const imageData = req.file.buffer;
+
+    try {
+        const result = await db.query(
+            "UPDATE blog SET heading = $1, text = $2, image_name = $3, image_data = $4 WHERE id = $5",
+            [heading, text, imageName, imageData, id]
+        );
+        res.redirect("/blog/" + id);
+    } catch (err) {
+        console.log(err);
+    }
+});
+
+app.post("/blog/:id/delete", async (req, res) => {
+    const id = req.params.id;
+    try {
+        const result = await db.query("DELETE FROM blog WHERE id = $1", [id]);
+        res.redirect("/blog");
+    } catch (err) {
+        console.log(err);
+    }
+});
+
+//!!Log-In/ Register Area!!
 app.get("/login", async (req, res) => {
-    res.render("login.ejs");
+    res.render("login.ejs", { user: userData });
 });
 
 app.get("/logout", (req, res) => {
@@ -219,7 +396,7 @@ app.get("/logout", (req, res) => {
 });
 
 app.get("/register", async (req, res) => {
-    res.render("register.ejs");
+    res.render("register.ejs", { user: userData });
 });
 
 app.post("/login",
