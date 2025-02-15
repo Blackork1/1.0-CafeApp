@@ -17,7 +17,7 @@ const port = process.env.PORT || 3000;
 const saltRounds = 10;
 
 const userData = {
-    isAdmin: true,
+    isAdmin: false,
     isLoggedIn: false,
     userName: "",
     userEmail: "",
@@ -80,7 +80,6 @@ app.get("/", async (req, res) => {
     try {
         const result = await db.query("SELECT id, tablename, places, roomname FROM tables ORDER BY id ASC");
         const tables = result.rows;
-        console.log(userData.isAdmin);
         res.render("index", { tables, selectedTable: null, availableSlots: {}, user: userData });
     } catch (err) {
         console.error("Database error:", err);
@@ -107,7 +106,6 @@ app.get("/reservation", async (req, res) => {
     try {
         const result = await db.query("SELECT id, tablename, places, roomname FROM tables ORDER BY id ASC");
         const tables = result.rows;
-        console.log(userData.isAdmin);
         res.render("reservation", { tables, selectedTable: null, availableSlots: {}, user: userData });
     } catch (err) {
         console.error("Database error:", err);
@@ -190,26 +188,29 @@ app.post("/reserve", async (req, res) => {
         userData.selectedTime = selectedTime;
         userData.selectedName = name;
 
-        console.log('EMAIL_USER:', process.env.EMAIL_USER);
-        console.log('EMAIL_PASS:', process.env.EMAIL_PASS);
-
         const mailOptions = {
             from: process.env.EMAIL_USER, // Sender address
             to: email,                      // Recipient's email
             bcc: process.env.EMAIL_USER,     // Copy to sender
-            subject: 'Reservierung Bestätigt',
+            subject: 'Reservierung Zur alten Backstube', // Subject line
             text: `Hallo ${name},
   
-  Deine Reservierung wurde bestätigt!:
+  Deine Reservierung wurde bestätigt:
   Tisch: ${selectedTable}
   Tag: ${selectedDate}
   Zeit: ${selectedTime}
   Anzahl an Gästen: ${numPeople}
   
-  Vielen Dank für die Reservierung
+  Vielen Dank für die Reservierung!
 
-  Ich freue mich auf euch,
-  Zur alten Backstube`,
+  Ich freue mich auf dich,
+  dein Manu!     
+  
+
+  
+  Zur alten Backstube
+  Hauptstraße 155, 13158 Berlin
+  Tel: 030-47488482`,
         };
 
         // Send the email
@@ -226,6 +227,8 @@ app.get("/allReservations", async (req, res) => {
     try {
         const result = await db.query("SELECT * FROM booking ORDER BY date ASC");
         const bookings = result.rows;
+        console.log(bookings);
+        
         if (userData.isAdmin) {
             res.render("allReservations", { bookings, user: userData });
         } else {
@@ -234,6 +237,16 @@ app.get("/allReservations", async (req, res) => {
     } catch (err) {
         console.error("Database error:", err);
         res.status(500).send("Internal Server Error");
+    }
+});
+
+app.post("/deleteReservation/:id", async (req, res) => {
+    const id = req.params.id;
+    try {
+        const result = await db.query("DELETE FROM booking WHERE id = $1", [id]);
+        res.redirect("/allReservations");
+    } catch (err) {
+        console.log(err);
     }
 });
 
@@ -274,15 +287,18 @@ app.get('/blog', async (req, res) => {
         );
         const posts = result.rows;
         //convert date to dd.mm.yyyy);
+        var date = "";
 
-        console.log(posts[0].date);
+        if (posts.length != 0) {
+            var fullDate = posts[0].date;
+            var dd = String(fullDate.getDate() - 1).padStart(1, '0');
+            var mm = String(fullDate.getMonth() + 1).padStart(2, '0'); //January is 0!
+            var yyyy = fullDate.getFullYear();
+            date = dd + '.' + mm + '.' + yyyy;
+        }
 
 
-        var fullDate = posts[0].date;
-        var dd = String(fullDate.getDate() - 1).padStart(1, '0');
-        var mm = String(fullDate.getMonth() + 1).padStart(2, '0'); //January is 0!
-        var yyyy = fullDate.getFullYear();
-        const date = dd + '.' + mm + '.' + yyyy;
+
 
         res.render('blog', { posts, user: userData, date });
     } catch (err) {

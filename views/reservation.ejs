@@ -37,7 +37,11 @@
         <legend>Select a Date and Time:</legend>
         <% Object.keys(availableSlots).forEach(date => { %>
         <div style="margin-bottom: 10px">
-          <strong><%= date %></strong><br />
+          <strong>
+            <%= new Date(date).toLocaleDateString('de-DE', {
+            weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })
+            %></strong
+          ><br />
           <% availableSlots[date].forEach(time => { %>
           <!-- Composite radio value: "date|time" -->
           <input

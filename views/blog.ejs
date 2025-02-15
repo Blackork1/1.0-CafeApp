@@ -10,7 +10,6 @@
       body {
         font-family: Arial, sans-serif;
         background-color: #f9f9f9;
-        padding: 20px;
       }
       h1 {
         text-align: center;
@@ -49,6 +48,10 @@
   <body>
     <%- include('partials/header') %>
     <h1>Veranstaltungen & Events</h1>
+    <% if (posts.length === 0) { %>
+    <p>Keine Veranstaltungen vorhanden.</p>
+    <% } else { %>
+    
     <div class="card-container">
       <% posts.forEach(post => { %>
       <div class="card" onclick="location.href='/blog/<%= post.id%>';" style="cursor: pointer;">
@@ -70,7 +73,7 @@
         </div>
       </div>
 
-      <% }); %>
+      <% });} %>
     </div>
 
     <script src="/js/slide.js"></script>

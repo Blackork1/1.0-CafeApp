@@ -13,8 +13,10 @@
         Deine Reservierung von Tisch <%=user.selectedTable%> war erfolgreich.
       </h1>
       <p>
-        Dein Termin ist am <%=user.selectedDate%> zwischen
-        <%=user.selectedTime%>.
+        Dein Termin ist am <%= new
+        Date(user.selectedDate).toLocaleDateString('de-DE', { weekday: 'short',
+        year: 'numeric', month: 'short', day: 'numeric' }) %> zwischen
+        <%=user.selectedTime%> Uhr.
       </p>
       <p>Wir freuen uns auf deinen Besuch <%=user.selectedName%>.</p>
       <!-- Button to download calendar event -->

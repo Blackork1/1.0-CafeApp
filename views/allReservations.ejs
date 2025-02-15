@@ -3,8 +3,45 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin ReservationPanel</title>
+    <title>Admin Reservation Panel</title>
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
     <%- include('partials/header') %>
+    <div class="adminPanel">
+      <h1>Admin Reservation Panel</h1>
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>Telefonnummer</th>
+          <th>Personen</th>
+          <th>Datum</th>
+          <th>Uhrzeit</th>
+          <th>Tisch</th>
+          <th>Stornieren</th>
+        </tr>
+        <% bookings.forEach(reservation => { %>
+        <tr>
+          <td><%= reservation.name %></td>
+          <td><%= reservation.email %></td>
+          <td><%= reservation.places_selected%></td>
+          <td>
+            <%= new Date(reservation.date).toLocaleDateString('de-DE', { weekday:
+            'short', year: 'numeric', month: 'short', day: 'numeric' }) %>
+          </td>
+          <td><%= reservation.time %></td>
+          <td><%= reservation.table_id %></td>
+          <td>
+            <form
+              action="/deleteReservation/<%= reservation.id %>"
+              method="POST"
+            >
+              <button type="submit">Stornieren</button>
+            </form>
+          </td>
+        </tr>
+        <% }) %>
+      </table>
+    </div>
+  </body>
+</html>
