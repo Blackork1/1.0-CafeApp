@@ -67,6 +67,8 @@ app.use(session({
     }
 }));
 
+
+
 // /* For Local use
 // const db = new pg.Client({
 //     user: process.env.PGUSER,
@@ -76,12 +78,14 @@ app.use(session({
 //     port: process.env.PGPORT,
 // });
 
-db.connect();
+// db.connect();
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Multer-Konfiguration: Dateien werden im Arbeitsspeicher gehalten
 const storage = multer.memoryStorage();
