@@ -34,7 +34,6 @@ const db = new pg.Client({
 db.connect()
     .then(() => console.log("Connected to Railway PostgreSQL"))
     .catch(err => console.error("Connection error:", err));
-// Configure the session middleware
 
 // For Local use
 // const db = new pg.Client({
@@ -50,11 +49,7 @@ db.connect()
 const PgSessionStore = pgSession(session);
 app.use(session({
     store: new PgSessionStore({
-        // Optionally, if you already have a pg Pool:
-        // pool: yourPgPool,
-        // Or provide connection options:
         conString: process.env.DATABASE_URL,
-        // Set other options as needed:
         tableName: 'session',  // default is "session"
         createTableIfMissing: true, // Automatically create the session table if missing
     }),
@@ -63,9 +58,9 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         maxAge: 30 * 24 * 60 * 60 * 1000,// Example: 30 days
-        // secure: process.env.NODE_ENV === 'production', // Secure cookies only in production
-        // httpOnly: true, // Prevents client-side JS access
-        // sameSite: 'strict' // Prevents CSRF attacks
+        secure: process.env.NODE_ENV, // Secure cookies only in production
+        httpOnly: true, // Prevents client-side JS access
+        sameSite: 'strict' // Prevents CSRF attacks
     }
 }));
 
@@ -493,7 +488,6 @@ passport.use("local",
     })
 );
 
-
 passport.serializeUser((user, done) => {
     done(null, {
         id: user.id,
@@ -503,7 +497,6 @@ passport.serializeUser((user, done) => {
         isLoggedIn: true, // ✅ Store isLoggedIn flag  
     });
 });
-
 
 passport.deserializeUser(async (user, done) => {
     try {
@@ -522,8 +515,6 @@ passport.deserializeUser(async (user, done) => {
         done(err);
     }
 });
-
-
 
 app.listen(port, () => {
     console.log(`Server running on port http://localhost:${port}`);
