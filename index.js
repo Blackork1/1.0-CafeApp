@@ -42,19 +42,8 @@ app.use(session({
     saveUninitialized: true,
 }));
 
-app.set('view engine', 'ejs');
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static("public"));
-
-app.use(passport.initialize());
-app.use(passport.session());
-
 const db = new pg.Client({
-    user: process.env.PGUSER,
-    host: process.env.PGHOST,
-    database: process.env.PGDATABASE,
-    password: process.env.PGPASSWORD,
-    port: parseInt(process.env.PGPORT, 10),
+    connectionString: process.env.DATABASE_URL,
     ssl: {
         rejectUnauthorized: false // Needed for Railway's managed PostgreSQL instances
     }
@@ -63,6 +52,15 @@ const db = new pg.Client({
 db.connect()
     .then(() => console.log("Connected to Railway PostgreSQL"))
     .catch(err => console.error("Connection error:", err));
+
+app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static("public"));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
 
 /* For Local use
 const db = new pg.Client({
