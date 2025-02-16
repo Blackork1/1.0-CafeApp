@@ -59,7 +59,7 @@ app.use(session({
     cookie: {
         maxAge: 30 * 24 * 60 * 60 * 1000,// Example: 30 days
         secure: process.env.NODE_ENV === 'production' && process.env.USE_HTTPS === 'true', // ✅ FIX: Secure only if HTTPS is enforced
-        httpOnly: true, // Prevents client-side JS access
+        // httpOnly: true, // Prevents client-side JS access
         sameSite: 'lax' // Prevents CSRF attacks
     }
 }));
