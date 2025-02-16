@@ -64,10 +64,13 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        maxAge: 30 * 24 * 60 * 60 * 1000// Example: 30 days
+        maxAge: 30 * 24 * 60 * 60 * 1000,// Example: 30 days
+        secure: process.env.NODE_ENV === 'production', // Secure cookies only in production
+        httpOnly: true, // Prevents client-side JS access
+        sameSite: 'strict' // Prevents CSRF attacks
     }
-}));
 
+}));
 
 
 // /* For Local use
@@ -110,7 +113,7 @@ app.get("/", async (req, res) => {
     try {
         const result = await db.query("SELECT id, tablename, places, roomname FROM tables ORDER BY id ASC");
         const tables = result.rows;
-        res.render("index", { tables, selectedTable: null, availableSlots: {}, user: userData });
+        res.render("index", { tables, selectedTable: null, availableSlots: {}, user: req.user || {} });
     } catch (err) {
         console.error("Database error:", err);
         res.status(500).send("Internal Server Error");
@@ -136,7 +139,7 @@ app.get("/reservation", async (req, res) => {
     try {
         const result = await db.query("SELECT id, tablename, places, roomname FROM tables ORDER BY id ASC");
         const tables = result.rows;
-        res.render("reservation", { tables, selectedTable: null, availableSlots: {}, user: userData });
+        res.render("reservation", { tables, selectedTable: null, availableSlots: {}, user: req.user || {} });
     } catch (err) {
         console.error("Database error:", err);
         res.status(500).send("Internal Server Error");
@@ -186,7 +189,7 @@ app.post("/select-table", async (req, res) => {
             tables: [],
             selectedTable,
             availableSlots,
-            user: userData,
+         user: req.user || {},
         });
     } catch (err) {
         console.error("Database error:", err);
@@ -260,7 +263,7 @@ app.get("/allReservations", async (req, res) => {
         console.log(bookings);
 
         if (userData.isAdmin) {
-            res.render("allReservations", { bookings, user: userData });
+            res.render("allReservations", { bookings, user: req.user || {} });
         } else {
             res.redirect("/");
         }
@@ -281,7 +284,7 @@ app.post("/deleteReservation/:id", async (req, res) => {
 });
 
 app.get("/booked", async (req, res) => {
-    res.render("booked.ejs", { user: userData });
+    res.render("booked.ejs", { user: req.user || {} });
 });
 
 //!!Blog Area!!
@@ -330,7 +333,7 @@ app.get('/blog', async (req, res) => {
 
 
 
-        res.render('blog', { posts, user: userData, date });
+        res.render('blog', { posts, user: req.user || {}, date });
     } catch (err) {
         console.error('Error fetching blog posts:', err);
         res.status(500).send('Error fetching blog posts');
@@ -339,7 +342,7 @@ app.get('/blog', async (req, res) => {
 
 app.get("/newBlog", async (req, res) => {
     if (userData.isAdmin) {
-        res.render("newBlog.ejs", { user: userData });
+        res.render("newBlog.ejs", { user: req.user || {} });
     }
     else {
         res.redirect("/");
@@ -351,7 +354,7 @@ app.get("/blog/:id", async (req, res) => {
     try {
         const result = await db.query("SELECT * FROM blog WHERE id = $1", [id]);
         const post = result.rows[0];
-        res.render("blogPost", { post, user: userData });
+        res.render("blogPost", { post, user: req.user || {} });
     } catch (err) {
         console.log(err);
     }
@@ -362,7 +365,7 @@ app.get("/blog/:id/edit", async (req, res) => {
     try {
         const result = await db.query("SELECT * FROM blog WHERE id = $1", [id]);
         const post = result.rows[0];
-        res.render("editBlog", { post, user: userData });
+        res.render("editBlog", { post, user: req.user || {} });
     } catch (err) {
         console.log(err);
     }
@@ -427,22 +430,20 @@ app.post("/blog/:id/delete", async (req, res) => {
 
 //!!Log-In/ Register Area!!
 app.get("/login", async (req, res) => {
-    res.render("login.ejs", { user: userData });
+    res.render("login.ejs", { user: req.user || {} });
 });
 
-app.get("/logout", (req, res) => {
-    req.logout(function (err) {
-        userData.isAdmin = false;
-        userData.isLoggedIn = false;
-        if (err) {
-            return next(err);
-        }
-        res.redirect("/");
+app.get("/logout", (req, res, next) => {
+    req.logout((err) => {
+        if (err) return next(err);
+        req.session.destroy(() => {
+            res.redirect("/");
+        });
     });
 });
 
 app.get("/register", async (req, res) => {
-    res.render("register.ejs", { user: userData });
+    res.render("register.ejs", { user: req.user || {} });
 });
 
 app.post("/login",
@@ -486,51 +487,44 @@ app.post("/register", async (req, res) => {
 });
 
 passport.use(
-    "local",
-    new Strategy(async function verify(username, password, cb) {
+    new Strategy(async (username, password, cb) => {
         try {
-            const result = await db.query("SELECT * FROM users WHERE email = $1 ", [
-                username,
-            ]);
-            console.log("username is: ", result.rows[0]);
+            const result = await db.query("SELECT * FROM users WHERE email = $1", [username]);
+            if (result.rows.length === 0) return cb(null, false);
 
-            if (result.rows[0].email === "admin@admin") {
-                userData.isAdmin = true;
-            }
-            if (result.rows.length > 0) {
-                const user = result.rows[0];
-                const storedHashedPassword = user.password;
-                bcrypt.compare(password, storedHashedPassword, (err, valid) => {
-                    if (err) {
-                        console.error("Error comparing passwords:", err);
-                        return cb(err);
-                    } else {
-                        if (valid) {
-                            userData.isLoggedIn = true;
-                            userData.userName = user.name;
-                            userData.userEmail = user.email;
-                            console.log("user is: ", user);
-                            return cb(null, user);
-                        } else {
-                            return cb(null, false);
-                        }
-                    }
-                });
-            } else {
-                return cb("User not found");
-            }
+            const user = result.rows[0];
+
+            bcrypt.compare(password, user.password, (err, valid) => {
+                if (err) return cb(err);
+                if (!valid) return cb(null, false);
+
+                return cb(null, user);
+            });
         } catch (err) {
-            console.log(err);
+            return cb(err);
         }
     })
 );
 
-passport.serializeUser((user, cb) => {
-    cb(null, user);
+
+passport.serializeUser((user, done) => {
+    done(null, {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        isAdmin: user.email === "admin@admin"
+    });
 });
 
-passport.deserializeUser((user, cb) => {
-    cb(null, user);
+passport.deserializeUser(async (user, done) => {
+    try {
+        const result = await db.query("SELECT * FROM users WHERE id = $1", [user.id]);
+        if (result.rows.length === 0) return done(null, false);
+
+        done(null, result.rows[0]); // Restores user from session
+    } catch (err) {
+        done(err);
+    }
 });
 
 
