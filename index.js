@@ -8,13 +8,14 @@ import { Strategy } from "passport-local";
 import session from "express-session";
 import nodemailer from 'nodemailer';
 import multer from 'multer';
-import e from 'express';
-
+import pgSession from 'connect-pg-simple';
 
 env.config();
 const app = express();
 const port = process.env.PORT || 3000;
 const saltRounds = 10;
+// Use the PG session store, passing in your session module
+
 
 const userData = {
     isAdmin: false,
@@ -36,10 +37,24 @@ const transporter = nodemailer.createTransport({
     },
 });
 
+// Configure the session middleware
+const PgSessionStore = pgSession(session);
+
 app.use(session({
+    store: new PgSessionStore({
+        // Optionally, if you already have a pg Pool:
+        // pool: yourPgPool,
+        // Or provide connection options:
+        conString: process.env.DATABASE_URL,
+        // Set other options as needed:
+        tableName: 'session',  // default is "session"
+    }),
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 30 * 24 * 60 * 60 // Example: 30 days
+    }
 }));
 
 const db = new pg.Client({
@@ -53,6 +68,17 @@ db.connect()
     .then(() => console.log("Connected to Railway PostgreSQL"))
     .catch(err => console.error("Connection error:", err));
 
+// /* For Local use
+// const db = new pg.Client({
+//     user: process.env.PGUSER,
+//     host: process.env.PGHOST,
+//     database: process.env.PGDATABASE,
+//     password: process.env.PGPASSWORD,
+//     port: process.env.PGPORT,
+// });
+
+db.connect();
+
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
@@ -62,16 +88,7 @@ app.use(passport.session());
 
 
 
-/* For Local use
-const db = new pg.Client({
-    user: process.env.PGUSER,
-    host: process.env.PGHOST,
-    database: process.env.PGDATABASE,
-    password: process.env.PGPASSWORD,
-    port: process.env.PGPORT,
-});
 
-db.connect();*/
 
 // Multer-Konfiguration: Dateien werden im Arbeitsspeicher gehalten
 const storage = multer.memoryStorage();
