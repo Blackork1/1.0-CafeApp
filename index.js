@@ -14,19 +14,6 @@ env.config();
 const app = express();
 const port = process.env.PORT || 3000;
 const saltRounds = 10;
-// Use the PG session store, passing in your session module
-
-
-// const userData = {
-//     isAdmin: false,
-//     isLoggedIn: false,
-//     userName: "",
-//     userEmail: "",
-//     selectedTable: null,
-//     selectedDate: null,
-//     selectedTime: null,
-//     selectedName: null,
-// }
 
 // Configure the transporter (make sure to set EMAIL_USER and EMAIL_PASS in your .env file)
 const transporter = nodemailer.createTransport({
@@ -49,6 +36,17 @@ db.connect()
     .catch(err => console.error("Connection error:", err));
 // Configure the session middleware
 
+// For Local use
+// const db = new pg.Client({
+//     user: process.env.PG_USER,
+//     host: process.env.PG_HOST,
+//     database: process.env.PG_DATABASE,
+//     password: process.env.PG_PASSWORD,
+//     port: process.env.PG_PORT,
+// });
+
+// db.connect();
+
 const PgSessionStore = pgSession(session);
 app.use(session({
     store: new PgSessionStore({
@@ -65,24 +63,11 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         maxAge: 30 * 24 * 60 * 60 * 1000,// Example: 30 days
-        secure: process.env.NODE_ENV === 'production', // Secure cookies only in production
-        httpOnly: true, // Prevents client-side JS access
-        sameSite: 'strict' // Prevents CSRF attacks
+        // secure: process.env.NODE_ENV === 'production', // Secure cookies only in production
+        // httpOnly: true, // Prevents client-side JS access
+        // sameSite: 'strict' // Prevents CSRF attacks
     }
-
 }));
-
-
-// /* For Local use
-// const db = new pg.Client({
-//     user: process.env.PGUSER,
-//     host: process.env.PGHOST,
-//     database: process.env.PGDATABASE,
-//     password: process.env.PGPASSWORD,
-//     port: process.env.PGPORT,
-// });
-
-// db.connect();
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -153,7 +138,6 @@ app.post("/select-table", async (req, res) => {
         const tableResult = await db.query("SELECT * FROM tables WHERE id = $1", [tableId]);
         if (tableResult.rows.length === 0) return res.redirect("/");
         const selectedTable = tableResult.rows[0];
-
         const allDates = getAvailableDays();
 
         // --- CHANGE: Use to_char to get date strings from the DB ---
@@ -181,15 +165,11 @@ app.post("/select-table", async (req, res) => {
             }
         });
 
-        if (req.user) {
-            userData.userName = req.user.name;
-            userData.userEmail = req.user.email;
-        }
         res.render("reservation", {
             tables: [],
             selectedTable,
             availableSlots,
-         user: req.user || {},
+            user: req.user || {},
         });
     } catch (err) {
         console.error("Database error:", err);
@@ -215,11 +195,17 @@ app.post("/reserve", async (req, res) => {
         `;
         await db.query(insertQuery, [selectedTable, selectedDate, selectedTime, numPeople, name, email]);
         // Compose the email content
+        req.session.selectedTable = selectedTable;
+        req.session.selectedDate = selectedDate; // ✅ Store selected date in session
+        req.session.selectedTime = selectedTime;
 
-        userData.selectedTable = selectedTable;
-        userData.selectedDate = selectedDate;
-        userData.selectedTime = selectedTime;
-        userData.selectedName = name;
+        if (req.user) {
+            req.user.name = name;
+        }
+        else{
+            req.session.name = name;
+        }
+        req.session.save(); // ✅ Save session update
 
         const mailOptions = {
             from: process.env.EMAIL_USER, // Sender address
@@ -248,7 +234,7 @@ app.post("/reserve", async (req, res) => {
 
         // Send the email
         await transporter.sendMail(mailOptions);
-        res.redirect("/booked")
+        res.redirect("/booked",)
         // res.send(`Reservation confirmed for ${name} at Table ${selectedTable} on ${selectedDate} at ${selectedTime} for ${numPeople} people.`);
     } catch (err) {
         console.error("Database error:", err);
@@ -260,9 +246,8 @@ app.get("/allReservations", async (req, res) => {
     try {
         const result = await db.query("SELECT * FROM booking ORDER BY date ASC");
         const bookings = result.rows;
-        console.log(bookings);
 
-        if (userData.isAdmin) {
+        if (req.user.isAdmin) {
             res.render("allReservations", { bookings, user: req.user || {} });
         } else {
             res.redirect("/");
@@ -284,7 +269,12 @@ app.post("/deleteReservation/:id", async (req, res) => {
 });
 
 app.get("/booked", async (req, res) => {
-    res.render("booked.ejs", { user: req.user || {} });
+    res.render("booked.ejs", {
+        user: req.user || req.session,
+        selectedTable: req.session.selectedTable, 
+        selectedDate: req.session.selectedDate, 
+        selectedTime: req.session.selectedTime
+    });
 });
 
 //!!Blog Area!!
@@ -330,9 +320,6 @@ app.get('/blog', async (req, res) => {
             date = dd + '.' + mm + '.' + yyyy;
         }
 
-
-
-
         res.render('blog', { posts, user: req.user || {}, date });
     } catch (err) {
         console.error('Error fetching blog posts:', err);
@@ -341,7 +328,7 @@ app.get('/blog', async (req, res) => {
 });
 
 app.get("/newBlog", async (req, res) => {
-    if (userData.isAdmin) {
+    if (req.user.isAdmin) {
         res.render("newBlog.ejs", { user: req.user || {} });
     }
     else {
@@ -486,7 +473,7 @@ app.post("/register", async (req, res) => {
     }
 });
 
-passport.use(
+passport.use("local",
     new Strategy(async (username, password, cb) => {
         try {
             const result = await db.query("SELECT * FROM users WHERE email = $1", [username]);
@@ -508,25 +495,34 @@ passport.use(
 
 
 passport.serializeUser((user, done) => {
-    done(null, {        
+    done(null, {
         id: user.id,
         email: user.email,
         name: user.name,
-        isAdmin: user.email === "admin@admin"
+        isAdmin: user.email === "admin@admin", // ✅ Store isAdmin flag
+        isLoggedIn: true, // ✅ Store isLoggedIn flag  
     });
-    console.log(user);
 });
+
 
 passport.deserializeUser(async (user, done) => {
     try {
         const result = await db.query("SELECT * FROM users WHERE id = $1", [user.id]);
         if (result.rows.length === 0) return done(null, false);
 
-        done(null, result.rows[0]); // Restores user from session
+        const dbUser = result.rows[0];
+        done(null, {
+            id: dbUser.id,
+            email: dbUser.email,
+            name: dbUser.name,
+            isAdmin: user.isAdmin, // ✅ Keep isAdmin from session
+            isLoggedIn: user.isLoggedIn, // ✅ Keep isLoggedIn from session
+        });
     } catch (err) {
         done(err);
     }
 });
+
 
 
 app.listen(port, () => {
