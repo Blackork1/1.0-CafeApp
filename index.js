@@ -58,9 +58,9 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         maxAge: 30 * 24 * 60 * 60 * 1000,// Example: 30 days
-        // secure: process.env.NODE_ENV, // Secure cookies only in production
-        // httpOnly: true, // Prevents client-side JS access
-        // sameSite: 'strict' // Prevents CSRF attacks
+        secure: process.env.NODE_ENV === 'production', // ✅ FIXED: Secure only in production
+        httpOnly: true, // Prevents client-side JS access
+        sameSite: 'strict' // Prevents CSRF attacks
     }
 }));
 
