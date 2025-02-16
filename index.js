@@ -48,8 +48,8 @@ db.connect()
     .then(() => console.log("Connected to Railway PostgreSQL"))
     .catch(err => console.error("Connection error:", err));
 // Configure the session middleware
-const PgSessionStore = pgSession(session);
 
+const PgSessionStore = pgSession(session);
 app.use(session({
     store: new PgSessionStore({
         // Optionally, if you already have a pg Pool:
@@ -67,8 +67,6 @@ app.use(session({
     }
 }));
 
-
-
 // /* For Local use
 // const db = new pg.Client({
 //     user: process.env.PGUSER,
@@ -84,8 +82,6 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-app.use(passport.initialize());
-app.use(passport.session());
 
 // Multer-Konfiguration: Dateien werden im Arbeitsspeicher gehalten
 const storage = multer.memoryStorage();
