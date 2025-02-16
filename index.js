@@ -58,12 +58,13 @@ app.use(session({
         conString: process.env.DATABASE_URL,
         // Set other options as needed:
         tableName: 'session',  // default is "session"
+        createTableIfMissing: true, // Automatically create the session table if missing
     }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
-        maxAge: 30 * 24 * 60 * 60 // Example: 30 days
+        maxAge: 30 * 24 * 60 * 60 * 1000// Example: 30 days
     }
 }));
 
