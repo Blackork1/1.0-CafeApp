@@ -57,13 +57,6 @@ app.use(session({
     }
 }));
 
-const db = new pg.Client({
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false // Needed for Railway's managed PostgreSQL instances
-    }
-});
-
 db.connect()
     .then(() => console.log("Connected to Railway PostgreSQL"))
     .catch(err => console.error("Connection error:", err));
@@ -85,10 +78,6 @@ app.use(express.static("public"));
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-
-
-
 
 // Multer-Konfiguration: Dateien werden im Arbeitsspeicher gehalten
 const storage = multer.memoryStorage();
