@@ -43,7 +43,7 @@ app.use(session({
 }));
 
 const db = new pg.Client({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: process.env.DATABASE_PUBLIC_URL,
     ssl: {
         rejectUnauthorized: false // Needed for Railway's managed PostgreSQL instances
     }
