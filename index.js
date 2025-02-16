@@ -17,16 +17,16 @@ const saltRounds = 10;
 // Use the PG session store, passing in your session module
 
 
-const userData = {
-    isAdmin: false,
-    isLoggedIn: false,
-    userName: "",
-    userEmail: "",
-    selectedTable: null,
-    selectedDate: null,
-    selectedTime: null,
-    selectedName: null,
-}
+// const userData = {
+//     isAdmin: false,
+//     isLoggedIn: false,
+//     userName: "",
+//     userEmail: "",
+//     selectedTable: null,
+//     selectedDate: null,
+//     selectedTime: null,
+//     selectedName: null,
+// }
 
 // Configure the transporter (make sure to set EMAIL_USER and EMAIL_PASS in your .env file)
 const transporter = nodemailer.createTransport({
@@ -508,12 +508,13 @@ passport.use(
 
 
 passport.serializeUser((user, done) => {
-    done(null, {
+    done(null, {        
         id: user.id,
         email: user.email,
         name: user.name,
         isAdmin: user.email === "admin@admin"
     });
+    console.log(user);
 });
 
 passport.deserializeUser(async (user, done) => {
