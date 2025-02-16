@@ -37,6 +37,16 @@ const transporter = nodemailer.createTransport({
     },
 });
 
+const db = new pg.Client({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false // Needed for Railway's managed PostgreSQL instances
+    }
+});
+
+db.connect()
+    .then(() => console.log("Connected to Railway PostgreSQL"))
+    .catch(err => console.error("Connection error:", err));
 // Configure the session middleware
 const PgSessionStore = pgSession(session);
 
@@ -57,9 +67,7 @@ app.use(session({
     }
 }));
 
-db.connect()
-    .then(() => console.log("Connected to Railway PostgreSQL"))
-    .catch(err => console.error("Connection error:", err));
+
 
 // /* For Local use
 // const db = new pg.Client({
