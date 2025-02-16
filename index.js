@@ -50,13 +50,30 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 const db = new pg.Client({
-    user: process.env.PG_USER,
-    host: process.env.PG_HOST,
-    database: process.env.PG_DATABASE,
-    password: process.env.PG_PASSWORD,
-    port: process.env.PG_PORT,
+    user: process.env.PGUSER,
+    host: process.env.PGHOST,
+    database: process.env.PGDATABASE,
+    password: process.env.PGPASSWORD,
+    port: parseInt(process.env.PGPORT, 10),
+    ssl: {
+        rejectUnauthorized: false // Needed for Railway's managed PostgreSQL instances
+    }
 });
-db.connect();
+
+db.connect()
+    .then(() => console.log("Connected to Railway PostgreSQL"))
+    .catch(err => console.error("Connection error:", err));
+
+/* For Local use
+const db = new pg.Client({
+    user: process.env.PGUSER,
+    host: process.env.PGHOST,
+    database: process.env.PGDATABASE,
+    password: process.env.PGPASSWORD,
+    port: process.env.PGPORT,
+});
+
+db.connect();*/
 
 // Multer-Konfiguration: Dateien werden im Arbeitsspeicher gehalten
 const storage = multer.memoryStorage();
@@ -207,7 +224,7 @@ app.post("/reserve", async (req, res) => {
   dein Manu!     
   
 
-  
+
   Zur alten Backstube
   Hauptstraße 155, 13158 Berlin
   Tel: 030-47488482`,
@@ -228,7 +245,7 @@ app.get("/allReservations", async (req, res) => {
         const result = await db.query("SELECT * FROM booking ORDER BY date ASC");
         const bookings = result.rows;
         console.log(bookings);
-        
+
         if (userData.isAdmin) {
             res.render("allReservations", { bookings, user: userData });
         } else {
