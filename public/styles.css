@@ -982,8 +982,3 @@ body.loading {
   color: #555;
   /* could include an actual spinner, e.g. a CSS animation */
 }
-
-/* Hide main content initially */
-.main-content {
-  display: none;
-}
