@@ -92,7 +92,7 @@ const upload = multer({
 // Step 1: Show table selection
 app.get("/", async (req, res) => {
     try {
-        const result = await db.query("SELECT id, tablename, places, roomname FROM tables ORDER BY id ASC");
+        const result = await db.query("SELECT id, tablename, places, roomname, desciption FROM tables ORDER BY id ASC");
         const tables = result.rows;
         res.render("index", { tables, selectedTable: null, availableSlots: {}, user: req.user || {} });
     } catch (err) {
@@ -118,7 +118,7 @@ function getAvailableDays() {
 // Step 1: Show table selection
 app.get("/reservation", async (req, res) => {
     try {
-        const result = await db.query("SELECT id, tablename, places, roomname FROM tables ORDER BY id ASC");
+        const result = await db.query("SELECT id, tablename, places, roomname, desciption FROM tables ORDER BY id ASC");
         const tables = result.rows;
         res.render("reservation", { tables, selectedTable: null, availableSlots: {}, user: req.user || {} });
     } catch (err) {
