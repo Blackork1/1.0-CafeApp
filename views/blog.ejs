@@ -11,7 +11,7 @@
         font-family: Arial, sans-serif;
         background-color: #f9f9f9;
       }
-      h1 {
+      h2 {
         text-align: center;
       }
       .card-container {
@@ -37,6 +37,7 @@
         padding: 15px;
       }
       .card h2 {
+        text-align: start;
         font-size: 1.25em;
         margin: 0 0 10px;
       }
@@ -44,18 +45,25 @@
         font-size: 0.9em;
         color: #666;
       }
+      .date {
+        text-align: end;
+      }
     </style>
   </head>
   <body>
-    <%- include('partials/header') %>
-    <h1>Veranstaltungen & Events</h1>
+    <div class="section"><%- include('partials/header') %></div>
+    <h2>Veranstaltungen & Events</h2>
     <% if (posts.length === 0) { %>
     <p>Keine Veranstaltungen vorhanden.</p>
     <% } else { %>
-    
+
     <div class="card-container">
       <% posts.forEach(post => { %>
-      <div class="card" onclick="location.href='/blog/<%= post.id%>';" style="cursor: pointer;">
+      <div
+        class="card"
+        onclick="location.href='/blog/<%= post.id%>';"
+        style="cursor: pointer"
+      >
         <% if (user.isAdmin) { %>
         <form action="/blog/<%= post.id%>/delete" method="post">
           <button type="submit" class="btn btn-danger btn-sm">Delete</button>

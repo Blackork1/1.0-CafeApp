@@ -7,23 +7,59 @@
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <%- include('partials/header') %>
-
-    <h1>Tisch Reservierung</h1>
-
+    <div class="reservation-container">
+      <%- include('partials/header') %>
+      <div class="container">
+        <h1 class="page-header">Tisch Reservierung</h1>
+      </div>
+    </div>
     <% if (!selectedTable) { %>
-    <!-- Table Selection: Each button submits the tableId -->
-    <form action="/select-table" method="POST" id="tableForm">
-      <fieldset>
-        <legend>Choose a table:</legend>
-        <% tables.forEach(table => { %>
-        <button type="submit" name="tableId" value="<%= table.id %>">
-          Table <%= table.tablename %> - <%= table.places %> seats (Room: <%=
-          table.roomname %>)</button
-        ><br />
-        <% }); %>
-      </fieldset>
-    </form>
+    <div class="carousel-container">
+      <div class="carousel">
+        <!-- Table Selection: Each button submits the tableId -->
+        <form action="/select-table" method="POST" id="tableForm">
+          <legend>Choose a table:</legend>
+          <div class="list">
+            <% tables.forEach(table => { %>
+            <div class="item">
+              <img src="/images/table<%= table.id%>.png" alt="Tabel image" />
+              <div class="content">
+                <div class="tablename"><%= table.roomname %></div>
+                <div class="title"><%= table.places %> Sitzplätze</div>
+                <div class="topic"><%= table.tablename %></div>
+                <div class="des">
+                  <!-- lorem 50 -->
+                  Der Tisch befindet sich links vom Eingang direkt am Fenster
+                  mit Blick nach draußen.
+                </div>
+                <div class="buttons">
+                  <button type="submit" name="tableId" value="<%= table.id %>">
+                    TISCH WÄHLEN
+                  </button>
+                </div>
+              </div>
+            </div>
+            <% }); %>
+          </div>
+          <div class="thumbnail">
+            <% tables.forEach(table => { %>
+            <div class="item">
+              <img src="/images/table<%= table.id%>.png" alt="Tabel image" />
+              <div class="content">
+                <div class="tablename"><%= table.tablename %></div>
+                <div class="des"><%= table.places%> Sitzplätze</div>
+              </div>
+            </div>
+            <% }); %>
+          </div>
+        </form>
+        <div class="arrows">
+          <button class="prev" id="prev"><</button>
+          <button class="next" id="next">></button>
+        </div>
+        <div class="time"></div>
+      </div>
+    </div>
     <% } %> <% if (selectedTable && Object.keys(availableSlots).length > 0) { %>
     <h2>Table <%= selectedTable.tablename %> Selected</h2>
     <!-- Reservation Form: Select a Date and Time, then fill out details -->
@@ -38,9 +74,8 @@
         <% Object.keys(availableSlots).forEach(date => { %>
         <div style="margin-bottom: 10px">
           <strong>
-            <%= new Date(date).toLocaleDateString('de-DE', {
-            weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })
-            %></strong
+            <%= new Date(date).toLocaleDateString('de-DE', { weekday: 'short',
+            year: 'numeric', month: 'short', day: 'numeric' }) %></strong
           ><br />
           <% availableSlots[date].forEach(time => { %>
           <!-- Composite radio value: "date|time" -->
@@ -93,9 +128,10 @@
       Sorry, there are no available slots for Table <%= selectedTable.tablename
       %>.
     </p>
-    <% } %>
+    <% } %> <%- include('partials/footer') %>
 
     <script src="/js/slide.js"></script>
     <script src="/js/navToggle.js"></script>
+    <script src="/js/reservation.js"></script>
   </body>
 </html>

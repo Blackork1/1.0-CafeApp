@@ -5,93 +5,211 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Startseite</title>
     <link rel="stylesheet" href="/styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Noto+Sans+JP:wght@100..900&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <%- include('partials/header') %>
-
-    <h1>Table Reservation Form</h1>
-
-    <% if (!selectedTable) { %>
-    <!-- Table Selection: Each button submits the tableId -->
-    <form action="/select-table" method="POST" id="tableForm">
-      <fieldset>
-        <legend>Choose a table:</legend>
-        <% tables.forEach(table => { %>
-        <button type="submit" name="tableId" value="<%= table.id %>">
-          Table <%= table.tablename %> - <%= table.places %> seats (Room: <%=
-          table.roomname %>)</button
-        ><br />
-        <% }); %>
-      </fieldset>
-    </form>
-    <% } %> <% if (selectedTable && Object.keys(availableSlots).length > 0) { %>
-    <h2>Table <%= selectedTable.tablename %> Selected</h2>
-    <!-- Reservation Form: Select a Date and Time, then fill out details -->
-    <form action="/reserve" method="POST">
-      <input
-        type="hidden"
-        name="selectedTable"
-        value="<%= selectedTable.id %>"
-      />
-      <fieldset>
-        <legend>Select a Date and Time:</legend>
-        <% Object.keys(availableSlots).forEach(date => { %>
-        <div style="margin-bottom: 10px">
-          <strong><%= date %></strong><br />
-          <% availableSlots[date].forEach(time => { %>
-          <!-- Composite radio value: "date|time" -->
-          <input
-            type="radio"
-            id="slot_<%= date %>_<%= time %>"
-            name="slot"
-            value="<%= date %>|<%= time %>"
-            required
-          />
-          <label for="slot_<%= date %>_<%= time %>"><%= time %></label><br />
-          <% }); %>
+    <div class="hero">
+      <div class="nav-bar-hero"><%- include('partials/header') %></div>
+      <div class="container">
+        <div class="hero-content">
+          <div><h1 class="hero-heading">ZUR ALTEN BACKSTUBE</h1></div>
+          <div class="lower-hero">
+            <p class="hero-text">
+              Das traditionelle Kaffee im Herzen von Rosenthal. Ofenfrischer
+              Kuchen, leckerer Kaffe und eine gemütliche Atmosphäre erwarten
+              dich!
+            </p>
+            <a href="/reservation" class="reservation-button"
+              >Tisch Reservierung</a
+            >
+          </div>
         </div>
-        <% }); %>
-      </fieldset>
-
-      <label for="numPeople">Guests:</label>
-      <select name="numPeople" id="numPeople" required>
-        <% for (let i = 1; i <= selectedTable.places; i++) { %>
-        <option value="<%= i %>"><%= i %></option>
-        <% } %></select
-      ><br />
-      <% if (user.userName && user.userEmail) { %>
-      <label for="name">Name:</label>
-      <input
-        type="text"
-        id="name"
-        name="name"
-        required
-        value="<%=user.userName%>"
-      /><br />
-      <label for="email">Email:</label>
-      <input
-        type="email"
-        id="email"
-        name="email"
-        required
-        value="<%=user.userEmail%>"
-      /><br />
-      <% } else {%>
-      <label for="name">Name:</label>
-      <input type="text" id="name" name="name" required /><br />
-      <label for="email">Email:</label>
-      <input type="email" id="email" name="email" required /><br />
-      <%}%>
-      <button type="submit">Reserve</button>
-    </form>
-    <% } else if (selectedTable) { %>
-    <p>
-      Sorry, there are no available slots for Table <%= selectedTable.tablename
-      %>.
-    </p>
-    <% } %>
-
-    <script src="/js/slide.js"></script>
+      </div>
+    </div>
+    <div class="section overflow-hidden padding-tb-40">
+      <div class="container">
+        <div class="flex-space-between">
+          <div class="main-content">
+            <h3>Unsere Historie</h3>
+            <p>
+              Bereits Anfang des 20. Jahrhunderts wurde unser traditionsreiches
+              Kaffeehaus ins Leben gerufen – ein Ort, der seit jeher
+              Begegnungen, Inspiration und Genuss miteinander verbindet. In
+              seinen ehrwürdigen Räumen, geschmückt mit antiken Möbeln und
+              liebevoll restaurierten Details, spürt man den Hauch vergangener
+              Zeiten. Generationen von Gästen haben hier ihre Geschichten
+              geschrieben, und die ursprüngliche Leidenschaft der Gründer lebt
+              in jedem Winkel fort.
+            </p>
+          </div>
+          <div class="img-container right-image flex_einfliegen">
+            <img
+              src="/images/EingangmitSchrift.png"
+              alt="Eingangsbereich heute"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section overflow-hidden padding-tb-40">
+      <div class="container">
+        <div class="flex-space-between flex-reverse">
+          <div class="img-container left-image flex_einfliegen">
+            <img src="/images/2024-03-05.png" alt="Eingangsbereich heute" />
+          </div>
+          <div class="main-content">
+            <h3>Tradition im Wandel</h3>
+            <p>
+              Im Laufe der Jahrzehnte hat sich unser Kaffeehaus dem Wandel der
+              Zeit stets angepasst, ohne seinen authentischen Charakter zu
+              verlieren. Moderne Einflüsse und behutsame Renovierungen haben
+              dafür gesorgt, dass klassische Elemente – von der Einrichtung bis
+              zu traditionellen Rezepten – erhalten bleiben. Diese gelungene
+              Balance zwischen historischer Bewahrung und zeitgemäßem Flair
+              macht unseren Ort zu einem einzigartigen Erlebnis, das
+              Vergangenheit und Gegenwart harmonisch miteinander vereint.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section overflow-hidden padding-tb-40">
+      <div class="container">
+        <div class="flex-space-between">
+          <div class="main-content">
+            <h3>Aktuelles Angebot & Veranstaltungen</h3>
+            <p>
+              Heute laden wir Sie ein, in unserem liebevoll restaurierten
+              Ambiente unvergessliche Momente zu genießen. Wir jeden Samstag und
+              Sonntag von 13 bis 17 Uhr für Sie geöffnet – perfekt für einen
+              entspannten Nachmittag mit Freunden oder der Familie. Darüber
+              hinaus bieten wir unser charmantes Kaffeehaus auch als
+              Veranstaltungsort an: Ob private Feiern, Firmen-Events oder
+              kulturelle Zusammenkünfte, wir freuen uns darauf, Ihr Event in
+              einem authentischen historischen Rahmen auszurichten.
+            </p>
+            <div class="contant-buttons">
+              <a href="/reservation" class="reservation-button"
+                >Tisch Reservierung</a
+              >
+              <a href="/blog" class="blog-button">Veranstaltungen</a>
+            </div>
+          </div>
+          <div class="img-container last right-image flex_einfliegen">
+            <img src="/images/2024-07-22.png" alt="Eingangsbereich heute" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section-testimonial overflow-hidden padding-tb-20-60">
+      <div class="container">
+        <h2 class="testimonial-heading">Was meine Gäste sagen:</h2>
+        <div class="testimonial-slider">
+          <div class="slider-mask">
+            <div class="slide">
+              <div class="testimonial-card">
+                <img src="/images/stars.svg" alt="Bewertungssterne" />
+                <p>
+                  Man wird sehr herzlich empfangen, der Garten und die beiden
+                  Gaststuben vermitteln den Eindruck,man besucht liebe Freunde
+                  zu Hause. Und mit liebevoller Gastfreundlichkeit wird man von
+                  Vater und Sohn bewirtet. Der selbst gebackene Kuchen schmeckt
+                  einmalig! Macht weiter so! Ich freue mich,die alte Backstube
+                  entdeckt zu haben!
+                </p>
+                <div class="author-block">
+                  <p>Pe Truschka</p>
+                  <p>10.2024</p>
+                </div>
+              </div>
+            </div>
+            <div class="slide">
+              <div class="testimonial-card">
+                <img src="/images/stars.svg" alt="Bewertungssterne" />
+                <p>
+                  Man wird sehr herzlich empfangen, der Garten und die beiden
+                  Gaststuben vermitteln den Eindruck,man besucht liebe Freunde
+                  zu Hause. Und mit liebevoller Gastfreundlichkeit wird man von
+                  Vater und Sohn bewirtet. Der selbst gebackene Kuchen schmeckt
+                  einmalig! Macht weiter so! Ich freue mich,die alte Backstube
+                  entdeckt zu haben!
+                </p>
+                <div class="author-block">
+                  <p>Pe Truschka</p>
+                  <p>10.2024</p>
+                </div>
+              </div>
+            </div>
+            <div class="slide">
+              <div class="testimonial-card">
+                <img src="/images/stars.svg" alt="Bewertungssterne" />
+                <p>
+                  Man wird sehr herzlich empfangen, der Garten und die beiden
+                  Gaststuben vermitteln den Eindruck,man besucht liebe Freunde
+                  zu Hause.
+                </p>
+                <div class="author-block">
+                  <p>Pe Truschka</p>
+                  <p>10.2024</p>
+                </div>
+              </div>
+            </div>
+            <div class="slide">
+              <div class="testimonial-card">
+                <img src="/images/stars.svg" alt="Bewertungssterne" />
+                <p>
+                  Man wird sehr herzlich empfangen, der Garten und die beiden
+                  Gaststuben vermitteln den Eindruck,man besucht liebe Freunde
+                  zu Hause. Und mit liebevoller Gastfreundlichkeit wird man von
+                  Vater und Sohn bewirtet. Der selbst gebackene Kuchen schmeckt
+                  einmalig! Macht weiter so!
+                </p>
+                <div class="author-block">
+                  <p>Pe Truschka</p>
+                  <p>10.2024</p>
+                </div>
+              </div>
+            </div>
+            <div class="slide">
+              <div class="testimonial-card">
+                <img src="/images/stars.svg" alt="Bewertungssterne" />
+                <p>
+                  Man wird sehr herzlich empfangen, der Garten und die beiden
+                  Gaststuben vermitteln den Eindruck,man besucht liebe Freunde
+                  zu Hause. Und mit liebevoller Gastfreundlichkeit wird man von
+                  Vater und Sohn bewirtet. Der selbst gebackene Kuchen schmeckt
+                  einmalig!
+                </p>
+                <div class="author-block">
+                  <p>Pe Truschka</p>
+                  <p>10.2024</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="arrow-left" id="prev">
+            <img
+              src="https://cdn.prod.website-files.com/678cb846ec8afcb96aeea333/678d1e91e52f8ef00fb66b91_arrow_back_24px.svg"
+              loading="lazy"
+              alt="Pfeil nach links"
+            />
+          </div>
+          <div class="arrow-right" id="next">
+            <img
+              src="https://cdn.prod.website-files.com/678cb846ec8afcb96aeea333/678d1e3bba0255383d97592a_arrow_forward_24px.svg"
+              loading="lazy"
+              alt="Pfeil nach rechts"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <%- include('partials/footer') %>
+    <script src="/js/slideIn.js"></script>
     <script src="/js/navToggle.js"></script>
+    <script src="/js/slider-animation.js"></script>
   </body>
 </html>

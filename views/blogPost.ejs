@@ -7,19 +7,24 @@
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <%- include('partials/header') %>
-    <h1><%= post.heading %></h1>
-    <p>
-      <%= new Date(post.date).toLocaleString('de-DE', {weekday: 'long', year:
-      'numeric', month: 'numeric',day: 'numeric'}) %>
-    </p>
-    <img
-      src="/image/<%= post.id %>"
-      alt="<%= post.title %>"
-      class="post-image"
-    />
-    <p><%= post.text %></p>
-    <a href="/blog" class="btn btn-primary">Zurück</a>
+    <div class="section">
+      <div class="container">
+        <%- include('partials/header') %>
+        <h1 class="page-header"><%= post.heading %></h1>
+        <p>
+          <%= new Date(post.date).toLocaleString('de-DE', {weekday: 'long',
+          year: 'numeric', month: 'numeric',day: 'numeric'}) %>
+        </p>
+        <img
+          src="/image/<%= post.id %>"
+          alt="<%= post.title %>"
+          class="post-image"
+        />
+        <p><%= post.text %></p>
+        <a href="/blog" class="btn btn-primary">Zurück</a>
+      </div>
+    </div>
+    <%- include('partials/footer') %>
 
     <script src="/js/slide.js"></script>
     <script src="/js/navToggle.js"></script>

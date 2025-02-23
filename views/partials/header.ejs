@@ -1,32 +1,33 @@
-<div class="section">
-  <div class="container">
-    <div class="navigation" id="navigation">
-      <div class="logo">
-        <a href="/">Home</a>
-      </div>
-      <div class="nav-right">
-        <img
-          src="/images/Nav-Bar-Icon.svg"
-          alt="Menu Icon"
-          class="menu-icon"
-          id="menu-icon"
-        />
-        <div class="links" id="nav-links">
-          <% if(user.isAdmin){%>
-          <a href="/"> <%= user.isAdmin ? 'Admin' : '' %> </a>
-          <a href="/allReservations">Alle Reservierungen</a>
-          <a href="/newBlog">Neuer Blog</a>
-          <%}%> 
-          <% if(user.isLoggedIn){%>
-          <a href="/">Hallo <%= user.name%></a>
-          <a href="/logout">Log-Out</a>
-          <%}else{%>
-          <a href="/login">Log-In</a>
-          <a href="/register">Registrierung</a>
-          <%}%>
-          <a href="/blog">Blog</a>
-          <a href="/reservation" class="reserve-button">Reservierung</a>
-        </div>
+<link
+href="https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Noto+Sans+JP:wght@100..900&display=swap"
+rel="stylesheet"
+/>
+<div class="container">
+  <div class="navigation" id="navigation">
+    <div class="logo">
+      <a href="/">Home</a>
+    </div>
+    <div class="nav-right">
+      <img
+        src="/images/Nav-Bar-Icon.svg"
+        alt="Menu Icon"
+        class="menu-icon"
+        id="menu-icon"
+      />
+      <div class="links" id="nav-links">
+        <% if(user.isAdmin){%>
+        <a href="/"> <%= user.isAdmin ? 'Admin' : '' %> </a>
+        <a href="/allReservations">Alle Reservierungen</a>
+        <a href="/newBlog">Neuer Blog</a>
+        <%}%> <% if(user.isLoggedIn){%>
+        <a href="/">Hallo <%= user.name%></a>
+        <a href="/logout">Log-Out</a>
+        <%}else{%>
+        <a href="/login">Log-In</a>
+        <a href="/register">Registrierung</a>
+        <%}%>
+        <a href="/blog">Blog</a>
+        <a href="/reservation" class="reserve-button">Reservierung</a>
       </div>
     </div>
   </div>
