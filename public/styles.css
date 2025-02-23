@@ -531,6 +531,7 @@ p {
   letter-spacing: 3px;
   font-weight: 500;
   transition: all 0.5s ease; 
+  cursor: pointer;
 }
 
 .carousel .list .item .buttons button:hover {
@@ -606,6 +607,7 @@ p {
   font-family: monospace;
   font-weight: bold;
   transition: 0.5s;
+  cursor: pointer;
 }
 .arrows button:hover {
   background-color: var(--main-box-color);
