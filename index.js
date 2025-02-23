@@ -92,9 +92,7 @@ const upload = multer({
 // Step 1: Show table selection
 app.get("/", async (req, res) => {
     try {
-        const result = await db.query("SELECT id, tablename, places, roomname, desciption FROM tables ORDER BY id ASC");
-        const tables = result.rows;
-        res.render("index", { tables, selectedTable: null, availableSlots: {}, user: req.user || {} });
+        res.render("index", { user: req.user || {} });
     } catch (err) {
         console.error("Database error:", err);
         res.status(500).send("Internal Server Error");
