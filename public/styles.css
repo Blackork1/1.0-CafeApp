@@ -464,7 +464,7 @@ p {
 
 .carousel {
   width: 100%;
-  height: 100vh;
+  height: 90vh;
   overflow: hidden;
   position: relative; /*so items align accounding to carousel*/
   border-radius: 10px;
