@@ -953,3 +953,37 @@ p {
     padding: 20px 20px;
   }
 }
+
+
+
+/* Page Loader */
+/* Prevent scrolling while loading */
+body.loading {
+  overflow: hidden;
+}
+
+/* Loader overlay covers entire viewport */
+.loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #fff; /* or semi-transparent color */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999; /* ensure it stays on top */
+}
+
+/* Loading spinner or text */
+.loader {
+  font-size: 1.5rem;
+  color: #555;
+  /* could include an actual spinner, e.g. a CSS animation */
+}
+
+/* Hide main content initially */
+.main-content {
+  display: none;
+}
