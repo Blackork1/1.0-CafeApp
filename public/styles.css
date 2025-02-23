@@ -1,28 +1,12 @@
-/* Page Setup */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --main-bg-color: #fff0dc;
-    --main-box-color: #f0bb78;
-    --main-box-color-blur: #f0bd7a66;
-    --main-button-color: #131010;
-    --secondary-button-color: #543a14;
-    --main-text-color: #495057;
-    --secondary-text-color: #6c757d;
-    --secondary-text-color-blur: rgba(108, 117, 125, 0.4);
-  }
-}
-
-@media (prefer-color-scheme: light) {
-  :root {
-    --main-bg-color: #fff0dc;
-    --main-box-color: #f0bb78;
-    --main-box-color-blur: #f0bd7a66;
-    --main-button-color: #131010;
-    --secondary-button-color: #543a14;
-    --main-text-color: #495057;
-    --secondary-text-color: #6c757d;
-    --secondary-text-color-blur: rgba(108, 117, 125, 0.4);
-  }
+:root {
+  --main-bg-color: #fff0dc;
+  --main-box-color: #f0bb78;
+  --main-box-color-blur: #f0bd7a66;
+  --main-button-color: #131010;
+  --secondary-button-color: #543a14;
+  --main-text-color: #495057;
+  --secondary-text-color: #6c757d;
+  --secondary-text-color-blur: rgba(108, 117, 125, 0.4);
 }
 
 body {
@@ -36,7 +20,6 @@ h1 {
   font-size: 4rem;
   font-weight: 700;
 }
-
 
 h2 {
   font-family: "Noto Serif", serif;
@@ -527,14 +510,14 @@ p {
   gap: 5px;
   margin-top: 20px;
 }
-.carousel .list .item .buttons button{
+.carousel .list .item .buttons button {
   border: none;
   background-color: var(--main-box-color-blur);
   color: var(--secondary-button-color);
   border-radius: 8px;
   letter-spacing: 3px;
   font-weight: 500;
-  transition: all 0.5s ease; 
+  transition: all 0.5s ease;
   cursor: pointer;
 }
 
@@ -957,8 +940,6 @@ p {
     padding: 20px 20px;
   }
 }
-
-
 
 /* Page Loader */
 /* Prevent scrolling while loading */
