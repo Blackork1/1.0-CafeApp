@@ -14,11 +14,14 @@
 
 @media (prefer-color-scheme: light) {
   :root {
-    --main-bg-color: #a79277;
+    --main-bg-color: #fff0dc;
+    --main-box-color: #f0bb78;
+    --main-box-color-blur: #f0bd7a66;
+    --main-button-color: #131010;
+    --secondary-button-color: #543a14;
     --main-text-color: #495057;
-    --main-button-color: #d1bb9e;
-    --secondary-button-color: #ead8c0;
-    --main-box-color: #fff2e1;
+    --secondary-text-color: #6c757d;
+    --secondary-text-color-blur: rgba(108, 117, 125, 0.4);
   }
 }
 
