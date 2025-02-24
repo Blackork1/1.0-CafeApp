@@ -7,33 +7,35 @@
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <%- include('partials/header') %>
-    <div class="Booked">
-      <h1>
-        Deine Reservierung von Tisch <%=selectedTable%> war erfolgreich.
-      </h1>
-      <p>
-        Dein Termin ist am <%= new
-        Date(selectedDate).toLocaleDateString('de-DE', { weekday: 'short',
-        year: 'numeric', month: 'short', day: 'numeric' }) %> zwischen
-        <%=selectedTime%> Uhr.
-      </p>
-      <p>Wir freuen uns auf deinen Besuch <%=user.name%>.</p>
-      <!-- Button to download calendar event -->
-      <button
-        id="download-ics"
-        data-name="<%= user.name %>"
-        data-date="<%= selectedDate %>"
-        data-time="<%= selectedTime %>"
-      >
-        Termin in Kalender speichern
-      </button>
+    <div class="section">
+      <div class="container">
+        <%- include('partials/header') %>
+        <div class="booked">
+          <h1>
+            Deine Reservierung von Tisch <%=selectedTable%> war erfolgreich.
+          </h1>
+          <p>
+            Dein Termin ist am <%= new
+            Date(selectedDate).toLocaleDateString('de-DE', { weekday: 'short',
+            year: 'numeric', month: 'short', day: 'numeric' }) %> zwischen
+            <%=selectedTime%> Uhr.
+          </p>
+          <p>Ich freuen uns auf deinen Besuch <%=user.name%>.</p>
+          <!-- Button to download calendar event -->
+          <button
+            id="download-ics"
+            data-name="<%= user.name %>"
+            data-date="<%= selectedDate %>"
+            data-time="<%= selectedTime %>"
+          >
+            Termin in Kalender speichern
+          </button>
+        </div>
+      </div>
     </div>
     <script src="/js/slide.js"></script>
     <script src="/js/navToggle.js"></script>
     <script src="/js/downloadICS.js"></script>
-    <script>
-      
-    </script>
+    <script></script>
   </body>
 </html>

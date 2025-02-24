@@ -116,7 +116,7 @@ function getAvailableDays() {
 // Step 1: Show table selection
 app.get("/reservation", async (req, res) => {
     try {
-        const result = await db.query("SELECT id, tablename, places, roomname, description FROM tables ORDER BY id ASC");/**/ 
+        const result = await db.query("SELECT id, tablename, places, roomname, description FROM tables ORDER BY id ASC");/**/
         const tables = result.rows;
         res.render("reservation", { tables, selectedTable: null, availableSlots: {}, user: req.user || {} });
     } catch (err) {
@@ -196,7 +196,7 @@ app.post("/reserve", async (req, res) => {
         if (req.user) {
             req.user.name = name;
         }
-        else{
+        else {
             req.session.name = name;
         }
         req.session.save(); // ✅ Save session update
@@ -265,8 +265,8 @@ app.post("/deleteReservation/:id", async (req, res) => {
 app.get("/booked", async (req, res) => {
     res.render("booked.ejs", {
         user: req.user || req.session,
-        selectedTable: req.session.selectedTable, 
-        selectedDate: req.session.selectedDate, 
+        selectedTable: req.session.selectedTable,
+        selectedDate: req.session.selectedDate,
         selectedTime: req.session.selectedTime
     });
 });

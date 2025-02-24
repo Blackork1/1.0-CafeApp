@@ -7,6 +7,7 @@
   --main-text-color: #495057;
   --secondary-text-color: #6c757d;
   --secondary-text-color-blur: rgba(108, 117, 125, 0.4);
+  --selected-radio-color: #629568;
 }
 
 body {
@@ -33,6 +34,14 @@ h3 {
   font-weight: 400;
   margin-top: 10px;
   margin-bottom: 10px;
+}
+
+.center {
+  justify-content: center;
+  align-items: center;
+  align-self: center;
+  align-content: center;
+  text-align: center;
 }
 
 h1,
@@ -150,6 +159,10 @@ p {
   text-align: justify;
 }
 
+.main-content h3 {
+  text-align: start;
+}
+
 .img-container {
   max-width: 50%;
   display: inline-block;
@@ -236,8 +249,8 @@ p {
 
 /* Each slide has fixed width and a right margin */
 .slide {
-  flex: 0 0 350px;
-  margin-right: 40px; /* Adjust spacing between slides as needed */
+  flex: 0 0 300px;
+  margin-right: 20px; /* Adjust spacing between slides as needed */
   /* Start with a slight blur for non-focused slides */
   filter: blur(3px);
   padding: 20px;
@@ -248,6 +261,7 @@ p {
   opacity: 0.5;
   transition: filter 0.3s ease;
   text-align: justify;
+  max-width: 90%;
 }
 
 /* The slide in focus is clear */
@@ -366,65 +380,7 @@ p {
   text-align: center;
 }
 
-/* Mobile styles */
-@media screen and (max-width: 700px) {
-  /* Show the menu icon on mobile */
-  .menu-icon {
-    display: block;
-    width: 30px; /* Adjust the size as needed */
-    height: auto;
-    cursor: pointer;
-    margin-left: 10px;
-  }
-  .carousel .list .item .content div:nth-child(2),
-  .carousel .list .item .content div:nth-child(3) {
-    font-size: 2em !important;
-  }
 
-  .slider-mask {
-    padding-left: 0;
-  }
-
-  .section-testimonial {
-    padding: 0 20px 120px 20px;
-  }
-
-  .navigation.active {
-    border-radius: 8px 8px 0px 0px;
-  }
-
-  /* Hide the inline links by default on mobile */
-  .links {
-    display: flex; /* Keep it as flex so that children layout correctly */
-    flex-direction: column;
-    background: #444;
-    position: absolute;
-    top: 100%;
-    right: 0;
-    width: 100%;
-    text-align: right;
-    overflow: hidden;
-    max-height: 0; /* Collapsed by default */
-    opacity: 0; /* Fully transparent by default */
-    transition: all 0.3s ease-out;
-  }
-
-  /* When active, display the links in a vertical list */
-  .links.active {
-    max-height: fit-content; /* Set to a value that can contain all links */
-    opacity: 1;
-    align-items: end;
-    border-radius: 0px 0px 8px 8px;
-    padding: 20px 0;
-  }
-
-  /* Mobile link styling */
-  .links a {
-    margin: 5px 20px;
-    padding: 5px 10px;
-    border-bottom: 1px solid #555;
-  }
-}
 .post-image {
   max-width: 80%;
   max-height: 400px;
@@ -760,6 +716,181 @@ p {
   }
 }
 
+.selected-table-container {
+  display: flex;
+  gap: 20px;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  top: 0;
+  left: 0;
+  height: 700px;
+  z-index: 1000;
+  padding-bottom: 60px;
+}
+
+.selected-table-content-container,
+.selected-table-booking {
+  height: 85%;
+  max-width: 50%;
+  position: relative;
+}
+
+.selected-table-content-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.selected-table-content {
+  position: absolute;
+  text-align: center;
+  width: 100%;
+  bottom: 10%;
+  left: 10%;
+  transform: translate(-10%, 90%);
+  padding: 10px;
+  box-sizing: border-box;
+  text-shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
+  background: var(--main-box-color-blur);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+}
+
+.selected-table-content div {
+  color: var(--main-button-color);
+}
+
+.selected-table-booking {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.select-date-time {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  justify-content: space-evenly;
+  align-items: center;
+  text-align: center;
+  gap: 15px;
+  width: 400px;
+  max-width: 90%;
+  background: var(--main-box-color-blur);
+  border-radius: 8px;
+  padding: 5px;
+}
+
+.select-date-time h4 {
+  grid-column: span 2;
+  text-align: center;
+  margin-top: 5px;
+}
+
+
+
+.date-time-item, .name-mail-guest{
+  background: var(--main-box-color);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  padding: 2px;
+}
+
+.slot-grid{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  padding: 10px;
+}
+
+.slot-item label{
+  display: flex;
+  flex-direction: column;
+  background-color: var(--main-bg-color);
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Hover effect */
+.slot-item label:hover {
+  background-color: #ddd;
+}
+
+input[type="radio"]:checked + .radio-label {
+  background-color: var(--selected-radio-color); /* Example accent color */
+  color: #fff;
+  border-color: var(--main-bg-color);
+}
+
+.user-data{
+  grid-column: span 2;
+  background: none !important;
+  display: grid;
+  justify-content: stretch;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 10px;
+}
+
+.name-mail-guest div{
+  padding: 5px 0;
+  text-align: start;
+}
+
+.guest-submit{
+  align-content: center;
+  background: none;
+}
+
+.guest-submit button{
+  background: var(--main-button-color);
+  color: var(--main-bg-color);
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.5s ease;
+}
+
+.guest-submit button:hover{
+  background: var(--main-box-color);
+  color: var(--main-button-color);
+}
+
+/*booked.ejs*/
+
+.booked{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 20px;
+}
+
+.booked button{
+  background: var(--main-button-color);
+  color: var(--main-bg-color);
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.5s ease;
+}
+
+.booked button:hover{
+  background: var(--main-box-color);
+  color: var(--main-button-color);
+}
+
+
 /* Content for Slide in Animation */
 .flex_einfliegen {
   overflow: hidden; /* when we move boxes out of container, it doesnt create scroll */
@@ -874,12 +1005,12 @@ p {
     padding: 0;
   }
 
-  .reservation-container {
-    padding: 0 20px;
+  h1 {
+    font-size: 3rem;
   }
 
-  h1 {
-    font-size: 3.5rem;
+  h2{
+    font-size: 2.5rem;
   }
 
   .flex_einfliegen > button {
@@ -909,9 +1040,10 @@ p {
   }
 
   .main-content {
-    max-width: 80%;
-    min-width: 350px;
+    max-width: 90%;
+    min-width: 280px;
   }
+
   .last {
     display: none;
   }
@@ -939,7 +1071,47 @@ p {
   .flex-footer {
     padding: 20px 20px;
   }
+
+  .selected-table-container {
+    flex-wrap: wrap;
+    max-height: fit-content;
+    height: 490px;
+    margin: 0 auto;
+  }
+  .selected-table-content-container {
+    max-width: 90%;
+    width: 380px;
+    position: relative;
+    height: 100%;
+  }
+  .selected-table-content {
+    position: absolute;
+    text-align: center;
+    bottom: 0%;
+    width: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px;
+    border-radius: 10px;
+  }
+  .reserve-form {
+    width: 380px;
+    max-width: 90%;
+  }
+  .select-date-time {
+    max-width: 100%;
+    background: var(--main-box-color-blur);
+    border-radius: 8px;
+    font-size: 14px;
+    gap: 10px;
+    padding: 0px;
+  }
+  .section {
+    padding: 0 20px;
+  }
 }
+
+
 
 /* Page Loader */
 /* Prevent scrolling while loading */
@@ -966,4 +1138,75 @@ body.loading {
   font-size: 1.5rem;
   color: #555;
   /* could include an actual spinner, e.g. a CSS animation */
+}
+
+/* Mobile styles */
+@media (max-width: 800px) {
+  /* Show the menu icon on mobile */
+  .menu-icon {
+    display: block;
+    width: 30px; /* Adjust the size as needed */
+    height: auto;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  .carousel .list .item .content div:nth-child(2),
+  .carousel .list .item .content div:nth-child(3) {
+    font-size: 2em !important;
+  }
+
+  .slider-mask {
+    padding-left: 0;
+  }
+
+  .section-testimonial {
+    padding: 0 20px 120px 20px;
+  }
+
+  .navigation.active {
+    border-radius: 8px 8px 0px 0px;
+  }
+
+  /* Hide the inline links by default on mobile */
+  .links {
+    display: flex; /* Keep it as flex so that children layout correctly */
+    flex-direction: column;
+    background: #444;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 100%;
+    text-align: right;
+    overflow: hidden;
+    max-height: 0; /* Collapsed by default */
+    opacity: 0; /* Fully transparent by default */
+    transition: all 0.3s ease-out;
+  }
+
+  /* When active, display the links in a vertical list */
+  .links.active {
+    max-height: fit-content; /* Set to a value that can contain all links */
+    opacity: 1;
+    align-items: end;
+    border-radius: 0px 0px 8px 8px;
+    padding: 20px 0;
+  }
+
+  /* Mobile link styling */
+  .links a {
+    margin: 5px 20px;
+    padding: 5px 10px;
+    border-bottom: 1px solid #555;
+  }
+
+  .selected-table-container{
+    height: auto;
+  }
+
+  .reservation-container {
+    padding: 0 20px;
+  }
+  .hero{
+    padding: 0 20px;
+  }
 }

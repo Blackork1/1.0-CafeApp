@@ -25,7 +25,6 @@
         <div class="carousel">
           <!-- Table Selection: Each button submits the tableId -->
           <form action="/select-table" method="POST" id="tableForm">
-            <legend>Choose a table:</legend>
             <div class="list">
               <% tables.forEach(table => { %>
               <div class="item">
@@ -70,76 +69,138 @@
           <div class="time"></div>
         </div>
       </div>
-      <% } %> <% if (selectedTable && Object.keys(availableSlots).length > 0) {
-      %>
-      <h2>Table <%= selectedTable.tablename %> Selected</h2>
-      <!-- Reservation Form: Select a Date and Time, then fill out details -->
-      <form action="/reserve" method="POST">
-        <input
-          type="hidden"
-          name="selectedTable"
-          value="<%= selectedTable.id %>"
-        />
-        <fieldset>
-          <legend>Select a Date and Time:</legend>
-          <% Object.keys(availableSlots).forEach(date => { %>
-          <div style="margin-bottom: 10px">
-            <strong>
-              <%= new Date(date).toLocaleDateString('de-DE', { weekday: 'short',
-              year: 'numeric', month: 'short', day: 'numeric' }) %></strong
-            ><br />
-            <% availableSlots[date].forEach(time => { %>
-            <!-- Composite radio value: "date|time" -->
-            <input
-              type="radio"
-              id="slot_<%= date %>_<%= time %>"
-              name="slot"
-              value="<%= date %>|<%= time %>"
-              required
-            />
-            <label for="slot_<%= date %>_<%= time %>"><%= time %></label><br />
-            <% }); %>
-          </div>
-          <% }); %>
-        </fieldset>
+      <% } %>
+      <div class="section">
+        <div class="container">
+          <% if (selectedTable && Object.keys(availableSlots).length > 0) {%>
+          <h2 class="center"><%= selectedTable.tablename %></h2>
+          <div class="selected-table-container">
+            <div class="selected-table-content-container">
+              <img
+                src="/images/table<%= selectedTable.id%>.png"
+                alt="Tisch Bild"
+              />
+              <div class="selected-table-content">
+                <div class="selected-table-name">
+                  <%= selectedTable.tablename %>
+                </div>
+                <div class="selected-table-places">
+                  <%= selectedTable.places %> Sitzplätze
+                </div>
+              </div>
+            </div>
+            <div class="reserve-form">
+              <!-- Reservation Form: Select a Date and Time, then fill out details -->
+              <form action="/reserve" method="POST">
+                <input
+                  type="hidden"
+                  name="selectedTable"
+                  value="<%= selectedTable.id %>"
+                />
+                <div class="select-date-time">
+                  <h4>Wähle Datum, Zeit und Personenanzahl</h4>
+                  <% Object.keys(availableSlots).forEach(date => { %>
+                  <div class="date-time-item" style="margin-bottom: 5px">
+                    <strong>
+                      <%= new Date(date).toLocaleDateString('de-DE', { weekday:
+                      'short', year: 'numeric', month: 'short', day: 'numeric'
+                      }) %></strong
+                    >
+                    <div class="slot-grid">
+                      <% availableSlots[date].forEach(time => { %>
+                      <!-- Composite radio value: "date|time" -->
+                      <div class="slot-item">
+                        <input
+                          type="radio"
+                          id="slot_<%= date %>_<%= time %>"
+                          name="slot"
+                          value="<%= date %>|<%= time %>"
+                          required
+                          hidden
+                        />
+                        <label
+                          class="radio-label"
+                          for="slot_<%= date %>_<%= time %>"
+                          ><%= time %></label
+                        >
+                      </div>
 
-        <label for="numPeople">Guests:</label>
-        <select name="numPeople" id="numPeople" required>
-          <% for (let i = 1; i <= selectedTable.places; i++) { %>
-          <option value="<%= i %>"><%= i %></option>
-          <% } %></select
-        ><br />
-        <% if (user.isLoggedIn) { %>
-        <label for="name">Name:</label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          required
-          value="<%=user.name%>"
-        /><br />
-        <label for="email">Email:</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          required
-          value="<%=user.email%>"
-        /><br />
-        <% } else {%>
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" value="" required /><br />
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" value="" required /><br />
-        <%}%>
-        <button type="submit">Reserve</button>
-      </form>
-      <% } else if (selectedTable) { %>
-      <p>
-        Sorry, there are no available slots for Table <%=
-        selectedTable.tablename %>.
-      </p>
-      <% } %> <%- include('partials/footer') %>
+                      <% }); %>
+                    </div>
+                  </div>
+                  <% }); %>
+                  <div class="user-data">
+                    <div class="name-mail-guest">
+                      <% if (user.isLoggedIn) { %>
+                      <div class="name-data">
+                        <label for="name">Name:</label>
+                        <input
+                          type="text"
+                          id="name"
+                          name="name"
+                          required
+                          value="<%=user.name%>"
+                        />
+                      </div>
+                      <div class="email-data">
+                        <label for="email">Email:</label>
+                        <input
+                          type="email"
+                          id="email"
+                          name="email"
+                          required
+                          value="<%=user.email%>"
+                        />
+                      </div>
+                      <% } else {%>
+                      <div class="name-data">
+                        <label for="name">Name:</label>
+                        <input
+                          type="text"
+                          id="name"
+                          name="name"
+                          value=""
+                          required
+                        />
+                      </div>
+                      <div class="email-data">
+                        <label for="email">Email:</label>
+                        <input
+                          type="email"
+                          id="email"
+                          name="email"
+                          value=""
+                          required
+                        />
+                      </div>
+                      <%}%>
+                      <div class="guest">
+                        <label for="numPeople">Gästeanzahl:</label>
+                        <select name="numPeople" id="numPeople" required>
+                          <% for (let i = 1; i <= selectedTable.places; i++) {
+                          %>
+                          <option value="<%= i %>"><%= i %></option>
+                          <% } %>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="guest-submit">
+                      <div><button type="submit">Reserve</button></div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <% } else if (selectedTable) { %>
+            <p>
+              Sorry, there are no available slots for Table <%=
+              selectedTable.tablename %>.
+            </p>
+            <% } %>
+          </div>
+        </div>
+      </div>
+      <%- include('partials/footer') %>
     </div>
     <script src="/js/slideIn.js"></script>
     <script src="/js/navToggle.js"></script>

@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const nextArrow = document.getElementById("next");
 
     let currentIndex = 0;
-    const slideWidth = 370; // Fixed slide width
+    const slideWidth = 300; // Fixed slide width
     const slideMarginRight = 60; // Same as in CSS
 
     function updateSlider() {
