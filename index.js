@@ -52,6 +52,7 @@ app.use(session({
     store: new PgSessionStore({
         conString: process.env.DATABASE_URL,
         tableName: 'session',  // default is "session"
+        createTableIfMissing: true, // Automatically create the session table if missing
     }),
     secret: process.env.SESSION_SECRET,
     resave: false,
