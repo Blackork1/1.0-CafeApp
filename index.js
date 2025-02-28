@@ -101,11 +101,18 @@ app.get("/", async (req, res) => {
 
 //!!Reservation Area!!
 function getAvailableDays() {
-    const today = new Date();
+    const now = new Date();
+    let offsetDays = 0;
+
+    // If it's Saturday (day 6) and the time is 08:00 or later, skip this weekend
+    if (now.getDay() === 6 && now.getHours() >= 8) {
+        offsetDays = 7; // Skip the current weekend, start from next Saturday
+    }
+
     const days = [];
-    for (let i = 0; i < 4 * 7; i++) {
+    for (let i = offsetDays; i < offsetDays + 14; i++) {
         const date = new Date();
-        date.setDate(today.getDate() + i);
+        date.setDate(now.getDate() + i);
         const dayOfWeek = date.getDay();
         if (dayOfWeek === 6 || dayOfWeek === 0) { // Saturday or Sunday
             days.push(date.toISOString().split("T")[0]);
@@ -148,7 +155,7 @@ app.post("/select-table", async (req, res) => {
             return acc;
         }, {});
 
-        const allTimes = ["13-15", "15-17"];
+        const allTimes = ["13:00-14:30", "14:30-16:00", "16:00-17:00"];
         const availableSlots = {};
         allDates.forEach(date => {
             // --- CHANGE: Only add the date if at least one time is free ---
@@ -214,13 +221,13 @@ app.post("/reserve", async (req, res) => {
   Zeit: ${selectedTime}
   Anzahl an Gästen: ${numPeople}
   
-  Vielen Dank für die Reservierung!
+  Vielen Dank.
 
-  Ich freue mich auf dich,
-  dein Manu!     
+  Wir freuen uns auf dich
+  Bernd und Manuel Ziekow
   
 
-
+  
   Zur alten Backstube
   Hauptstraße 155, 13158 Berlin
   Tel: 030-47488482`,
