@@ -13,8 +13,6 @@ import sharp from 'sharp';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { log } from 'console';
-import { abort } from 'process';
 
 env.config();
 const app = express();
