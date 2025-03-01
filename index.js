@@ -9,7 +9,7 @@ import session from "express-session";
 import nodemailer from 'nodemailer';
 import multer from 'multer';
 import pgSession from 'connect-pg-simple';
-import sharp from 'sharp';
+import Jimp from 'jimp';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -294,19 +294,25 @@ app.get("/booked", async (req, res) => {
     });
 });
 
-// Helper: Process image with sharp (resize to 5:7, convert to webp)
+// Helper: Process image with Jimp (resize to 5:7, convert to webp)
 async function processImage(imageBuffer, filename) {
     const outputPath = path.join(__dirname, 'public/uploads', filename);
-    await sharp(imageBuffer)
-        .resize({
-            width: 500, // adjust as needed
-            height: 700, // 5:7 ratio
-            fit: 'cover',
-            position: 'center'
-        })
-        .toFormat('webp')
-        .toFile(outputPath);
-    return filename;
+
+    try {
+        // Bild aus dem Buffer laden
+        const image = await Jimp.read(imageBuffer);
+
+        // Bild auf das 5:7 Verhältnis zuschneiden (zentriert)
+        image.cover(500, 700, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_MIDDLE);
+
+        // Bild als webp speichern
+        await image.writeAsync(outputPath);
+
+        return filename;
+    } catch (err) {
+        console.error("Error processing image with Jimp:", err);
+        throw err;
+    }
 }
 
 //!!Blog Area!!
