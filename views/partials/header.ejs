@@ -19,13 +19,7 @@ rel="stylesheet"
         <a href="/"> <%= user.isAdmin ? 'Admin' : '' %> </a>
         <a href="/allReservations">Alle Reservierungen</a>
         <a href="/newBlog">Neuer Blog</a>
-        <%}%> <% if(user.isLoggedIn){%>
-        <a href="/">Hallo <%= user.name%></a>
-        <a href="/logout">Log-Out</a>
-        <%}else{%>
-        <a href="/login">Log-In</a>
-        <a href="/register">Registrierung</a>
-        <%}%>
+        <% } %>
         <a href="/blog">Veranstaltungen</a>
         <a href="/reservation" class="reserve-button">Reservierung</a>
       </div>
