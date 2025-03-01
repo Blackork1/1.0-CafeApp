@@ -7,7 +7,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "npm install"
+    "start": "node index.js",
+    "build": "npm install"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
