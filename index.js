@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import pg from 'pg';
 import env from "dotenv";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import passport from "passport";
 import { Strategy } from "passport-local";
 import session from "express-session";
