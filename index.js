@@ -9,7 +9,7 @@ import session from "express-session";
 import nodemailer from 'nodemailer';
 import multer from 'multer';
 import pgSession from 'connect-pg-simple';
-import Jimp from 'jimp';
+import {Jimp} from 'jimp';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
