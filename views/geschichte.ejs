@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Geschichte</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <style>
+    .split-area {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      align-items: center;
+    }
+    .text-container {
+      flex: 1;
+    }
+    .image-container {
+      flex: 1;
+      border-radius: 8px;
+    }
+    .image-container img {
+      height: 400px;
+      width: 500px;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    .split-area:last-child{
+      margin-bottom: 80px;
+    }
+  </style>
+  <body>
+    <div class="section">
+      <div class="container">
+        <%- include('partials/header') %>
+        <h2 style="text-align: center">Die Geschichte der alten Backstube</h2>
+        <div class="split-area">
+          <div class="text-container">
+            <h3>Gründung</h3>
+            <p>
+              Bereits 1863 entschloss sich Albert Ziekow mit seiner Frau Emilie
+              ein Bäckerhand- werk in Rosenthal zu eröffnen, um die hiesige
+              Bevölkerung mit Brot und Brötchen zu versorgen. Gebacken wurde
+              zuerst auf dem Grundstück der Hauptstraße 140 (direkt vis-a-vis),
+              später in der Hauptstraße 179.
+            </p>
+          </div>
+          <div class="image-container">
+            <img
+              src="/images/Kutsche.jpeg"
+              alt="Die alte Backstube"
+              style="width: 100%"
+            />
+          </div>
+        </div>
+        <div class="split-area">
+          <div class="image-container">
+            <img
+              src="/images/SchwarzWeiß.jpg"
+              alt="Die alte Backstube"
+              style="width: 100%"
+            />
+          </div>
+          <div class="text-container">
+            <h3>Familie</h3>
+            <p>
+              Einen Bäckerladen gab es zu dieser Zeit noch nicht - die frischen
+              Brote und Brötchen wurden anfänglich mit Hunde- schlitten, bald
+              auch mit Pferdekutschen ausgeliefert. Während des Ersten
+              Weltkrieges entschied sich Albert Ziekow, das bereits im Bau
+              befindliche Haus in der Hauptstraße 155 zu erwerben.
+            </p>
+          </div>
+        </div>
+        <div class="split-area">
+          <div class="text-container">
+            <h3>Eröffnung</h3>
+            <p>
+              Hier eröffneten die Eheleute etwa 1918 die Bäckerei Ziekow in den
+              Räumlichkeiten, die Sie heute hier vorfinden. Zu dieser Zeit war
+              ihr Sohn Otto bereits in das Bäckerhandwerk eingeführt, was er
+              wenig später von seinen Eltern übernahm. Otto und Luise Ziekow
+              brachten 1919 ihren Sohn Willy zur Welt, und um die
+              Familientradition fortzuführen, erlernte auch er den Beruf des
+              Bäckers.
+            </p>
+          </div>
+          <div class="image-container">
+            <img
+              src="/images/Reifen.jpg"
+              alt="Die alte Backstube"
+              style="width: 100%"
+            />
+          </div>
+        </div>
+        <div class="split-area">
+          <div class="image-container">
+            <img
+              src="/images/Urkunde.jpg"
+              alt="Die alte Backstube"
+              style="width: 100%"
+            />
+          </div>
+          <div class="text-container">
+            <h3>Nachkriegszeit</h3>
+            <p>
+              Ein Jahr nach Ende des Zweiten Weltkrieges heiratete Willy seine
+              große Liebe Lenchen, die 1954 den gemeinsamen Sohn Bernd zur Welt
+              brachte. Nachdem dieser von 1968 bis 1971 in der väterlichen Lehre
+              die Kunst des Backens erlernt hatte, übernahm Bernd Ziekow 1985 in
+              vierter Generation die Bäckerei und führte sie bis zur Schließung
+              durch die DDR am 16.08.1987.
+            </p>
+          </div>
+        </div>
+        <div class="split-area">
+          <div class="text-container">
+            <h3>Heute</h3>
+            <p>
+              Im Frühjahr 2007 erwachten die alten Gemäuer aus ihrem 20jährigen
+              Domröschenschlaf. Die Öfen wurden wieder befeuert und aus der
+              ehemaligen Bäckerei Ziekow wurde das Café "Zur alten Backstube",
+              in dem nun wieder selbst gebackener Kuchen genossen werden kann.
+            </p>
+          </div>
+          <div class="image-container">
+            <img
+              src="/images/2Typen.jpg"
+              alt="Die alte Backstube"
+              style="width: 100%"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <%- include('partials/footer') %>
+  </body>
+</html>

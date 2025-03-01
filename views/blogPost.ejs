@@ -1,10 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%= post.heading%></title>
+    <title><%= post.heading %></title>
     <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .main-image {
+        
+        width: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+        text-align: center;
+      }
+      .main-image img {
+        height: 500px;
+        border-radius: 8px;
+        object-fit: cover;
+      }
+      .extra-images {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
+      }
+      .extra-images img {
+        width: 150px;
+        border-radius: 4px;
+        object-fit: cover;
+      }
+    </style>
   </head>
   <body>
     <div class="section">
@@ -12,20 +37,33 @@
         <%- include('partials/header') %>
         <h1 class="page-header"><%= post.heading %></h1>
         <p>
-          <%= new Date(post.date).toLocaleString('de-DE', {weekday: 'long',
-          year: 'numeric', month: 'numeric',day: 'numeric'}) %>
+          <%= new Date(post.date).toLocaleString('de-DE', { weekday: 'long',
+          year: 'numeric', month: 'numeric', day: 'numeric' }) %>
         </p>
-        <img
-          src="/image/<%= post.id %>"
-          alt="<%= post.title %>"
-          class="post-image"
-        />
-        <p><%= post.text %></p>
+        <% if (post.main_image) { %>
+        <div class="main-image">
+          <img
+            src="/uploads/<%= post.main_image %>"
+            alt="<%= post.heading %> Main Image"
+          />
+        </div>
+
+        <% } %>
+        <div class="post-text"><p><%= post.text %></p></div>
+        <% if (post.extra_images && post.extra_images.length > 0) {%>
+        <div class="extra-images">
+          <% post.extra_images.forEach(function(img) { %>
+          <img
+            src="/uploads/<%= img %>"
+            alt="Extra image for <%= post.heading %>"
+          />
+          <% }); %>
+        </div>
+        <% } %>
         <a href="/blog" class="btn btn-primary">Zurück</a>
       </div>
     </div>
     <%- include('partials/footer') %>
-
     <script src="/js/slide.js"></script>
     <script src="/js/navToggle.js"></script>
   </body>

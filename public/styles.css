@@ -197,7 +197,6 @@ p {
 
 .contant-buttons {
   display: flex;
-  margin: 20px 0px;
   font-size: 15px;
 }
 
@@ -226,7 +225,6 @@ p {
 .blog-button {
   margin-top: 10px;
   text-decoration: none;
-  margin-left: 30px;
   padding: 10px;
   background-color: var(--secondary-button-color);
   border: 1px solid rgba(255, 255, 255, 0.25);

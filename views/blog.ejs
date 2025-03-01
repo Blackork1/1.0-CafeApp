@@ -7,10 +7,6 @@
     <link rel="stylesheet" href="/styles.css" />
     <style>
       /* Basic styling for the cards */
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f9f9f9;
-      }
       h2 {
         text-align: center;
       }
@@ -21,12 +17,13 @@
         justify-content: center;
       }
       .card {
-        background: #fff;
+        background: #f0bd7ac5;
         border: 1px solid #ddd;
         border-radius: 8px;
         width: 300px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         overflow: hidden;
+        position: relative;
       }
       .card img {
         width: 100%;
@@ -47,6 +44,9 @@
       }
       .date {
         text-align: end;
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
       }
     </style>
   </head>
@@ -72,7 +72,7 @@
         <% } %>
 
         <!-- The image is loaded via the /image/:id route -->
-        <img src="/image/<%= post.id %>" alt="<%= post.title %>" />
+        <img src="/uploads/<%= post.main_image %>" alt="<%= post.title %>" />
         <div class="card-content">
           <h2><%= post.heading %></h2>
           <div class="date">
