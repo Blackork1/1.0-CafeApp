@@ -804,6 +804,7 @@ p {
   backdrop-filter: blur(10px);
   border-radius: 8px;
   padding: 2px;
+  height: 100%;
 }
 
 .slot-grid {
@@ -821,6 +822,10 @@ p {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease, border-color 0.3s ease;
+  height: 30px;
+  width: 80%;
+  margin: 0 auto;
+  justify-content: center;
 }
 
 /* Hover effect */

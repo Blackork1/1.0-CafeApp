@@ -16,11 +16,24 @@ const port = process.env.PORT || 3000;
 const saltRounds = 10;
 
 // Configure the transporter (make sure to set EMAIL_USER and EMAIL_PASS in your .env file)
+// const transporter = nodemailer.createTransport({
+//     service: 'Gmail', // or use another email service
+//     auth: {
+//         user: process.env.EMAIL_USER,
+//         pass: process.env.EMAIL_PASS,
+//     },
+// });
+
 const transporter = nodemailer.createTransport({
-    service: 'Gmail', // or use another email service
+    host: "mail.manitu.de", // Manitu SMTP server
+    port: 587, // Use 587 for STARTTLS (recommended) or 465 for SSL
+    secure: false, // Set to true if using port 465
     auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        user: process.env.EMAIL_USER, // Your full email address
+        pass: process.env.EMAIL_PASS, // Your email password
+    },
+    tls: {
+        rejectUnauthorized: false, // Allows self-signed certificates (if needed)
     },
 });
 
@@ -212,10 +225,10 @@ app.post("/reserve", async (req, res) => {
             from: process.env.EMAIL_USER, // Sender address
             to: email,                      // Recipient's email
             bcc: process.env.EMAIL_USER,     // Copy to sender
-            subject: 'Reservierung Zur alten Backstube', // Subject line
+            subject: `Reservierung Zur alten Backstube am ${selectedDate}`, // Subject line
             text: `Hallo ${name},
   
-  Deine Reservierung wurde bestätigt:
+  Deine Reservierung wurde bestätigt: 🥳🎉
   Tisch: ${selectedTable}
   Tag: ${selectedDate}
   Zeit: ${selectedTime}
@@ -223,14 +236,15 @@ app.post("/reserve", async (req, res) => {
   
   Vielen Dank.
 
-  Wir freuen uns auf dich
+  Wir freuen uns auf dich,
   Bernd und Manuel Ziekow
   
 
   
   Zur alten Backstube
   Hauptstraße 155, 13158 Berlin
-  Tel: 030-47488482`,
+  Tel: 030-47488482`
+  ,
         };
 
         // Send the email
