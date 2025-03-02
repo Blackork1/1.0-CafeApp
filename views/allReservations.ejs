@@ -6,42 +6,56 @@
     <title>Admin Reservation Panel</title>
     <link rel="stylesheet" href="/styles.css" />
   </head>
+  <style>
+    .reservation-table {
+      font-size: 10px;
+      margin-bottom: 60px;
+    }
+
+    .reservation-table tr:nth-child(2) td:nth-child(2){
+      font-size: 6px;
+    }
+  </style>
   <body>
-    <%- include('partials/header') %>
-    <div class="adminPanel">
-      <h1>Admin Reservation Panel</h1>
-      <table>
-        <tr>
-          <th>Name</th>
-          <th>Telefonnummer</th>
-          <th>Personen</th>
-          <th>Datum</th>
-          <th>Uhrzeit</th>
-          <th>Tisch</th>
-          <th>Stornieren</th>
-        </tr>
-        <% bookings.forEach(reservation => { %>
-        <tr>
-          <td><%= reservation.name %></td>
-          <td><%= reservation.email %></td>
-          <td><%= reservation.places_selected%></td>
-          <td>
-            <%= new Date(reservation.date).toLocaleDateString('de-DE', { weekday:
-            'short', year: 'numeric', month: 'short', day: 'numeric' }) %>
-          </td>
-          <td><%= reservation.time %></td>
-          <td><%= reservation.table_id %></td>
-          <td>
-            <form
-              action="/deleteReservation/<%= reservation.id %>"
-              method="POST"
-            >
-              <button type="submit">Stornieren</button>
-            </form>
-          </td>
-        </tr>
-        <% }) %>
-      </table>
+    <div class="section">
+      <%- include('partials/header') %>
+      <div class="adminPanel">
+        <h1>Alle Reservierungen</h1>
+        <table class="reservation-table">
+          <tr>
+            <th>Name</th>
+            <th>Mail</th>
+            <th>Personen</th>
+            <th>Datum</th>
+            <th>Uhrzeit</th>
+            <th>Tisch</th>
+            <th>Löschen</th>
+          </tr>
+          <% bookings.forEach(reservation => { %>
+          <tr>
+            <td><%= reservation.name %></td>
+            <td><%= reservation.email %></td>
+            <td><%= reservation.places_selected%></td>
+            <td>
+              <%= new Date(reservation.date).toLocaleDateString('de-DE', {
+              weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'
+              }) %>
+            </td>
+            <td><%= reservation.time %></td>
+            <td><%= reservation.table_id %></td>
+            <td>
+              <form
+                action="/deleteReservation/<%= reservation.id %>"
+                method="POST"
+              >
+                <button type="submit">-</button>
+              </form>
+            </td>
+          </tr>
+          <% }) %>
+        </table>
+      </div>
     </div>
+    <%- include('partials/footer')%>
   </body>
 </html>

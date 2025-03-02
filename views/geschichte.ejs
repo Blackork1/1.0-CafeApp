@@ -16,18 +16,15 @@
     .text-container {
       flex: 1;
     }
-    .image-container {
+    .image-containers {
       flex: 1;
-      border-radius: 8px;
     }
-    .image-container img {
+    .image-containers img {
       height: 400px;
       width: 500px;
       object-fit: contain;
-      border-radius: 8px;
     }
-
-    .split-area:last-child{
+    .split-area:last-child {
       margin-bottom: 80px;
     }
   </style>
@@ -38,7 +35,7 @@
         <h2 style="text-align: center">Die Geschichte der alten Backstube</h2>
         <div class="split-area">
           <div class="text-container">
-            <h3>Gründung</h3>
+            <h3>Der Beginn</h3>
             <p>
               Bereits 1863 entschloss sich Albert Ziekow mit seiner Frau Emilie
               ein Bäckerhand- werk in Rosenthal zu eröffnen, um die hiesige
@@ -47,24 +44,26 @@
               später in der Hauptstraße 179.
             </p>
           </div>
-          <div class="image-container">
+          <div class="image-containers">
             <img
               src="/images/Kutsche.jpeg"
               alt="Die alte Backstube"
               style="width: 100%"
+              class="vertical-image"
             />
           </div>
         </div>
-        <div class="split-area">
-          <div class="image-container">
+        <div class="split-area flex-reverse">
+          <div class="image-containers">
             <img
               src="/images/SchwarzWeiß.jpg"
               alt="Die alte Backstube"
               style="width: 100%"
+              class="vertical-image"
             />
           </div>
           <div class="text-container">
-            <h3>Familie</h3>
+            <h3>Kauf der Bäckerei</h3>
             <p>
               Einen Bäckerladen gab es zu dieser Zeit noch nicht - die frischen
               Brote und Brötchen wurden anfänglich mit Hunde- schlitten, bald
@@ -87,7 +86,7 @@
               Bäckers.
             </p>
           </div>
-          <div class="image-container">
+          <div class="image-containers">
             <img
               src="/images/Reifen.jpg"
               alt="Die alte Backstube"
@@ -95,8 +94,8 @@
             />
           </div>
         </div>
-        <div class="split-area">
-          <div class="image-container">
+        <div class="split-area flex-reverse">
+          <div class="image-containers">
             <img
               src="/images/Urkunde.jpg"
               alt="Die alte Backstube"
@@ -125,7 +124,7 @@
               in dem nun wieder selbst gebackener Kuchen genossen werden kann.
             </p>
           </div>
-          <div class="image-container">
+          <div class="image-containers">
             <img
               src="/images/2Typen.jpg"
               alt="Die alte Backstube"

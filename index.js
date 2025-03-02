@@ -9,7 +9,6 @@ import session from "express-session";
 import nodemailer from 'nodemailer';
 import multer from 'multer';
 import pgSession from 'connect-pg-simple';
-import {Jimp} from 'jimp';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -294,27 +293,6 @@ app.get("/booked", async (req, res) => {
     });
 });
 
-// Helper: Process image with Jimp (resize to 5:7, convert to webp)
-async function processImage(imageBuffer, filename) {
-    const outputPath = path.join(__dirname, 'public/uploads', filename);
-
-    try {
-        // Bild aus dem Buffer laden
-        const image = await Jimp.read(imageBuffer);
-
-        // Bild auf das 5:7 Verhältnis zuschneiden (zentriert)
-        image.cover(500, 700, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_MIDDLE);
-
-        // Bild als webp speichern
-        await image.writeAsync(outputPath);
-
-        return filename;
-    } catch (err) {
-        console.error("Error processing image with Jimp:", err);
-        throw err;
-    }
-}
-
 //!!Blog Area!!
 // Display all blog posts (only main image and heading)
 app.get('/blog', async (req, res) => {
@@ -355,7 +333,6 @@ app.get("/newBlog", async (req, res) => {
     }
 });
 
-// Create New Blog Post – Process form upload (mainImage and extraImages)
 app.post("/newBlog", upload.fields([
     { name: 'mainImage', maxCount: 1 },
     { name: 'extraImages', maxCount: 5 }
@@ -371,27 +348,33 @@ app.post("/newBlog", upload.fields([
         return res.status(400).send('Main image is required.');
     }
 
-    // Process main image:
+    // Save main image without any processing
     const mainImageBuffer = req.files.mainImage[0].buffer;
-    const mainImageName = `main_${Date.now()}.webp`;
+    // Create a new filename using the current timestamp and original extension
+    const mainExt = path.extname(req.files.mainImage[0].originalname);
+    const mainImageName = `main_${Date.now()}${mainExt}`;
+    const mainImagePath = path.join(uploadDir, mainImageName);
+
     try {
-        await processImage(mainImageBuffer, mainImageName);
+        await fs.promises.writeFile(mainImagePath, mainImageBuffer);
     } catch (err) {
-        console.error("Error processing main image:", err);
-        return res.status(500).send("Error processing main image.");
+        console.error("Error saving main image:", err);
+        return res.status(500).send("Error saving main image.");
     }
 
-    // Process extra images if provided:
+    // Process extra images if provided (save them directly without any resizing)
     let extraImagePaths = [];
     if (req.files.extraImages) {
         for (let i = 0; i < req.files.extraImages.length; i++) {
             const extraBuffer = req.files.extraImages[i].buffer;
-            const extraImageName = `extra_${Date.now()}_${i}.webp`;
+            const extraExt = path.extname(req.files.extraImages[i].originalname);
+            const extraImageName = `extra_${Date.now()}_${i}${extraExt}`;
+            const extraImagePath = path.join(uploadDir, extraImageName);
             try {
-                await processImage(extraBuffer, extraImageName);
+                await fs.promises.writeFile(extraImagePath, extraBuffer);
                 extraImagePaths.push(extraImageName);
             } catch (err) {
-                console.error("Error processing extra image:", err);
+                console.error("Error saving extra image:", err);
             }
         }
     }
@@ -436,7 +419,6 @@ app.get("/blog/:id/edit", async (req, res) => {
     }
 });
 
-// Edit Blog – Process form upload for updates
 app.post("/blog/:id/edit", upload.fields([
     { name: 'mainImage', maxCount: 1 },
     { name: 'extraImages', maxCount: 5 }
@@ -447,27 +429,29 @@ app.post("/blog/:id/edit", upload.fields([
     if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
     try {
-        // Fetch current blog data:
+        // Fetch current blog data
         const result = await db.query("SELECT main_image, extra_images FROM blog WHERE id = $1", [id]);
         if (result.rows.length === 0) return res.status(404).send("Blog not found.");
         let { main_image, extra_images } = result.rows[0];
-        let currentExtras = extra_images;
+        let currentExtras = extra_images ? extra_images : [];
 
         // Process new main image if uploaded:
         if (req.files.mainImage && req.files.mainImage.length > 0) {
-            // Delete old main image file:
+            // Delete old main image file if exists
             if (main_image) {
                 const oldMainPath = path.join(uploadDir, main_image);
                 if (fs.existsSync(oldMainPath)) fs.unlinkSync(oldMainPath);
             }
             const mainImageBuffer = req.files.mainImage[0].buffer;
-            main_image = `main_${Date.now()}.webp`;
-            await processImage(mainImageBuffer, main_image);
+            const mainExt = path.extname(req.files.mainImage[0].originalname);
+            main_image = `main_${Date.now()}${mainExt}`;
+            const mainImagePath = path.join(uploadDir, main_image);
+            await fs.promises.writeFile(mainImagePath, mainImageBuffer);
         }
 
         // Process new extra images if uploaded:
         if (req.files.extraImages && req.files.extraImages.length > 0) {
-            // Optionally delete old extra images:
+            // Delete old extra images if needed
             currentExtras.forEach(imgName => {
                 const oldExtraPath = path.join(uploadDir, imgName);
                 if (fs.existsSync(oldExtraPath)) fs.unlinkSync(oldExtraPath);
@@ -475,8 +459,10 @@ app.post("/blog/:id/edit", upload.fields([
             currentExtras = [];
             for (let i = 0; i < req.files.extraImages.length; i++) {
                 const extraBuffer = req.files.extraImages[i].buffer;
-                const extraImageName = `extra_${Date.now()}_${i}.webp`;
-                await processImage(extraBuffer, extraImageName);
+                const extraExt = path.extname(req.files.extraImages[i].originalname);
+                const extraImageName = `extra_${Date.now()}_${i}${extraExt}`;
+                const extraImagePath = path.join(uploadDir, extraImageName);
+                await fs.promises.writeFile(extraImagePath, extraBuffer);
                 currentExtras.push(extraImageName);
             }
         }
@@ -492,24 +478,22 @@ app.post("/blog/:id/edit", upload.fields([
     }
 });
 
-// Delete Blog – Process deletion and remove files
 app.post("/blog/:id/delete", async (req, res) => {
     const id = req.params.id;
+    const uploadDir = path.join(__dirname, 'public/uploads');
     try {
         const result = await db.query("SELECT main_image, extra_images FROM blog WHERE id = $1", [id]);
         if (result.rows.length === 0) return res.status(404).send("Blog not found.");
         const { main_image, extra_images } = result.rows[0];
-        const uploadDir = path.join(__dirname, 'public/uploads');
 
-        // Delete main image:
+        // Delete main image
         if (main_image) {
             const mainPath = path.join(uploadDir, main_image);
             if (fs.existsSync(mainPath)) fs.unlinkSync(mainPath);
         }
-
-        // Delete extra images:
+        // Delete extra images
         if (extra_images) {
-            const extras = JSON.parse(extra_images);
+            const extras = extra_images;
             extras.forEach(imgName => {
                 const imgPath = path.join(uploadDir, imgName);
                 if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
@@ -523,6 +507,7 @@ app.post("/blog/:id/delete", async (req, res) => {
         res.status(500).send("Error deleting blog post.");
     }
 });
+
 
 //!!Log-In/ Register Area!!
 app.get("/login", async (req, res) => {
