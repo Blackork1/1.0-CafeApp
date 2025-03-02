@@ -245,6 +245,7 @@ p {
   position: relative;
   width: 100%;
   margin: 0 auto;
+  margin-bottom: 100px;
 }
 
 /* The inner container that holds all slides in a row */
@@ -277,6 +278,10 @@ p {
   opacity: 1;
 }
 
+.extra-images img {
+  width: 300px;
+}
+
 /* Arrow button container styling */
 .arrow-left,
 .arrow-right {
@@ -293,18 +298,17 @@ p {
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   z-index: 10;
+  width: 50px;
 }
 
 .arrow-left:hover,
 .arrow-right:hover {
-  transform: translateY(-55%);
   background-color: var(--main-box-color);
 }
 
 /* Bounce effect on click (active state) */
 .arrow-left:active,
 .arrow-right:active {
-  transform: translateY(-50%) scale(0.9);
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
@@ -315,11 +319,13 @@ p {
 }
 
 .arrow-left {
-  left: 0%;
+  left: 50%;
+  transform: translateX(-120%);
 }
 
 .arrow-right {
-  left: 20%;
+  left: 50%;
+  transform: translateX(20%);
 }
 
 /* Nav-Bar-Settings */

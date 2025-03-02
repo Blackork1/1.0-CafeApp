@@ -26,74 +26,74 @@
     </style>
   </head>
   <body>
-    <%- include('partials/header') %>
-    <div class="container">
-      <h1>Blog bearbeiten</h1>
-      <form
-        action="/blog/<%= post.id %>/edit"
-        method="POST"
-        enctype="multipart/form-data"
-      >
-        <div class="form-group">
-          <label for="heading">Titel:</label>
-          <input
-            type="text"
-            name="heading"
-            id="heading"
-            value="<%= post.heading %>"
-            required
-          />
+    <div class="section">
+      <%- include('partials/header') %>
+      <div class="container">
+        <h1>Blog bearbeiten</h1>
+        <form
+          action="/blog/<%= post.id %>/edit"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          <div class="form-group">
+            <label for="heading">Titel:</label>
+            <input
+              type="text"
+              name="heading"
+              id="heading"
+              value="<%= post.heading %>"
+              required
+            />
 
-          <label for="text">Text:</label>
-          <textarea name="text" id="text" rows="8" required>
+            <label for="text">Text:</label>
+            <textarea name="text" id="text" rows="8" required>
 <%= post.text %></textarea
-          >
+            >
 
-          <div class="image-preview">
-            <h3>Aktuelles Hauptbild:</h3>
-            <% if (post.main_image) { %>
-            <img src="/uploads/<%= post.main_image %>" alt="Hauptbild" />
-            <% } else { %>
-            <p>Kein Hauptbild vorhanden.</p>
-            <% } %>
-          </div>
-          <label for="mainImage">Neues Hauptbild (optional, JPG/PNG):</label>
-          <input
-            type="file"
-            name="mainImage"
-            id="mainImage"
-            accept="image/jpeg, image/png"
-          />
-
-          <div class="image-preview">
-            <h3>Aktuelle Extra Bilder:</h3>
-            <% if (post.extra_images) { %>
-            <div class="extra-preview">
-              <% post.extra_images.forEach(function(img) { %>
-              <img src="/uploads/<%= img %>" alt="Extra Bild" />
-              <% }); %>
+            <div class="image-preview">
+              <h3>Aktuelles Hauptbild:</h3>
+              <% if (post.main_image) { %>
+              <img src="/uploads/<%= post.main_image %>" alt="Hauptbild" />
+              <% } else { %>
+              <p>Kein Hauptbild vorhanden.</p>
+              <% } %>
             </div>
-            <% } else { %>
-            <p>Keine Extra Bilder vorhanden.</p>
-            <% } %>
-          </div>
-          <label for="extraImages"
-            >Neue Extra Bilder hochladen (optional, max. 5, JPG/PNG):</label
-          >
-          <input
-            type="file"
-            name="extraImages"
-            id="extraImages"
-            accept="image/jpeg, image/png"
-            multiple
-          />
+            <label for="mainImage">Neues Hauptbild (optional, JPG/PNG):</label>
+            <input
+              type="file"
+              name="mainImage"
+              id="mainImage"
+              accept="image/jpeg, image/png"
+            />
 
-          <button type="submit">Post aktualisieren</button>
-        </div>
-      </form>
+            <div class="image-preview">
+              <h3>Aktuelle Extra Bilder:</h3>
+              <% if (post.extra_images) { %>
+              <div class="extra-preview">
+                <% post.extra_images.forEach(function(img) { %>
+                <img src="/uploads/<%= img %>" alt="Extra Bild" />
+                <% }); %>
+              </div>
+              <% } else { %>
+              <p>Keine Extra Bilder vorhanden.</p>
+              <% } %>
+            </div>
+            <label for="extraImages"
+              >Neue Extra Bilder hochladen (optional, max. 5, JPG/PNG):</label
+            >
+            <input
+              type="file"
+              name="extraImages"
+              id="extraImages"
+              accept="image/jpeg, image/png"
+              multiple
+            />
+
+            <button type="submit">Post aktualisieren</button>
+          </div>
+        </form>
+      </div>
     </div>
     <%- include('partials/footer') %>
-    <script src="/js/slide.js"></script>
-    <script src="/js/navToggle.js"></script>
   </body>
 </html>

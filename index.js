@@ -312,8 +312,6 @@ app.get('/blog/:id', async (req, res) => {
         const result = await db.query("SELECT * FROM blog WHERE id = $1", [id]);
         if (result.rows.length === 0) return res.status(404).send("Blog not found.");
         const post = result.rows[0];
-        console.log(post.extra_images);
-
         // Parse extra_images JSON
         // post.extra_images = post.extra_images ? JSON.parse(post.extra_images) : [];
         res.render("blogPost", { post, user: req.user || {} });

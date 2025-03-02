@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="/styles.css" />
     <style>
       .main-image {
-        
         width: 100%;
         object-fit: cover;
         border-radius: 8px;
@@ -23,16 +22,17 @@
         flex-wrap: wrap;
         gap: 10px;
         margin-top: 20px;
+        margin-bottom: 30px;
       }
       .extra-images img {
-        width: 150px;
+        width: 300px;
         border-radius: 4px;
         object-fit: cover;
       }
     </style>
   </head>
   <body>
-    <div class="section">
+    <div class="section overflow-hidden">
       <div class="container">
         <%- include('partials/header') %>
         <h1 class="page-header"><%= post.heading %></h1>
@@ -52,12 +52,34 @@
         <div class="post-text"><p><%= post.text %></p></div>
         <% if (post.extra_images && post.extra_images.length > 0) {%>
         <div class="extra-images">
-          <% post.extra_images.forEach(function(img) { %>
-          <img
-            src="/uploads/<%= img %>"
-            alt="Extra image for <%= post.heading %>"
-          />
-          <% }); %>
+          <div class="testimonial-slider">
+            <div class="slider-mask">
+              <% post.extra_images.forEach(function(img) { %>
+              <div class="slide">
+                <div class="testimonial-card">
+                  <img
+                    src="/uploads/<%= img %>"
+                    alt="Extra image for <%= post.heading %>"
+                  />
+                </div>
+              </div>
+              <% }); %>
+            </div>
+            <div class="arrow-left" id="prev">
+              <img
+                src="https://cdn.prod.website-files.com/678cb846ec8afcb96aeea333/678d1e91e52f8ef00fb66b91_arrow_back_24px.svg"
+                loading="lazy"
+                alt="Pfeil nach links"
+              />
+            </div>
+            <div class="arrow-right" id="next">
+              <img
+                src="https://cdn.prod.website-files.com/678cb846ec8afcb96aeea333/678d1e3bba0255383d97592a_arrow_forward_24px.svg"
+                loading="lazy"
+                alt="Pfeil nach rechts"
+              />
+            </div>
+          </div>
         </div>
         <% } %>
         <a href="/blog" class="btn btn-primary">Zurück</a>
@@ -66,5 +88,6 @@
     <%- include('partials/footer') %>
     <script src="/js/slide.js"></script>
     <script src="/js/navToggle.js"></script>
+    <script src="/js/slider-animation.js"></script>
   </body>
 </html>
