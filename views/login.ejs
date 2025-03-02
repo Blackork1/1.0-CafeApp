@@ -7,21 +7,25 @@
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <%- include('partials/header') %>
-    <div class="Log-In">
-      <h1>Log-In</h1>
-      <form action="/logIn" method="POST">
-        <label for="username">E-Mail:</label>
-        <input type="text" id="username" name="username" required />
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required />
-        <button type="submit">Log-In</button>
-      </form>
+    <div class="section">
+      <%- include('partials/header') %>
+      <div class="container">
+        <h1 class="center">Log-In</h1>
+        <form action="/logIn" method="POST">
+          <div class="logIn-form">
+            <div class="Mail">
+              <label for="username">E-Mail:</label>
+              <input type="text" id="username" name="username" required />
+            </div>
+            <div class="password">
+              <label for="password">Password:</label>
+              <input type="password" id="password" name="password" required />
+            </div>
+            <button type="submit">Log-In</button>
+          </div>
+        </form>
+      </div>
     </div>
-    <div class="Register">
-      <h1>Noch nicht registriert?</h1>
-      <a href="/register">Registriere dich hier!</a>
-    <script src="/js/slide.js"></script>
-    <script src="/js/navToggle.js"></script>
+    <%- include('partials/footer')%>
   </body>
 </html>

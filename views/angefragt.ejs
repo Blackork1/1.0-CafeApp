@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event angefragt</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="section">
+      <div class="container">
+        <%- include('partials/header') %>
+        <div class="booked">
+          <h1>
+            Du hast das Event "<%=event%>" gewählt
+          </h1>
+          <p>Vielen Dank für dein Vertrauen <%=name%></p>
+          <p>Ich werde mich in kürze bei dir melden.</p>
+        </div>
+      </div>
+    </div>
+    <%- include('partials/footer') %>
+    <script src="/js/downloadICS.js"></script>
+  </body>
+</html>

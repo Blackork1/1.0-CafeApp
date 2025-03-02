@@ -338,11 +338,6 @@ app.post("/newBlog", upload.fields([
     { name: 'extraImages', maxCount: 5 }
 ]), async (req, res) => {
     const { heading, text } = req.body;
-
-    // Ensure upload directory exists
-    const uploadDir = path.join(__dirname, 'public/uploads');
-    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-
     // Validate that a main image was uploaded.
     if (!req.files || !req.files.mainImage) {
         return res.status(400).send('Main image is required.');
@@ -508,6 +503,65 @@ app.post("/blog/:id/delete", async (req, res) => {
     }
 });
 
+
+// Event Area
+app.get("/eventbuchung", async (req, res) => {
+    res.render("eventbuchung.ejs", { user: req.user || {} })
+});
+
+app.post("/eventbuchung", async (req, res) => {
+    const { event, text, mail, name, tel } = req.body;
+
+    req.session.event = event;
+    req.session.name = name; // ✅ Store selected date in session
+    req.session.save(); // ✅ Save session update
+
+
+    try {
+        const result = await db.query("INSERT INTO eventbuchung (event, text, mail, name, tel) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+            [event, text, mail, name, tel]
+        )
+
+        const mailOptions = {
+            from: process.env.EMAIL_USER, // Sender address
+            to: mail,                      // Recipient's email
+            bcc: process.env.EMAIL_USER,     // Copy to sender
+            subject: `Buchungsanfrage Erfolgreich`, // Subject line
+            text: `Hallo ${name},
+  
+  Deine Anfrage wurde erfolgreich übermittelt: 🥳🎉
+  Dein gewähltes Event: ${event}
+  Dein Text: ${text}
+  Deine Rufnummer: ${tel}
+
+  Vielen Dank für deine Anfrage.
+
+  Wir melden uns in kürze bei dir,
+  Bernd und Manuel Ziekow
+  
+  
+  Zur alten Backstube
+  Hauptstraße 155, 13158 Berlin
+  Tel: 030-47488482`
+            ,
+        };
+
+        // Send the email
+        await transporter.sendMail(mailOptions);
+        res.redirect("/angefragt",)
+    } catch (error) {
+        console.error("Error inserting event into DB:", err);
+        res.status(500).send("Error inserting blog.");
+    }
+})
+
+app.get("/angefragt", (req, res) => {
+    res.render("angefragt.ejs", {
+        user: req.user || req.session,
+        event: req.session.event,
+        name: req.session.name,
+    });
+})
 
 //!!Log-In/ Register Area!!
 app.get("/login", async (req, res) => {

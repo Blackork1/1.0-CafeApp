@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eventbuchung</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="section">
+      <%- include('partials/header') %>
+      <div class="container">
+        <h1 class="center">Eventbuchung</h1>
+        <h3>Willst du eine Feier bei mir veranstalten?</h3>
+        <p>
+          Such dir zunächst eine Eventart aus und schreibe mir deine
+          Vorstellungen. Ich melde mich bei dir, dann besprechen wir alles
+          weitere 🎉
+        </p>
+        <form action="/eventbuchung" method="POST">
+          <div class="eventbuchung-form">
+            <div class="eventbuchung-radio">
+              <div class="radio-item">
+                <div class="span2"><p>Wähle dein Event!</p></div>
+                <input
+                  type="radio"
+                  id="Geburtstag"
+                  name="event"
+                  value="Geburtstag"
+                  required
+                  hidden
+                />
+                <label class="radio-event" for="Geburtstag">Geburtstag</label>
+                <input
+                  type="radio"
+                  id="Hochzeit"
+                  name="event"
+                  value="Hochzeit"
+                  required
+                  hidden
+                />
+                <label class="radio-event" for="Hochzeit">Hochzeit</label>
+                <input
+                  type="radio"
+                  id="Firmenfeier"
+                  name="event"
+                  value="Firmenfeier"
+                  required
+                  hidden
+                />
+                <label class="radio-event" for="Firmenfeier">Firmenfeier</label>
+                <input
+                  type="radio"
+                  id="Beerdigung"
+                  name="event"
+                  value="Beerdigung"
+                  required
+                  hidden
+                />
+                <label class="radio-event" for="Beerdigung">Beerdigung</label>
+                <input
+                  type="radio"
+                  id="Andere"
+                  name="event"
+                  value="Andere"
+                  required
+                  hidden
+                />
+                <label class="radio-event" for="Andere">Anderes Event</label>
+              </div>
+            </div>
+            <div class="eventbuchung-textarea">
+              <label for="text">Beschreibe was du dir vorstellst:</label>
+              <textarea class="newBlog-Text" name="text" id="text"></textarea>
+            </div>
+            <div class="input-fields-grid">
+              <div class="eventbuchung-email">
+                <label for="mail">E-Mail:</label>
+                <input type="text" id="mail" name="mail" required />
+              </div>
+              <div class="eventbuchung-name">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required />
+              </div>
+              <div class="eventbuchung-tel">
+                <label for="tel">Telefonnummer:</label>
+                <input type="text" id="tel" name="tel" required />
+              </div>
+            </div>
+            <button class="event-button" type="submit">Anfrage absenden</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <%- include('partials/footer')%>
+  </body>
+</html>
