@@ -12,6 +12,7 @@ import pgSession from 'connect-pg-simple';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import methodOverride from 'method-override';
 
 env.config();
 const app = express();
@@ -69,6 +70,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.json());
+app.use(methodOverride('_method'));
 
 // Multer-Konfiguration: Dateien werden im Arbeitsspeicher gehalten
 const storage = multer.memoryStorage();
@@ -295,7 +298,7 @@ app.get("/booked", async (req, res) => {
 
 //!!Blog Area!!
 // Display all blog posts (only main image and heading)
-app.get('/blog', async (req, res) => {
+app.get('/blog', async (req, res) => {    
     try {
         const result = await db.query("SELECT id, heading, main_image, date FROM blog ORDER BY date DESC");
         res.render("blog", { posts: result.rows, user: req.user || {} });
@@ -560,6 +563,91 @@ app.get("/angefragt", (req, res) => {
         name: req.session.name,
     });
 })
+
+//Menu Area
+// GET /menu: Fetch menu items, group by category, and render the page
+app.get('/menu', async (req, res) => {
+    try {
+        const result = await db.query("SELECT * FROM menu ORDER BY main_category, id");
+        // Group by main_category
+        const categories = {};
+        result.rows.forEach(drink => {
+            if (!categories[drink.main_category]) {
+                categories[drink.main_category] = [];
+            }
+            categories[drink.main_category].push(drink);
+        });
+        const categoriesArray = Object.keys(categories).map(cat => ({
+            mainCategory: cat,
+            drinks: categories[cat]
+        }));
+        res.render('menu', { categories: categoriesArray, user: req.user || {}});
+    } catch (err) {
+        console.error("Error fetching menu:", err);
+        res.status(500).send("Error fetching menu");
+    }
+});
+
+// PATCH /menu/:id - update price
+app.patch('/menu/:id', async (req, res) => {
+    const drinkId = req.params.id;
+    const { price } = req.body;
+    try {
+        const result = await db.query(
+            "UPDATE menu SET price = $1 WHERE id = $2 RETURNING *",
+            [price, drinkId]
+        );
+        if (result.rows.length === 0) return res.status(404).json({ error: "Drink not found" });
+        res.json({ message: "Price updated", drink: result.rows[0] });
+    } catch (err) {
+        console.error("Error updating price:", err);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+// PATCH /menu/:id/toggle - enable/disable a drink
+app.patch('/menu/:id/toggle', async (req, res) => {
+    const drinkId = req.params.id;
+    const { enabled } = req.body;
+    try {
+        const result = await db.query(
+            "UPDATE menu SET enabled = $1 WHERE id = $2 RETURNING *",
+            [enabled, drinkId]
+        );
+        if (result.rows.length === 0) return res.status(404).json({ error: "Drink not found" });
+        res.json({ message: "Drink toggled", drink: result.rows[0] });
+    } catch (err) {
+        console.error("Error toggling drink:", err);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+// DELETE /menu/:id - delete a drink
+app.delete('/menu/:id', async (req, res) => {
+    const drinkId = req.params.id;
+    try {
+        await db.query("DELETE FROM menu WHERE id = $1", [drinkId]);
+        res.json({ message: "Drink deleted" });
+    } catch (err) {
+        console.error("Error deleting drink:", err);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+// POST /menu - add a new drink
+app.post('/menu', async (req, res) => {
+    const { name, price, image, main_category, description } = req.body;
+    try {
+        const result = await db.query(
+            "INSERT INTO menu (name, price, image, description, main_category, enabled) VALUES ($1, $2, $3, $4, $5, true) RETURNING *",
+            [name, price, image, description || '', main_category]
+        );
+        res.json({ message: "Drink added", drink: result.rows[0] });
+    } catch (err) {
+        console.error("Error adding drink:", err);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
 
 //!!Log-In/ Register Area!!
 app.get("/login", async (req, res) => {

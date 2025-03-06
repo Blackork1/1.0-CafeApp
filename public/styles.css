@@ -45,6 +45,10 @@ h3 {
   text-align: center;
 }
 
+.m-b-0{
+  margin-bottom: 0;
+}
+
 h1,
 h2,
 h3 {
@@ -262,9 +266,8 @@ p {
   /* Start with a slight blur for non-focused slides */
   filter: blur(3px);
   padding: 20px;
-  background-color: var(
-    --main-box-color-blur
-  ); /* Light brown/yellow newspaper color */
+  background-image: url(/images/cardBackground.jpg);
+  background-size: cover;
   border-radius: 8px;
   opacity: 0.5;
   transition: filter 0.3s ease;
@@ -792,7 +795,8 @@ p {
   gap: 15px;
   width: 400px;
   max-width: 90%;
-  background: var(--main-box-color-blur);
+  background-image: url(/images/cardBackground.jpg);
+  background-size: cover;
   border-radius: 8px;
   padding: 5px;
 }
@@ -805,8 +809,9 @@ p {
 
 .date-time-item,
 .name-mail-guest {
-  background: var(--main-box-color);
-  backdrop-filter: blur(10px);
+  background-color: #f0bd7a49;
+  background-image: url(/images/asfalt-dark.png);
+  /* This is mostly intended for prototyping; please download the pattern and re-host for production environments. Thank you! */
   border-radius: 8px;
   padding: 2px;
   height: 100%;
@@ -1049,9 +1054,12 @@ input[type="radio"]:checked + .radio-label {
 }
 
 .eventbuchung-form{
-  background: var(--main-box-color-blur);
+  background-image: url(/images/cardBackground.jpg);
+  background-size: cover;
   padding-bottom: 10px;
   margin-bottom: 60px;
+  border-radius: 8px;
+  padding: 15px;
 }
 
 .eventbuchung-textarea textarea {
@@ -1263,7 +1271,6 @@ input[type="radio"]:checked + .radio-event {
   }
   .select-date-time {
     max-width: 100%;
-    background: var(--main-box-color-blur);
     border-radius: 8px;
     font-size: 14px;
     gap: 10px;

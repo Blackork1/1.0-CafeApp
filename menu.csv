@@ -1,0 +1,83 @@
+name,price,image,description,main_category,enabled
+Tasse Kaffee,2.30,,,Berliner Kaffeerösterei,true
+Pott Kaffee,3.30,,,Berliner Kaffeerösterei,true
+Kännchen Kaffee,3.80,,,Berliner Kaffeerösterei,true
+Latte Macchiato,3.30,,,Berliner Kaffeerösterei,true
+Milchkaffee,3.30,,,Berliner Kaffeerösterei,true
+Cappucino,2.90,,,Berliner Kaffeerösterei,true
+Espresso,2.30,,,Berliner Kaffeerösterei,true
+Doppelter Espresso,3.10,,,Berliner Kaffeerösterei,true
+Tiger Spice Chai Latte,3.30,,"Mit schwarzem Tee, Zimt. Kardamom und Nelken",Berliner Kaffeerösterei,true
+Heiße Schokolade,3.30,,"Rohrzucker, Kakaopulver, (45% Kakao)",Berliner Kaffeerösterei,true
+Spezi Original,3.80,,,Softdrinks,true
+Orangina Original,3.50,,,Softdrinks,true
+Afri Cola,3.20,,,Softdrinks,true
+Bluna,3.20,,,Softdrinks,true
+Rixdorfer Fassbrause,3.80,,,Softdrinks,true
+Club-Mate Original,3.80,,,Softdrinks,true
+Coca Cola,3.20,,,Softdrinks,true
+Fanta,3.20,,,Softdrinks,true
+Sprite,3.20,,,Softdrinks,true
+Coca Cola Zero,3.20,,,Softdrinks,true
+Tonic Water,3.20,,,Softdrinks,true
+Bitter Lemon,3.20,,,Softdrinks,true
+Ginger Ale,3.20,,,Softdrinks,true
+Almdudler,3.80,,,Softdrinks,true
+Stachelbeere,3.80,,Erfrischungsgetränk mit Kohlensäure,Schorlen und Säfte,true
+Rhabarber,3.80,,Erfrischungsgetränk mit Kohlensäure,Schorlen und Säfte,true
+Apfel,3.80,,Erfrischungsgetränk mit Kohlensäure,Schorlen und Säfte,true
+Limette Ingwer,3.80,,Erfrischungsgetränk mit Kohlensäure,Schorlen und Säfte,true
+Maracuja,3.80,,Erfrischungsgetränk mit Kohlensäure,Schorlen und Säfte,true
+Naturtrübe Blutorange,3.80,,,Schorlen und Säfte,true
+Streuobst,3.80,,,Schorlen und Säfte,true
+Holunder,3.80,,,Schorlen und Säfte,true
+Naturtrübe Orange,3.80,,,Schorlen und Säfte,true
+Naturtrübe Zitrone,3.80,,,Schorlen und Säfte,true
+Ingwer Orange,3.80,,,Schorlen und Säfte,true
+Bio-Orangensaft,2.80,,,Schorlen und Säfte,true
+Apfelsaft,2.80,,,Schorlen und Säfte,true
+Spreequell Classic (0.33l),2.80,,,Schorlen und Säfte,true
+Spreequell Naturell (0.33l),2.80,,,Schorlen und Säfte,true
+Spreequell Classic (0.75l),5.50,,,Schorlen und Säfte,true
+Darjeeling Sungma,2.80,,Exquisiter Schwarztee,Tee,true
+Special Earl Grey,2.80,,Bergamotte Aroma,Tee,true
+Blutorange Früchtetee,2.80,,Fruchtiger Tee,Tee,true
+Berliner Rote Grütze Früchtetee,2.80,,"Himbeer-, Erdbeer-, Kirschgeschmack",Tee,true
+Kaktusfeige Rotbusch Tee,2.80,,Rotbusch-Tee mit Orangen-Kaktusfeigen-Geschmack,Tee,true
+Warme Seele Grüner Tee,2.80,,Grüner Tee mit Ingwer und Mandarine,Tee,true
+Tegernseer Hell (0.3l),3.50,,Bayerisches helles Vollbier,Bier,true
+Tegernseer Hell (0.5l),4.50,,Bayerisches helles Vollbier,Bier,true
+Erdinger Weißbier,4.20,,,Bier,true
+Erdinger Kristall,4.20,,,Bier,true
+Erdinger Dunkel,4.20,,,Bier,true
+Erdinger Alkoholfrei,4.20,,,Bier,true
+Natur Radler,4.20,,,Bier,true
+Waldmeister Berliner Weisse,3.10,,,Bier,true
+Himbeere Berliner Weisse,3.10,,,Bier,true
+Johannesbeer Berliner Weisse,3.10,,,Bier,true
+Kirsch Berliner Weisse,3.10,,,Bier,true
+Holunderblüten Berliner Weisse,3.10,,,Bier,true
+"Carlsberg 0,0%",4.20,,,Bier,true
+Haselnusslikör Frangelico,2.50,,,Spirituosen,true
+Tequila Sierra,2.50,,,Spirituosen,true
+Pott Eierlikör im Waffelbecher,2.90,,,Spirituosen,true
+Berliner Luft,2.50,,,Spirituosen,true
+Jägermeister,2.50,,,Spirituosen,true
+Johnnie Walker,2.50,,,Spirituosen,true
+Bombay Gin,3.50,,,Spirituosen,true
+Jack Daniels,3.50,,,Spirituosen,true
+Absolut Wodka,3.50,,,Spirituosen,true
+Campari,3.50,,,Spirituosen,true
+Ramazzotti,3.50,,,Spirituosen,true
+Amaretto Disaronno,3.50,,,Spirituosen,true
+Bailey’s Original,3.50,,,Spirituosen,true
+Asbach Uralt,3.50,,,Spirituosen,true
+Underberg,2.20,,,Spirituosen,true
+Kümmerling,2.20,,,Spirituosen,true
+Kleiner Feigling,2.20,,,Spirituosen,true
+Aperol Spritz,6.50,,,"Longdrinks, Wein und Sekt",true
+Campari Orange,6.50,,,"Longdrinks, Wein und Sekt",true
+Piccolo Rotkäppchen Sekt Halbtrocken,4.90,,,"Longdrinks, Wein und Sekt",true
+Piccolo Rotkäppchen Sekt Trocken,4.90,,,"Longdrinks, Wein und Sekt",true
+Rotwein Blauer Zweigelt 2021,10.20,,,"Longdrinks, Wein und Sekt",true
+Weißwein Grüner Veltiner 2021,10.20,,,"Longdrinks, Wein und Sekt",true

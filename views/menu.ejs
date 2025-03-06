@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Getränkekarte</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <!-- Include jQuery from CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+      :root {
+        --main-bg-color: #fff0dc;
+        --main-box-color: #f0bb78;
+        --main-box-color-blur: #f0bd7a66;
+        --main-box-color-blur-2: #f0bd7ac5;
+        --main-button-color: #131010;
+        --secondary-button-color: #543a14;
+        --main-text-color: #495057;
+        --secondary-text-color: #6c757d;
+        --secondary-text-color-blur: rgba(108, 117, 125, 0.4);
+        --selected-radio-color: #629568;
+      }
+      .menu-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        padding: 20px;
+      }
+      .menu-card {
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        background-image: url(/images/cardBackground.jpg);
+        background-size: cover;
+      }
+      .category-title {
+        text-align: center;
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        color: var(--main-text-color);
+      }
+      .drink-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        flex-grow: 1;
+      }
+      .drink-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      }
+      .drink-item:last-child {
+        border-bottom: none;
+      }
+      .drink-name {
+        font-size: 1rem;
+        color: var(--secondary-text-color);
+      }
+      .drink-price {
+        font-size: 1rem;
+        color: var(--main-button-color);
+      }
+      .price-input {
+        width: 60px;
+        padding: 2px 4px;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .update-price,
+      .delete-drink,
+      .toggle-drink {
+        background-color: var(--secondary-button-color);
+        border: none;
+        color: var(--main-bg-color);
+        margin-left: 5px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .add-drink {
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px dashed #ccc;
+      }
+      .add-drink-form input,
+      .add-drink-form button {
+        margin: 5px 0;
+        padding: 5px;
+        font-size: 0.9rem;
+      }
+      .add-drink-form button {
+        background-color: var(--main-button-color);
+        color: var(--main-bg-color);
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="section">
+      <%- include('partials/header') %>
+      <div class="menu-container">
+        <% categories.forEach(category => { %>
+        <div class="menu-card" data-category="<%= category.mainCategory %>">
+          <h2 class="category-title"><%= category.mainCategory %></h2>
+          <ul class="drink-list">
+            <% category.drinks.forEach(drink => { if (!(user && user.isAdmin)
+            &&!drink.enabled) return; %>
+            <li class="drink-item" data-drink-id="<%= drink.id %>">
+              <span class="drink-name"><%= drink.name %></span>
+              <span class="drink-price">
+                <% if (user && user.isAdmin) { %>
+                <input
+                  type="number"
+                  class="price-input"
+                  value="<%= drink.price %>"
+                  data-drink-id="<%= drink.id %>"
+                />
+                <button class="update-price" data-drink-id="<%= drink.id %>">
+                  ✅
+                </button>
+                <button class="delete-drink" data-drink-id="<%= drink.id %>">
+                  Löschen
+                </button>
+                <% if (drink.enabled) { %>
+                <button
+                  class="toggle-drink"
+                  data-drink-id="<%= drink.id %>"
+                  data-enabled="true"
+                >
+                  Ausblenden
+                </button>
+                <% } else { %>
+                <button
+                  class="toggle-drink"
+                  data-drink-id="<%= drink.id %>"
+                  data-enabled="false"
+                >
+                  Einblenden
+                </button>
+                <% } %> <% } else { %> <%= drink.price %> <% } %>
+              </span>
+            </li>
+            <% }); %>
+          </ul>
+          <% if (user && user.isAdmin) { %>
+          <div class="add-drink">
+            <h3>Neues Getränk hinzufügen</h3>
+            <form
+              class="add-drink-form"
+              data-category="<%= category.mainCategory %>"
+            >
+              <input
+                type="text"
+                name="name"
+                placeholder="Getränkname"
+                required
+              />
+              <input
+                type="number"
+                name="price"
+                placeholder="Preis"
+                step="0.1"
+                required
+              />
+              <input type="text" name="image" placeholder="Bild" />
+              <!-- Optional: description field -->
+              <button type="submit">Hinzufügen</button>
+            </form>
+          </div>
+          <% } %>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+    <script src="/js/ajaxMenu.js"></script>
+    <%- include('partials/footer') %>
+  </body>
+</html>
