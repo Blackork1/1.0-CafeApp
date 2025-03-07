@@ -324,7 +324,6 @@ app.get('/blog/:id', async (req, res) => {
     }
 });
 
-
 // New Blog Post – Display form (newBlog.ejs)
 app.get("/newBlog", async (req, res) => {
     if (req.user && req.user.isAdmin) {
@@ -504,7 +503,6 @@ app.post("/blog/:id/delete", async (req, res) => {
     }
 });
 
-
 // Event Area
 app.get("/eventbuchung", async (req, res) => {
     res.render("eventbuchung.ejs", { user: req.user || {} })
@@ -653,6 +651,20 @@ app.post('/menu', async (req, res) => {
 app.get("/login", async (req, res) => {
     res.render("login.ejs", { user: req.user || {} });
 });
+
+//impressum, agb, datenschutz
+app.get("/impressum", async(req,res) =>{
+    res.render("impressum.ejs", { user: req.user || {} })
+});
+
+app.get("/agb", async(req,res) =>{
+    res.render("agb.ejs", { user: req.user || {} })
+})
+
+app.get("/datenschutz", async(req,res) =>{
+    res.render("datenschutz.ejs", { user: req.user || {} })
+})
+
 
 app.get("/logout", (req, res, next) => {
     req.logout((err) => {

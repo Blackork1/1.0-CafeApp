@@ -5,63 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blog</title>
     <link rel="stylesheet" href="/styles.css" />
-    <style>
-      /* Basic styling for the cards */
-      h2 {
-        text-align: center;
-      }
-      .card-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        justify-content: center;
-      }
-      .card {
-        background-image: url(/images/cardBackground.jpg);
-        background-size: cover;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        width: 300px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        position: relative;
-      }
-      .card img {
-        width: 100%;
-        max-height: 400px;
-        display: block;
-      }
-      .card-content {
-        padding: 15px;
-      }
-      .card h2 {
-        text-align: start;
-        font-size: 1.25em;
-        margin: 0 0 10px;
-      }
-      .card .date {
-        font-size: 0.9em;
-        color: #666;
-      }
-      .date {
-        text-align: end;
-        position: absolute;
-        bottom: 5px;
-        right: 5px;
-      }
-    </style>
   </head>
   <body>
     <div class="section"><%- include('partials/header') %></div>
-    <h2>Veranstaltungen & Events</h2>
+    <h2 class="center">Veranstaltungen & Events</h2>
     <% if (posts.length === 0) { %>
     <p>Keine Veranstaltungen vorhanden.</p>
     <% } else { %>
 
-    <div class="card-container">
+    <div class="card-container-blog">
       <% posts.forEach(post => { %>
       <div
-        class="card"
+        class="card-blog"
         onclick="location.href='/blog/<%= post.id%>';"
         style="cursor: pointer"
       >
@@ -74,9 +29,9 @@
 
         <!-- The image is loaded via the /image/:id route -->
         <img src="/uploads/<%= post.main_image %>" alt="<%= post.title %>" />
-        <div class="card-content">
+        <div class="card-content-blog">
           <h2><%= post.heading %></h2>
-          <div class="date">
+          <div class="date-blog">
             <%= new Date(post.date).toLocaleString('de-DE', {weekday: 'long',
             year: 'numeric', month: 'numeric',day: 'numeric'}) %>
           </div>
@@ -85,8 +40,6 @@
 
       <% });} %>
     </div>
-
-    <script src="/js/slide.js"></script>
-    <script src="/js/navToggle.js"></script>
+    <%- include('partials/footer') %>
   </body>
 </html>
