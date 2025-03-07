@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Startseite (index.ejs) -->
+  <url>
+    <loc>https://www.zuraltenbackstube.de/</loc>
+    <lastmod>2025-03-07</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <!-- AGB (agb.ejs) -->
+  <url>
+    <loc>https://www.zuraltenbackstube.de/agb</loc>
+    <lastmod>2025-03-07</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Blog (blog.ejs) -->
+  <url>
+    <loc>https://www.zuraltenbackstube.de/blog</loc>
+    <lastmod>2025-03-07</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <!-- Blog Post (blogPost.ejs) -->
+  <url>
+    <loc>https://www.zuraltenbackstube.de/blogPost</loc>
+    <lastmod>2025-03-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <!-- Booked (booked.ejs) -->
+  <url>
+    <loc>https://www.zuraltenbackstube.de/booked</loc>
+    <lastmod>2025-03-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <!-- Datenschutz (datenschutz.ejs) -->
+  <url>
+    <loc>https://www.zuraltenbackstube.de/datenschutz</loc>
+    <lastmod>2025-03-07</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Eventbuchung (eventbuchung.ejs) -->
+  <url>
+    <loc>https://www.zuraltenbackstube.de/eventbuchung</loc>
+    <lastmod>2025-03-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <!-- Geschichte (geschichte.ejs) -->
+  <url>
+    <loc>https://www.zuraltenbackstube.de/geschichte</loc>
+    <lastmod>2025-03-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <!-- Impressum (impressum.ejs) -->
+  <url>
+    <loc>https://www.zuraltenbackstube.de/impressum</loc>
+    <lastmod>2025-03-07</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Menu (menu.ejs) -->
+  <url>
+    <loc>https://www.zuraltenbackstube.de/menu</loc>
+    <lastmod>2025-03-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <!-- Reservation (reservation.ejs) -->
+  <url>
+    <loc>https://www.zuraltenbackstube.de/reservation</loc>
+    <lastmod>2025-03-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+</urlset>
