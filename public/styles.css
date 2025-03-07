@@ -238,12 +238,13 @@ input[type="text"], input[type="email"], select {
   max-width: 250px;
   font-weight: bold;
   color: var(--main-bg-color);
-  transition: all 0.3s ease;
+  transition: all 0.5s ease;
 }
 .reservation-button:hover,
 .blog-button:hover {
   background: var(--main-box-color);
   color: var(--main-button-color);
+  transform: translateY(-5px) scale(1.1);
 }
 
 .blog-button {
@@ -367,9 +368,11 @@ input[type="text"], input[type="email"], select {
   color: var(--main-button-color);
   text-decoration: none;
   font-weight: bold;
+  transition: all 0.5 ease;
 }
 .navigation a:hover:not(.reserve-button) {
   border-bottom: 3px solid #ff9900;
+  transform: scale(1.05);
 }
 .nav-right {
   display: flex;
@@ -885,6 +888,7 @@ input[type="radio"]:checked + .radio-label {
 .guest-submit {
   align-content: center;
   background: none;
+  padding-bottom: 10px;
 }
 
 .guest-submit button {
@@ -901,6 +905,7 @@ input[type="radio"]:checked + .radio-label {
 .guest-submit button:hover {
   background: var(--main-box-color);
   color: var(--main-button-color);
+  transform: translateY(-2px);
 }
 
 /*booked.ejs*/
@@ -1206,13 +1211,14 @@ input[type="radio"]:checked + .radio-event {
   letter-spacing: 1px;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.3s ease;
+  transition: all 0.5s ease;
   display: block;
   margin: 30px auto;
 }
 
 .event-button:hover {
-  background-color: var(--secondary-button-color);
+  background: var(--main-box-color);
+  color: var(--main-button-color);
   transform: translateY(-2px);
   box-shadow: 0 4px 8px var(--main-box-color-blur);
 }
@@ -1273,7 +1279,7 @@ input[type="radio"]:checked + .radio-event {
   font-size: 1rem;
   color: var(--main-button-color);
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 3fr 1fr;
   justify-items: end;
 }
 .price-input {
