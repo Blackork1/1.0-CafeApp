@@ -12,6 +12,7 @@
       gap: 20px;
       justify-content: center;
       align-items: center;
+      padding: 40px 0;
     }
     .text-container {
       flex: 1;
@@ -27,13 +28,16 @@
     .split-area:last-child {
       margin-bottom: 80px;
     }
+    .flex-reverse{
+      flex-direction: row-reverse;
+    }
   </style>
   <body>
-    <div class="section">
+    <div class="section overflow-hidden">
       <div class="container">
         <%- include('partials/header') %>
         <h2 style="text-align: center">Die Geschichte der alten Backstube</h2>
-        <div class="split-area">
+        <div class="split-area slide-left">
           <div class="text-container">
             <h3>Der Beginn</h3>
             <p>
@@ -53,15 +57,7 @@
             />
           </div>
         </div>
-        <div class="split-area flex-reverse">
-          <div class="image-containers">
-            <img
-              src="/images/SchwarzWeiß.jpg"
-              alt="Die alte Backstube"
-              style="width: 100%"
-              class="vertical-image"
-            />
-          </div>
+        <div class="split-area flex-reverse slide-right opacity0">
           <div class="text-container">
             <h3>Kauf der Bäckerei</h3>
             <p>
@@ -72,8 +68,16 @@
               befindliche Haus in der Hauptstraße 155 zu erwerben.
             </p>
           </div>
+          <div class="image-containers">
+            <img
+              src="/images/SchwarzWeiß.jpg"
+              alt="Die alte Backstube"
+              style="width: 100%"
+              class="vertical-image"
+            />
+          </div>
         </div>
-        <div class="split-area">
+        <div class="split-area slide-left">
           <div class="text-container">
             <h3>Eröffnung</h3>
             <p>
@@ -94,14 +98,7 @@
             />
           </div>
         </div>
-        <div class="split-area flex-reverse">
-          <div class="image-containers">
-            <img
-              src="/images/Urkunde.jpg"
-              alt="Die alte Backstube"
-              style="width: 100%"
-            />
-          </div>
+        <div class="split-area flex-reverse slide-right">
           <div class="text-container">
             <h3>Nachkriegszeit</h3>
             <p>
@@ -113,8 +110,15 @@
               durch die DDR am 16.08.1987.
             </p>
           </div>
+          <div class="image-containers">
+            <img
+              src="/images/Urkunde.jpg"
+              alt="Die alte Backstube"
+              style="width: 100%"
+            />
+          </div>
         </div>
-        <div class="split-area">
+        <div class="split-area slide-left">
           <div class="text-container">
             <h3>Heute</h3>
             <p>
@@ -135,5 +139,7 @@
       </div>
     </div>
     <%- include('partials/footer') %>
+    <script src="/js/slideOnScoll.js"></script>
+
   </body>
 </html>

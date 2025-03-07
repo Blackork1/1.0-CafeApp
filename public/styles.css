@@ -260,6 +260,17 @@ input[type="text"], input[type="email"], select {
   transition: all 0.3s ease;
 }
 
+
+.slide-left, .slide-right {
+  transition: transform 0.8s ease-out, opacity 0.8s ease-out;
+  /* No hardcoded transform here because we update it dynamically */
+}
+
+.opacity0{
+  opacity: 0;
+}
+
+
 /* Container for the testimonial slider */
 .section-testimonial {
   padding: 0 60px 120px 60px;
@@ -362,6 +373,7 @@ input[type="text"], input[type="email"], select {
   padding-top: 30px;
   padding-bottom: 5px;
   z-index: 10;
+  height: 40px;
   border-bottom: 1px solid var(--secondary-button-color);
 }
 .navigation a {
@@ -372,8 +384,8 @@ input[type="text"], input[type="email"], select {
 }
 .navigation a:hover:not(.reserve-button) {
   border-bottom: 3px solid #ff9900;
-  transform: scale(1.05);
 }
+
 .nav-right {
   display: flex;
   align-items: center;
@@ -1357,7 +1369,7 @@ input[type="radio"]:checked + .radio-event {
   }
 
   .flex-reverse {
-    flex-direction: column-reverse !important;
+    flex-direction: column !important;
   }
 
   .img-left {
