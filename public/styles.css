@@ -1375,6 +1375,10 @@ input[type="radio"]:checked + .radio-event {
     flex-direction: column !important;
   }
 
+  .flex-reverse-main{
+    flex-direction: column-reverse;
+  }
+
   .img-left {
     margin-left: 0px;
   }
