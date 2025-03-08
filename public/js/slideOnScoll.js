@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const minVisibleRatio = window.innerWidth < 600 ? 0.5 : 0.8;
+    const minVisibleRatio = window.innerWidth < 600 ? 0.2 : 0.8;
 
-    const thresholds = Array.from({ length: 101 }, (_, i) => i / 100);
+    const thresholds = Array.from({ length: 51 }, (_, i) => i / 50);
     const observerOptions = { threshold: thresholds };
 
     const observer = new IntersectionObserver((entries) => {
