@@ -11,12 +11,6 @@
         <h4>Unternehmen</h4>
         <a href="/impressum">Über Uns</a>
         <a href="/impressum">Kontakt</a>
-        <button
-          onclick="resetCookieConsent()"
-          style="position: fixed; bottom: 10px; right: 10px; padding: 0.5em 1em"
-        >
-          Cookie-Einstellungen ändern
-        </button>
       </div>
       <div>
         <h4>Funktionen</h4>
@@ -93,7 +87,7 @@
     .addEventListener("click", function () {
       localStorage.setItem("allowCookies", "true");
       document.getElementById("cookieConsentBanner").style.display = "none";
-      loadGoogleTags();
+      location.reload(); // 🔄 Reload the page after accepting cookies
     });
 
   document
@@ -129,18 +123,13 @@
   }
 </script>
 
-<!-- Google Tag Manager (noscript) -->
-<noscript>
-  <iframe
-    src="https://www.googletagmanager.com/ns.html?id=GTM-TQWQWK8S"
-    height="0"
-    width="0"
-    style="display: none; visibility: hidden"
-  ></iframe>
-</noscript>
-
 <!-- Button to change cookie settings (place in footer) -->
-
+<button
+  onclick="resetCookieConsent()"
+  style="position: fixed; bottom: 10px; right: 10px; padding: 0.5em 1em"
+>
+  Cookie-Einstellungen ändern
+</button>
 <script>
   function resetCookieConsent() {
     localStorage.removeItem("allowCookies");
