@@ -1567,3 +1567,87 @@ body.loading {
     padding: 0 20px;
   }
 }
+
+/* Cookie-Banner */
+/* Content Box */
+#cookieConsentBanner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #222;
+  color: #fff;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 1em;
+  z-index: 1000;
+}
+
+.cookie-content {
+  background: #222;
+  padding: 30px;
+  text-align: center;
+  border-radius: 10px;
+  box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.2);
+}
+
+.cookie-content h2 {
+  font-size: 24px;
+  margin-bottom: 15px;
+}
+
+.cookie-content p {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+/* Button Styling */
+.cookie-content button {
+  padding: 12px 25px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Accept Button - More Clickable */
+.accept {
+  background: #28a745; /* Grün für Zustimmung */
+  color: white;
+  font-size: 18px; /* Größer als Ablehnen */
+  font-weight: bold;
+  padding: 15px 30px; /* Größerer Klickbereich */
+  box-shadow: 0px 5px 10px rgba(40, 167, 69, 0.4);
+}
+
+.accept:hover {
+  background: #218838;
+  box-shadow: 0px 8px 15px rgba(40, 167, 69, 0.5);
+}
+
+/* Decline Button - Less Emphasized */
+.decline {
+  background: #dc3545; /* Rot für Ablehnung */
+  color: white;
+  margin-left: 10px;
+  opacity: 0.8; /* Weniger auffällig */
+}
+
+.decline:hover {
+  background: #c82333;
+  opacity: 1;
+}
+
+/* Datenschutz-Link */
+.cookie-content a {
+  display: block;
+  margin-top: 15px;
+  color: #f1c40f;
+  text-decoration: none;
+}
+
+.cookie-content a:hover {
+  text-decoration: underline;
+}

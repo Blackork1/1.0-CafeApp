@@ -116,6 +116,10 @@ app.get("/geschichte", async (req, res) => {
     res.render("geschichte", { user: req.user || {} });
 });
 
+app.get("/cookies", async (req, res) => {
+    res.render("cookies.ejs", { user: req.user || {} });
+});
+
 //!!Reservation Area!!
 function getAvailableDays() {
     const now = new Date();

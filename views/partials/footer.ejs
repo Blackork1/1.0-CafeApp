@@ -43,30 +43,18 @@
   </div>
 </div>
 <!-- Cookie Consent Banner -->
-<div
-  id="cookieConsentBanner"
-  style="
-    display: none;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: #222;
-    color: #fff;
-    text-align: center;
-    padding: 1em;
-    z-index: 1000;
-  "
->
-  Diese Website verwendet Cookies und Google Tags, um die Benutzererfahrung zu
-  verbessern. Stimmen Sie der Nutzung zu?
-  <button id="acceptCookies" style="margin-left: 1em; padding: 0.5em 1em">
-    Akzeptieren
-  </button>
-  <button id="declineCookies" style="margin-left: 1em; padding: 0.5em 1em">
-    Ablehnen
-  </button>
-  <a href="/datenschutz">Erfahre mehr</a>
+<div id="cookieConsentBanner">
+  <div class="cookie-content">
+    <h3>🍪 Cookie-Einwilligung</h3>
+    <p>
+      Wir verwenden Cookies, um deine Erfahrung auf unserer Website zu
+      verbessern. Mit deiner Einwilligung kann die Seite besser auf deine
+      Bedürfnisse angepasst werden.
+    </p>
+    <button id="acceptCookies" class="accept">Akzeptieren</button>
+    <button id="declineCookies" class="decline">Ablehnen</button>
+    <a href="/cookies">Info</a>
+  </div>
 </div>
 
 <script>
