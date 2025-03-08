@@ -268,7 +268,6 @@ select {
 .slide-left,
 .slide-right {
   transition: transform 0.3s ease-out, opacity 0.2s ease-out;
-  /* No hardcoded transform here because we update it dynamically */
 }
 
 .opacity0 {
@@ -1375,7 +1374,7 @@ input[type="radio"]:checked + .radio-event {
     flex-direction: column !important;
   }
 
-  .flex-reverse-main{
+  .flex-reverse-main {
     flex-direction: column-reverse;
   }
 
@@ -1471,6 +1470,11 @@ input[type="radio"]:checked + .radio-event {
   }
   .drink-price {
     grid-template-columns: 1fr;
+  }
+
+  .slide-left,
+  .slide-right {
+    transition: all 0s;
   }
 }
 
