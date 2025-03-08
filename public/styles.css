@@ -44,15 +44,15 @@ h3 {
   text-align: center;
 }
 
-.m-b-0{
+.m-b-0 {
   margin-bottom: 0;
 }
 
-.p-b-60{
+.p-b-60 {
   padding-bottom: 60px;
 }
 
-.p-b-100{
+.p-b-100 {
   padding-bottom: 100px;
 }
 
@@ -78,7 +78,9 @@ p {
   line-height: 30px;
 }
 
-input[type="text"], input[type="email"], select {
+input[type="text"],
+input[type="email"],
+select {
   background-color: var(--main-bg-color); /* Light gray background */
   border: 0.5px solid var(--main-box-color-blur-2);
   border-radius: 4px; /* Slightly rounded corners */
@@ -94,7 +96,7 @@ input[type="text"], input[type="email"], select {
   max-width: 1160px;
 }
 
-.index-body{
+.index-body {
   background-image: url(/images/asfalt-dark.webp);
   background-color: #f0bd7a5c;
 }
@@ -122,7 +124,7 @@ input[type="text"], input[type="email"], select {
   color: var(--main-bg-color) !important;
 }
 
-.hero-text{
+.hero-text {
   font-size: 2rem;
 }
 
@@ -263,16 +265,15 @@ input[type="text"], input[type="email"], select {
   transition: all 0.3s ease;
 }
 
-
-.slide-left, .slide-right {
+.slide-left,
+.slide-right {
   transition: transform 0.8s ease-out, opacity 0.8s ease-out;
   /* No hardcoded transform here because we update it dynamically */
 }
 
-.opacity0{
+.opacity0 {
   opacity: 0;
 }
-
 
 /* Container for the testimonial slider */
 .section-testimonial {
@@ -1060,6 +1061,7 @@ input[type="radio"]:checked + .radio-label {
   gap: 20px;
   justify-content: center;
   padding-bottom: 60px;
+  min-height: 500px;
 }
 .card-blog {
   background-image: url(/images/cardBackground.jpg);
@@ -1134,7 +1136,7 @@ input[type="radio"]:checked + .radio-label {
   display: block;
 }
 
-.eventbuchung-form{
+.eventbuchung-form {
   background-image: url(/images/cardBackground.jpg);
   background-size: cover;
   padding-bottom: 10px;
@@ -1167,11 +1169,11 @@ textarea {
   border-radius: 8px;
 }
 
-.radio-event:last-child{
+.radio-event:last-child {
   grid-column: span 2;
 }
 
-.span2{
+.span2 {
   grid-column: span 2;
 }
 
@@ -1190,24 +1192,23 @@ textarea {
   background: var(--main-box-color);
   color: var(--secondary-button-color);
   transform: translateY(-2px);
-
 }
 
 input[type="radio"]:checked + .radio-event {
   background: var(--selected-radio-color);
 }
 
-.eventbuchung-email input{
+.eventbuchung-email input {
   width: 326px;
 }
 
-.flex-name-tel{
+.flex-name-tel {
   display: flex;
   justify-content: flex-start;
   gap: 40px;
 }
 
-.input-fields-grid{
+.input-fields-grid {
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
@@ -1242,7 +1243,6 @@ input[type="radio"]:checked + .radio-event {
   transform: translateY(1px);
   box-shadow: 0 2px 4px var(--main-box-color-blur-2);
 }
-
 
 /* menu.ejs */
 
