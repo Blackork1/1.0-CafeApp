@@ -11,6 +11,12 @@
         <h4>Unternehmen</h4>
         <a href="/impressum">Über Uns</a>
         <a href="/impressum">Kontakt</a>
+        <button
+          onclick="resetCookieConsent()"
+          style="position: fixed; bottom: 10px; right: 10px; padding: 0.5em 1em"
+        >
+          Cookie-Einstellungen ändern
+        </button>
       </div>
       <div>
         <h4>Funktionen</h4>
@@ -42,5 +48,104 @@
     </div>
   </div>
 </div>
+<!-- Cookie Consent Banner -->
+<div
+  id="cookieConsentBanner"
+  style="
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #222;
+    color: #fff;
+    text-align: center;
+    padding: 1em;
+    z-index: 1000;
+  "
+>
+  Diese Website verwendet Cookies und Google Tags, um die Benutzererfahrung zu
+  verbessern. Stimmen Sie der Nutzung zu?
+  <button id="acceptCookies" style="margin-left: 1em; padding: 0.5em 1em">
+    Akzeptieren
+  </button>
+  <button id="declineCookies" style="margin-left: 1em; padding: 0.5em 1em">
+    Ablehnen
+  </button>
+  <a href="/datenschutz">Erfahre mehr</a>
+</div>
+
+<script>
+  // Check if the user has already made a choice
+  document.addEventListener("DOMContentLoaded", function () {
+    const cookieDecision = localStorage.getItem("allowCookies");
+
+    if (cookieDecision === "true") {
+      loadGoogleTags();
+    } else if (cookieDecision === null) {
+      document.getElementById("cookieConsentBanner").style.display = "block";
+    }
+  });
+
+  // Handle user decision
+  document
+    .getElementById("acceptCookies")
+    .addEventListener("click", function () {
+      localStorage.setItem("allowCookies", "true");
+      document.getElementById("cookieConsentBanner").style.display = "none";
+      loadGoogleTags();
+    });
+
+  document
+    .getElementById("declineCookies")
+    .addEventListener("click", function () {
+      localStorage.setItem("allowCookies", "false");
+      document.getElementById("cookieConsentBanner").style.display = "none";
+    });
+
+  // Load Google Tag Manager only if the user has accepted cookies
+  function loadGoogleTags() {
+    var script1 = document.createElement("script");
+    script1.async = true;
+    script1.src = "https://www.googletagmanager.com/gtag/js?id=G-7KCV3QVBP7";
+    document.head.appendChild(script1);
+
+    var script2 = document.createElement("script");
+    script2.text =
+      "window.dataLayer = window.dataLayer || [];\n" +
+      "function gtag(){dataLayer.push(arguments);}\n" +
+      "gtag('js', new Date());\n" +
+      "gtag('config', 'G-7KCV3QVBP7');";
+    document.head.appendChild(script2);
+
+    var script3 = document.createElement("script");
+    script3.text =
+      "(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\n" +
+      "new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],\n" +
+      "j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\n" +
+      "'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);\n" +
+      "})(window,document,'script','dataLayer','GTM-TQWQWK8S');";
+    document.head.appendChild(script3);
+  }
+</script>
+
+<!-- Google Tag Manager (noscript) -->
+<noscript>
+  <iframe
+    src="https://www.googletagmanager.com/ns.html?id=GTM-TQWQWK8S"
+    height="0"
+    width="0"
+    style="display: none; visibility: hidden"
+  ></iframe>
+</noscript>
+
+<!-- Button to change cookie settings (place in footer) -->
+
+<script>
+  function resetCookieConsent() {
+    localStorage.removeItem("allowCookies");
+    location.reload();
+  }
+</script>
 <script src="/js/slideIn.js"></script>
 <script src="/js/navToggle.js"></script>
