@@ -12,7 +12,6 @@
 }
 
 body {
-  font-family: Arial, sans-serif;
   margin: 0px;
   background-color: var(--main-bg-color);
 }
@@ -121,6 +120,10 @@ input[type="text"], input[type="email"], select {
 .hero-heading,
 .hero-text {
   color: var(--main-bg-color) !important;
+}
+
+.hero-text{
+  font-size: 2rem;
 }
 
 .p-hero {
