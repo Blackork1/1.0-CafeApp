@@ -39,7 +39,7 @@
 
 document.addEventListener("DOMContentLoaded", function () {
   // Set the minimum visible ratio (0.8 for larger screens, or 0.2 for small screens)
-  const minVisibleRatio = window.innerWidth < 600 ? 0.2 : 0.7;
+  const minVisibleRatio = window.innerWidth < 600 ? 0.1 : 0.7;
   // Create thresholds from 0 to 1 in 0.01 steps
   const thresholds = Array.from({ length: 101 }, (_, i) => i / 100);
   const observerOptions = { threshold: thresholds };
