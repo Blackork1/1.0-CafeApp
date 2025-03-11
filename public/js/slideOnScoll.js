@@ -52,9 +52,9 @@ document.addEventListener("DOMContentLoaded", function () {
         // When the element is less than the minimum visible ratio, keep it hidden at full offset.
         entry.target.style.opacity = 0;
         if (entry.target.classList.contains("slide-left")) {
-          entry.target.style.transform = `translateX(-50px)`;
+          entry.target.style.transform = `translateX(-100px)`;
         } else if (entry.target.classList.contains("slide-right")) {
-          entry.target.style.transform = `translateX(50px)`;
+          entry.target.style.transform = `translateX(100px)`;
         }
       } else {
         // When the element is at least minVisibleRatio visible, calculate a progress factor.

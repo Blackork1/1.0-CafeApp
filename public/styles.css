@@ -42,6 +42,7 @@ h3 {
   align-self: center;
   align-content: center;
   text-align: center;
+  margin: 0 auto;
 }
 
 .m-b-0 {
@@ -1023,6 +1024,7 @@ input[type="radio"]:checked + .radio-label {
 }
 
 .left-footer p,
+.left-footer a,
 .right-footer a {
   font-size: 1em;
   margin: 0;
@@ -1658,4 +1660,10 @@ body.loading {
 
 .cookie-content a:hover {
   text-decoration: underline;
+}
+
+.kartenzahlung-image img{
+  width: 170px;
+  height: 230px;
+  border-radius: 10px;
 }

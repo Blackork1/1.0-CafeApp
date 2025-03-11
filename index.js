@@ -302,7 +302,7 @@ app.get("/booked", async (req, res) => {
 
 //!!Blog Area!!
 // Display all blog posts (only main image and heading)
-app.get('/blog', async (req, res) => {    
+app.get('/blog', async (req, res) => {
     try {
         const result = await db.query("SELECT id, heading, main_image, date FROM blog ORDER BY date DESC");
         res.render("blog", { posts: result.rows, user: req.user || {} });
@@ -570,7 +570,7 @@ app.get("/angefragt", (req, res) => {
 // GET /menu: Fetch menu items, group by category, and render the page
 app.get('/menu', async (req, res) => {
     try {
-        const result = await db.query("SELECT * FROM menu ORDER BY main_category, id");
+        const result = await db.query("SELECT * FROM menu ORDER BY sort, main_category, id");
         // Group by main_category
         const categories = {};
         result.rows.forEach(drink => {
@@ -583,7 +583,7 @@ app.get('/menu', async (req, res) => {
             mainCategory: cat,
             drinks: categories[cat]
         }));
-        res.render('menu', { categories: categoriesArray, user: req.user || {}});
+        res.render('menu', { categories: categoriesArray, user: req.user || {} });
     } catch (err) {
         console.error("Error fetching menu:", err);
         res.status(500).send("Error fetching menu");
@@ -606,6 +606,29 @@ app.patch('/menu/:id', async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 });
+
+// PATCH /menu/category/:category - Update category name and sort order
+app.patch('/menu/category/:category', async (req, res) => {
+    const { category } = req.params;
+    const { newCategoryName, newSort } = req.body;
+
+    try {
+        const result = await db.query(
+            "UPDATE menu SET main_category = $1, sort = $2 WHERE main_category = $3 RETURNING *",
+            [newCategoryName, newSort, category]
+        );
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: "Kategorie nicht gefunden" });
+        }
+
+        res.json({ message: "Kategorie aktualisiert", category: result.rows });
+    } catch (err) {
+        console.error("Fehler beim Aktualisieren der Kategorie:", err);
+        res.status(500).json({ error: "Interner Serverfehler" });
+    }
+});
+
 
 // PATCH /menu/:id/toggle - enable/disable a drink
 app.patch('/menu/:id/toggle', async (req, res) => {
@@ -638,16 +661,32 @@ app.delete('/menu/:id', async (req, res) => {
 
 // POST /menu - add a new drink
 app.post('/menu', async (req, res) => {
-    const { name, price, image, main_category, description } = req.body;
+    const { name, price, hinweis, main_category, description } = req.body;
     try {
         const result = await db.query(
-            "INSERT INTO menu (name, price, image, description, main_category, enabled) VALUES ($1, $2, $3, $4, $5, true) RETURNING *",
-            [name, price, image, description || '', main_category]
+            "INSERT INTO menu (name, price, hinweis, image, description, main_category, enabled) VALUES ($1, $2, $3, $4, $5, $6, true) RETURNING *",
+            [name, price, hinweis, ' ', description || '', main_category]
         );
         res.json({ message: "Drink added", drink: result.rows[0] });
     } catch (err) {
         console.error("Error adding drink:", err);
         res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+// POST /menu/category – fügt eine neue Kategorie mit einem Getränk hinzu
+app.post('/menu/category', async (req, res) => {
+    const { category, name, price, hinweis } = req.body;
+    try {
+        const result = await db.query(
+            `INSERT INTO menu (name, price, image, description, main_category, enabled, hinweis)
+         VALUES ($1, $2, $3, $4, $5, true, $6) RETURNING *`,
+            [name, price, '', '', category, hinweis]
+        );
+        res.json({ message: "Neue Kategorie und Getränk hinzugefügt", drink: result.rows[0] });
+    } catch (err) {
+        console.error("Fehler beim Hinzufügen der neuen Kategorie:", err);
+        res.status(500).json({ error: "Interner Serverfehler" });
     }
 });
 
@@ -657,15 +696,15 @@ app.get("/login", async (req, res) => {
 });
 
 //impressum, agb, datenschutz
-app.get("/impressum", async(req,res) =>{
+app.get("/impressum", async (req, res) => {
     res.render("impressum.ejs", { user: req.user || {} })
 });
 
-app.get("/agb", async(req,res) =>{
+app.get("/agb", async (req, res) => {
     res.render("agb.ejs", { user: req.user || {} })
 })
 
-app.get("/datenschutz", async(req,res) =>{
+app.get("/datenschutz", async (req, res) => {
     res.render("datenschutz.ejs", { user: req.user || {} })
 })
 
