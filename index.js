@@ -21,6 +21,8 @@ const saltRounds = 10;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+app.use(express.static(path.join(__dirname, 'public'), { maxAge: '30d' }));
+
 const transporter = nodemailer.createTransport({
     host: "mail.manitu.de", // Manitu SMTP server
     port: 587, // Use 587 for STARTTLS (recommended) or 465 for SSL
