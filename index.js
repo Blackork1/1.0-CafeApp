@@ -13,6 +13,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import methodOverride from 'method-override';
+import compression from 'compression';
 
 env.config();
 const app = express();
@@ -74,6 +75,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.json());
 app.use(methodOverride('_method'));
+app.use(compression());
+
 
 // Multer-Konfiguration: Dateien werden im Arbeitsspeicher gehalten
 const storage = multer.memoryStorage();
