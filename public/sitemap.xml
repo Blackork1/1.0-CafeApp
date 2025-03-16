@@ -21,13 +21,6 @@
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
-  <!-- Blog Post (blogPost.ejs) -->
-  <url>
-    <loc>https://www.zuraltenbackstube.de/blogPost</loc>
-    <lastmod>2025-03-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
   <!-- Booked (booked.ejs) -->
   <url>
     <loc>https://www.zuraltenbackstube.de/booked</loc>
