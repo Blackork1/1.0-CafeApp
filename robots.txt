@@ -3,4 +3,5 @@ Disallow: /admin/
 Disallow: /private/
 Allow: /
 
+
 Sitemap: https://zuraltenbackstube.de/sitemap.xml
