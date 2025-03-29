@@ -50,7 +50,7 @@ $(document).ready(function () {
   // Delete drink via Ajax
   $('.delete-drink').on('click', function (e) {
     e.preventDefault();
-    if (!confirm("Are you sure you want to delete this drink?")) return;
+    // if (!confirm("Are you sure you want to delete this drink?")) return;
     const drinkId = $(this).data('drink-id');
 
     $.ajax({
