@@ -3,14 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Neuer Blog-Post</title>
+    <title>Neue Veranstaltung</title>
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
     <div class="section">
       <%- include('partials/header') %>
       <div class="container">
-        <h1 class="center">Neuer Blog</h1>
+        <h1 class="center">Neue Veranstaltung</h1>
         <form action="/newBlog" method="POST" enctype="multipart/form-data">
           <div class="newBlog">
             <label for="heading">Titel:</label>
@@ -31,7 +31,7 @@
               name="mainImage"
               id="mainImage"
               accept="image/jpeg, image/png"
-              
+              required
             />
 
             <label for="extraImages">Extra Bilder (max. 5, JPG/PNG):</label>
