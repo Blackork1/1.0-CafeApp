@@ -348,9 +348,9 @@ app.post("/newBlog", upload.fields([
 ]), async (req, res) => {
     const { heading, text } = req.body;
     // Validate that a main image was uploaded.
-    if (!req.files || !req.files.mainImage) {
-        return res.status(400).send('Main image is required.');
-    }
+    // if (!req.files || !req.files.mainImage) {
+    //     return res.status(400).send('Main image is required.');
+    // }
 
     // Save main image without any processing
     const mainImageBuffer = req.files.mainImage[0].buffer;
@@ -815,6 +815,6 @@ passport.deserializeUser(async (user, done) => {
     }
 });
 
-app.listen(port, () => {
+app.listen(port, "0.0.0.0", function(){
     console.log(`Server running on port http://localhost:${port}`);
 });
