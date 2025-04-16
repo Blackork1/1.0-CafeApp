@@ -148,6 +148,7 @@ select {
   display: flex;
   flex-direction: column;
   max-width: 500px;
+  padding-top: 450px;
 }
 
 .lower-hero p,

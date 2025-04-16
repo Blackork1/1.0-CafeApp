@@ -94,14 +94,59 @@ const upload = multer({
     },
 });
 // Function to get weekend dates (next 4 weeks) in YYYY-MM-DD format
+// Helper: Get banner settings from the database
+async function getBannerSettings() {
+    try {
+        const textResult = await db.query("SELECT value FROM settings WHERE key = 'bannerText'");
+        const bannerText = textResult.rows.length ? textResult.rows[0].value : 'Willkommen auf unserer Seite!';
+        const enabledResult = await db.query("SELECT value FROM settings WHERE key = 'bannerEnabled'");
+        const bannerEnabled = enabledResult.rows.length ? (enabledResult.rows[0].value === 'true') : true;
+        return { bannerText, bannerEnabled };
+    } catch (err) {
+        console.error('Error fetching banner settings:', err);
+        return { bannerText: '', bannerEnabled: true };
+    }
+}
 
 // Step 1: Show table selection
 app.get("/", async (req, res) => {
+    const bannerSettings = await getBannerSettings();
+
     try {
-        res.render("index", { user: req.user || {} });
+        console.log("settings are: ", bannerSettings);
+        res.render("index", {
+            user: req.user || {}, bannerText: bannerSettings.bannerText,
+            bannerEnabled: bannerSettings.bannerEnabled,
+        });
     } catch (err) {
         console.error("Database error:", err);
         res.status(500).send("Internal Server Error");
+    }
+});
+
+// PATCH endpoint to update banner text
+app.patch('/update-banner-text', async (req, res) => {
+    const { bannerText } = req.body;
+    try {
+        await db.query("UPDATE settings SET value = $1 WHERE key = 'bannerText'", [bannerText]);
+        res.json({ message: "Banner Text updated" });
+    } catch (err) {
+        console.error("Error updating banner text:", err);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+// PATCH endpoint to toggle banner visibility
+app.patch('/toggle-banner', async (req, res) => {
+    try {
+        const result = await db.query("SELECT value FROM settings WHERE key = 'bannerEnabled'");
+        let currentState = result.rows.length ? (result.rows[0].value === 'true') : true;
+        const newState = !currentState;
+        await db.query("UPDATE settings SET value = $1 WHERE key = 'bannerEnabled'", [newState.toString()]);
+        res.json({ bannerEnabled: newState });
+    } catch (err) {
+        console.error("Error toggling banner:", err);
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 
@@ -816,6 +861,6 @@ passport.deserializeUser(async (user, done) => {
     }
 });
 
-app.listen(port, "0.0.0.0", function(){
+app.listen(port, "0.0.0.0", function () {
     console.log(`Server running on port http://localhost:${port}`);
 });
