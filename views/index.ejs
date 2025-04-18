@@ -30,17 +30,16 @@
         white-space: nowrap;
         background: none; /* Use your theme color */
         padding: 20px 0 0 0;
-        margin-bottom: 0;
+        margin-bottom: -60px;
         display: block;
       }
       .banner-text {
         display: inline-block;
         padding-left: 100%;
         animation: scrollText linear infinite;
-        animation-duration: 15s; /* kann dynamisch angepasst werden */
-
+        animation-duration: 10s; /* kann dynamisch angepasst werden */
         font-size: 2rem;
-        color: var(--main-box-color);
+        color: var(--main-bg-color);
         left: 100%;
       }
       @keyframes scrollText {
@@ -80,6 +79,9 @@
       .hidden {
         display: none;
       }
+      .show {
+        display: block
+      }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link
@@ -110,15 +112,49 @@
   </head>
   <body class="index-body">
     <div class="hero">
-      <div class="nav-bar-hero"><%- include('partials/header') %></div>
+      <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TQWQWK8S"
+        height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+        <!-- End Google Tag Manager (noscript) -->
+      <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap"
+      rel="stylesheet"
+      />
+      <div class="container">
+        <div class="navigation" id="navigation">
+          <div class="logo">
+            <a style="color: var(--main-bg-color);" href="/">Home</a>
+          </div>
+          <div class="nav-right">
+            <img
+              src="/images/Nav-Bar-Icon-Home.svg"
+              alt="Menu Icon"
+              class="menu-icon"
+              id="menu-icon"
+            />
+            <div class="links heroLinks" id="nav-links" >
+              <% if(user.isAdmin){%>
+              <!-- <a href="/allReservations">Alle Reservierungen</a> -->
+              <a class="heroLinks" href="/newBlog">Neue Veranstaltung</a>
+              <a class="heroLinks" href="/logout">Log-Out</a>
+              <% } %>
+              <a class="heroLinks" href="/geschichte">Geschichte</a>
+              <a class="heroLinks" href="/blog">Aktuelles</a>
+              <a class="heroLinks" href="/menu">Getränkekarte</a>
+              <a class="heroLinks" href="/eventbuchung">Feier buchen</a>
+              <!-- <a href="/reservation" class="reserve-button">Reservierung</a> -->
+            </div>
+          </div>
+        </div>
+      </div>
+      <% if (bannerEnabled) { %>
       <!-- Scrolling Banner -->
       <div
         class="banner-container"
-        class="<%= bannerEnabled ? '' : 'hidden' %>"
+        class="<%= bannerEnabled ? 'show' : 'hidden' %>"
       >
         <div class="banner-text"><%= bannerText %></div>
       </div>
-
+      <%} %>
       <!-- Admin Control Panel for the Banner -->
       <% if (user && user.isAdmin) { %>
       <div class="banner-admin">
