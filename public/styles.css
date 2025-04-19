@@ -1290,15 +1290,17 @@ input[type="radio"]:checked + .radio-event {
   border-bottom: none;
 }
 .drink-name {
-  font-size: 1rem;
+  font-size: 0.8rem;
   color: var(--secondary-text-color);
 }
 .drink-price {
-  font-size: 1rem;
+  font-size: 0.8rem;
   color: var(--main-button-color);
   display: grid;
   grid-template-columns: 3fr 1fr;
   justify-items: end;
+  padding-left: 50px;
+  min-width: 45px;
 }
 .price-input {
   width: 60px;
