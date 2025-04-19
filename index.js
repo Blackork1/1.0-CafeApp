@@ -621,7 +621,9 @@ app.get("/angefragt", (req, res) => {
 // GET /menu: Fetch menu items, group by category, and render the page
 app.get('/menu', async (req, res) => {
     try {
-        const result = await db.query("SELECT * FROM menu ORDER BY sort, main_category, id");
+        // Neue Sortierung: nach main_category, dann nach position (nicht mehr nach "sort" oder id)
+        const result = await db.query("SELECT * FROM menu ORDER BY sort, main_category, position ASC");
+
         // Group by main_category
         const categories = {};
         result.rows.forEach(drink => {
@@ -630,16 +632,46 @@ app.get('/menu', async (req, res) => {
             }
             categories[drink.main_category].push(drink);
         });
+
         const categoriesArray = Object.keys(categories).map(cat => ({
             mainCategory: cat,
             drinks: categories[cat]
         }));
+
         res.render('menu', { categories: categoriesArray, user: req.user || {} });
     } catch (err) {
         console.error("Error fetching menu:", err);
         res.status(500).send("Error fetching menu");
     }
 });
+
+app.patch('/menu/reorder', async (req, res) => {
+    // Admin‑Check (angenommen du nutzt req.user.isAdmin)
+    if (!req.user || !req.user.isAdmin) {
+      return res.status(403).json({ error: 'Nur Admins dürfen das.' });
+    }
+  
+    const { category, newOrder } = req.body;
+    if (!category || !Array.isArray(newOrder)) {
+      return res.status(400).json({ error: 'Ungültiges Format. Erwartet category + Array newOrder' });
+    }
+  
+    try {
+      for (let i = 0; i < newOrder.length; i++) {
+        const drinkId = newOrder[i];
+        await db.query(
+          'UPDATE menu SET position = $1 WHERE id = $2 AND main_category = $3',
+          [i, drinkId, category]
+        );
+      }
+      console.log('✅ Positionen aktualisiert');
+      res.json({ message: 'Reihenfolge gespeichert' });
+    } catch (err) {
+      console.error('❌ Fehler beim Speichern der Position:', err);
+      // Gib err.message ans Frontend zurück, damit du siehst, was wirklich klemmt
+      res.status(500).json({ error: err.message });
+    }
+  });
 
 // PATCH /menu/:id - update price
 app.patch('/menu/:id', async (req, res) => {
@@ -703,7 +735,6 @@ app.delete('/menu/:id', async (req, res) => {
     const drinkId = req.params.id;
     try {
         await db.query("DELETE FROM menu WHERE id = $1", [drinkId]);
-        res.json({ message: "Drink deleted" });
     } catch (err) {
         console.error("Error deleting drink:", err);
         res.status(500).json({ error: "Internal server error" });
@@ -740,6 +771,10 @@ app.post('/menu/category', async (req, res) => {
         res.status(500).json({ error: "Interner Serverfehler" });
     }
 });
+
+
+  
+
 
 //!!Log-In/ Register Area!!
 app.get("/login", async (req, res) => {

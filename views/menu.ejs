@@ -10,9 +10,13 @@
       content="Getränkekarte zur alten Backstube. Hier findest du alle Getränke, welche in unserer Backstube angeboten werden."
     />
     <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
-    <link rel="canonical" href="https://www.zuraltenbackstube.de/menu">
-    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-        <!-- Include jQuery from CDN -->
+    <link rel="canonical" href="https://www.zuraltenbackstube.de/menu" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/images/apple-touch-icon.png"
+    />
+    <!-- Include jQuery from CDN -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
   <style>
@@ -40,7 +44,7 @@
             step="0.1"
             required
           />
-          <input type="number" name="sort" placeholder="Reinfolge" required />
+          <input type="number" name="sort" placeholder="Reihenfolge" required />
           <button type="submit">Kategorie & Getränk hinzufügen</button>
         </form>
       </div>
@@ -57,7 +61,6 @@
               value="<%= category.mainCategory %>"
               data-category="<%= category.mainCategory %>"
             />
-            <%= console.log(category.sort)%>
             <input
               type="number"
               class="category-sort-input"
@@ -75,14 +78,16 @@
           <% } else { %>
           <h2 class="category-title"><%= category.mainCategory %></h2>
           <% } %>
-          <ul class="drink-list">
-            <% category.drinks.forEach(drink => { if (!(user && user.isAdmin)
-            &&!drink.enabled) return; %>
+
+          <ul class="drink-list" data-category="<%= category.mainCategory %>">
+            <% category.drinks.forEach(drink => {
+                 if (!(user && user.isAdmin) && !drink.enabled) return;
+            %>
             <li class="drink-item" data-drink-id="<%= drink.id %>">
-              <span class="drink-name"
-                ><%= drink.name %>
-                <p class="hinweis"><%=drink.hinweis %></p></span
-              >
+              <span class="drink-name">
+                <%= drink.name %>
+                <p class="hinweis"><%= drink.hinweis %></p>
+              </span>
               <span class="drink-price">
                 <% if (user && user.isAdmin) { %>
                 <input
@@ -113,11 +118,15 @@
                 >
                   Einblenden
                 </button>
-                <% } %> <% } else { %> <%= drink.price %> <% } %>
+                <% } %>
+                <% } else { %>
+                <%= drink.price %> €
+                <% } %>
               </span>
             </li>
             <% }); %>
           </ul>
+
           <% if (user && user.isAdmin) { %>
           <div class="add-drink">
             <h3>Neues Getränk hinzufügen</h3>
@@ -139,7 +148,6 @@
                 required
               />
               <input type="text" name="hinweis" placeholder="Hinweis" />
-              <!-- Optional: description field -->
               <button type="submit">Hinzufügen</button>
             </form>
           </div>
@@ -148,7 +156,51 @@
         <% }); %>
       </div>
     </div>
+
     <script src="/js/ajaxMenu.js"></script>
     <%- include('partials/footer') %>
+
+    <% if (user && user.isAdmin) { %>
+    <!-- jQuery UI für Drag & Drop (nur für Admins) -->
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <script>
+      $(function () {
+        $('.drink-list').sortable({
+          placeholder: 'sortable-placeholder',
+          update: function () {
+            const $list = $(this);
+            const category = $list.closest('.menu-card').data('category');
+            const newOrder = $list
+              .children('.drink-item')
+              .map((_, el) => $(el).data('drink-id'))
+              .get();
+
+            $.ajax({
+              url: '/menu/reorder',
+              method: 'PATCH',
+              contentType: 'application/json',
+              data: JSON.stringify({ category, newOrder }),
+              success() {
+                console.log('✅ Reihenfolge gespeichert');
+              },
+              error(xhr) {
+                const err = JSON.parse(xhr.responseText).error;
+                console.error('❌ Fehler beim Speichern der Sortierung:', err);
+                alert('Fehler beim Speichern: ' + err);
+              }
+            });
+          }
+        }).disableSelection();
+      });
+    </script>
+    <style>
+      .sortable-placeholder {
+        background: #eee;
+        border: 2px dashed #aaa;
+        height: 2em;
+        margin: 4px 0;
+      }
+    </style>
+    <% } %>
   </body>
 </html>
