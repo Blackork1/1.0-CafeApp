@@ -623,7 +623,6 @@ app.get('/menu', async (req, res) => {
     try {
         // Neue Sortierung: nach main_category, dann nach position (nicht mehr nach "sort" oder id)
         const result = await db.query("SELECT * FROM menu ORDER BY sort, main_category, position ASC");
-
         // Group by main_category
         const categories = {};
         result.rows.forEach(drink => {
