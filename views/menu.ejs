@@ -16,13 +16,20 @@
       sizes="180x180"
       href="/images/apple-touch-icon.png"
     />
-    <!-- Include jQuery from CDN -->
+    <!-- jQuery für AJAX-Requests -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
   <style>
     .hinweis {
       display: inline;
       font-size: 5px;
+    }
+    /* Sortable.js Styles */
+    .sortable-ghost {
+      opacity: 0.4;
+    }
+    .sortable-chosen {
+      background: #f0f0f0;
     }
   </style>
   <body>
@@ -31,6 +38,7 @@
       <h2 class="center">Getränkekarte</h2>
 
       <% if (user && user.isAdmin) { %>
+      <!-- Admin: Neue Kategorie anlegen -->
       <div class="menu-card add-category center">
         <h2 class="category-title">Neue Kategorie erstellen</h2>
         <form class="add-category-form">
@@ -44,8 +52,7 @@
             step="0.1"
             required
           />
-          <input type="number" name="sort" placeholder="Reihenfolge" required />
-          <button type="submit">Kategorie & Getränk hinzufügen</button>
+          <button type="submit">Kategorie &amp; Getränk hinzufügen</button>
         </form>
       </div>
       <% } %>
@@ -54,6 +61,7 @@
         <% categories.forEach(category => { %>
         <div class="menu-card" data-category="<%= category.mainCategory %>">
           <% if (user && user.isAdmin) { %>
+          <!-- Admin: Kategorie bearbeiten -->
           <div class="category-edit">
             <input
               type="text"
@@ -71,15 +79,14 @@
             <button
               class="update-category"
               data-category="<%= category.mainCategory %>"
-            >
-              ✅
-            </button>
+            >✅</button>
           </div>
           <% } else { %>
           <h2 class="category-title"><%= category.mainCategory %></h2>
           <% } %>
 
-          <ul class="drink-list" data-category="<%= category.mainCategory %>">
+          <!-- Drink-Liste -->
+          <ul class="drink-list">
             <% category.drinks.forEach(drink => {
                  if (!(user && user.isAdmin) && !drink.enabled) return;
             %>
@@ -96,28 +103,20 @@
                   value="<%= drink.price %>"
                   data-drink-id="<%= drink.id %>"
                 />
-                <button class="update-price" data-drink-id="<%= drink.id %>">
-                  ✅
-                </button>
-                <button class="delete-drink" data-drink-id="<%= drink.id %>">
-                  Löschen
-                </button>
+                <button class="update-price" data-drink-id="<%= drink.id %>">✅</button>
+                <button class="delete-drink" data-drink-id="<%= drink.id %>">Löschen</button>
                 <% if (drink.enabled) { %>
                 <button
                   class="toggle-drink"
                   data-drink-id="<%= drink.id %>"
                   data-enabled="true"
-                >
-                  Ausblenden
-                </button>
+                >Ausblenden</button>
                 <% } else { %>
                 <button
                   class="toggle-drink"
                   data-drink-id="<%= drink.id %>"
                   data-enabled="false"
-                >
-                  Einblenden
-                </button>
+                >Einblenden</button>
                 <% } %>
                 <% } else { %>
                 <%= drink.price %> €
@@ -128,6 +127,7 @@
           </ul>
 
           <% if (user && user.isAdmin) { %>
+          <!-- Admin: Neuen Drink hinzufügen -->
           <div class="add-drink">
             <h3>Neues Getränk hinzufügen</h3>
             <form
@@ -157,50 +157,44 @@
       </div>
     </div>
 
+    <!-- AJAX-Funktionen -->
     <script src="/js/ajaxMenu.js"></script>
+
     <%- include('partials/footer') %>
 
     <% if (user && user.isAdmin) { %>
-    <!-- jQuery UI für Drag & Drop (nur für Admins) -->
-    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <!-- Sortable.js für Drag & Drop auf Desktop & Mobile -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script>
-      $(function () {
-        $('.drink-list').sortable({
-          placeholder: 'sortable-placeholder',
-          update: function () {
-            const $list = $(this);
-            const category = $list.closest('.menu-card').data('category');
-            const newOrder = $list
-              .children('.drink-item')
-              .map((_, el) => $(el).data('drink-id'))
-              .get();
-
-            $.ajax({
-              url: '/menu/reorder',
-              method: 'PATCH',
-              contentType: 'application/json',
-              data: JSON.stringify({ category, newOrder }),
-              success() {
-                console.log('✅ Reihenfolge gespeichert');
-              },
-              error(xhr) {
-                const err = JSON.parse(xhr.responseText).error;
-                console.error('❌ Fehler beim Speichern der Sortierung:', err);
-                alert('Fehler beim Speichern: ' + err);
+      document.querySelectorAll('.drink-list').forEach(listEl => {
+        new Sortable(listEl, {
+          animation: 150,
+          ghostClass: 'sortable-ghost',
+          chosenClass: 'sortable-chosen',
+          onEnd: async evt => {
+            const list = evt.to;
+            const category = list.closest('.menu-card').dataset.category;
+            const newOrder = Array.from(list.children)
+              .map(li => li.dataset.drinkId);
+            try {
+              const res = await fetch('/menu/reorder', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ category, newOrder })
+              });
+              if (!res.ok) {
+                const err = await res.json();
+                throw err;
               }
-            });
+              console.log('✅ Reihenfolge gespeichert');
+            } catch (err) {
+              console.error('❌ Fehler beim Speichern der Sortierung:', err.error || err);
+              alert('Fehler beim Speichern: ' + (err.error || err));
+            }
           }
-        }).disableSelection();
+        });
       });
     </script>
-    <style>
-      .sortable-placeholder {
-        background: #eee;
-        border: 2px dashed #aaa;
-        height: 2em;
-        margin: 4px 0;
-      }
-    </style>
     <% } %>
   </body>
 </html>
