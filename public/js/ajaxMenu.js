@@ -97,13 +97,13 @@ $(document).ready(function () {
     const name = form.find('input[name="name"]').val();
     const price = form.find('input[name="price"]').val();
     const hinweis = form.find('input[name="hinweis"]').val();
-
+    const sort = form.find('input[name="sort"]').val();
 
     $.ajax({
       url: `/menu`,
       method: 'POST',
       contentType: 'application/json',
-      data: JSON.stringify({ name, price, hinweis, main_category: category }),
+      data: JSON.stringify({ name, price, hinweis, main_category: category, sort}),
       success: function (response) {
         const newDrink = response.drink;
         const newDrinkHTML = `
@@ -139,7 +139,7 @@ $(document).ready(function () {
       url: '/menu/category',
       method: 'POST',
       contentType: 'application/json',
-      data: JSON.stringify({ category, name, price, hinweis}),
+      data: JSON.stringify({ main_category: category, name, price, hinweis}),
       success: function (response) {
         // Option 1: Seite neu laden, um die neue Kategorie zu sehen
         location.reload();
