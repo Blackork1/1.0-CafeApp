@@ -44,7 +44,7 @@
               value="<%= post.heading %>"
               required
             />
-
+            <br>
             <label for="text">Text:</label>
             <textarea name="text" id="text" rows="8" required>
 <%= post.text %></textarea
@@ -53,7 +53,7 @@
             <div class="image-preview">
               <h3>Aktuelles Hauptbild:</h3>
               <% if (post.main_image) { %>
-              <img src="/uploads/<%= post.main_image %>" alt="Hauptbild" />
+              <img src="<%= post.main_image %>" alt="Hauptbild" />
               <% } else { %>
               <p>Kein Hauptbild vorhanden.</p>
               <% } %>
@@ -71,7 +71,7 @@
               <% if (post.extra_images) { %>
               <div class="extra-preview">
                 <% post.extra_images.forEach(function(img) { %>
-                <img src="/uploads/<%= img %>" alt="Extra Bild" />
+                <img src="<%= img.url %>" alt="Extra Bild" />
                 <% }); %>
               </div>
               <% } else { %>
