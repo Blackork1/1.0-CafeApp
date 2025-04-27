@@ -1304,7 +1304,7 @@ input[type="radio"]:checked + .radio-event {
   grid-template-columns: 3fr 1fr;
   justify-items: end;
   padding-left: 50px;
-  min-width: 45px;
+  min-width: 60px;
 }
 .price-input {
   width: 60px;
