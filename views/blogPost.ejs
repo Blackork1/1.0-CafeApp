@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= post.heading %></title>
     <link rel="stylesheet" href="/styles.css" />
-    <meta name="description" content="Hier findest du den Blog zum Thema: <%= post.heading %>">
-
+    <meta
+      name="description"
+      content="Hier findest du den Blog zum Thema: <%= post.heading %>"
+    />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
     <style>
       .main-image {
         width: 100%;
@@ -45,7 +48,7 @@
         <% if (post.main_image) { %>
         <div class="main-image">
           <img
-            src="/uploads/<%= post.main_image %>"
+            src="<%= post.main_image %>"
             alt="<%= post.heading %> Main Image"
           />
         </div>
@@ -59,8 +62,9 @@
               <% post.extra_images.forEach(function(img) { %>
               <div class="slide">
                 <div class="testimonial-card">
-                  <img
-                    src="/uploads/<%= img %>"
+                  <img 
+                    class="img400h"
+                    src="<%= img.url %>"
                     alt="Extra image for <%= post.heading %>"
                   />
                 </div>
