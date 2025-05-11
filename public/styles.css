@@ -701,7 +701,7 @@ select {
 
 /* running time */
 
-.carousel .time {
+.carousel .time { 
   position: absolute;
   z-index: 1000;
   width: 0%;
