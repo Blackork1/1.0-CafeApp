@@ -6,91 +6,127 @@
     <title>Eventbuchung</title>
     <link rel="stylesheet" href="/styles.css" />
     <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-    <link rel="canonical" href="https://www.zuraltenbackstube.de/eventbuchung">
-        <meta name="description" content="Plane dein Event bei uns. Ob Hochzeit, Firmenfeier, Geburtstag, Beerdigung oder sonstige Veranstaltungen. Wir machen es möglich. Veranstaltung - Location - Eventplanung">
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/images/apple-touch-icon.png"
+    />
+    <link
+      rel="canonical"
+      href="https://www.zuraltenbackstube.de/eventbuchung"
+    />
+    <meta
+      name="description"
+      content="Plane dein Event bei uns. Ob Hochzeit, Firmenfeier, Geburtstag, Beerdigung oder sonstige Veranstaltungen. Wir machen es möglich. Veranstaltung - Location - Eventplanung"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
+
+  <style>
+    /* Grid für die Radio-Buttons */
+    .eventbuchung-radio {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .radio-item {
+      position: relative;
+    }
+    .radio-input {
+      opacity: 0;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      cursor: pointer;
+    }
+
+    /* Admin-Controls oben */
+    .admin-controls-container {
+      margin-bottom: 1.5rem;
+    }
+    .admin-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0.25rem;
+    }
+    .admin-controls .name-input {
+      width: 150px;
+    }
+  </style>
   <body>
     <div class="section">
       <%- include('partials/header') %>
       <div class="container">
-        <h1 class="center p-b-40" >Eventbuchung</h1>
-        <h3 class="center p-b-20">Willst du eine Feier bei mir veranstalten?</h3>
+        <h1 class="center p-b-40">Eventbuchung</h1>
+        <h3 class="center p-b-20">
+          Willst du eine Feier bei mir veranstalten?
+        </h3>
         <p class="center p-b-20">
           Such dir zunächst eine Eventart aus und schreibe mir deine
           Vorstellungen. Ich melde mich bei dir, dann besprechen wir alles
           weitere 🎉
         </p>
+        <% if (user && user.isAdmin) { %>
+        <div class="admin-controls-container">
+          <% eventButton.forEach(button => { %>
+          <div class="admin-controls" data-id="<%= button.id %>">
+            <!-- Textfeld zum Ändern des Namens -->
+            <input type="text" class="name-input" value="<%= button.name %>" />
+            <!-- Name ändern -->
+            <button type="button" class="update-name">Name ändern</button>
+            <!-- Ein/Ausblenden -->
+            <button
+              type="button"
+              class="toggle-button"
+              data-enabled="<%= button.enabled %>"
+            >
+              <%= button.enabled ? 'Ausblenden' : 'Einblenden' %>
+            </button>
+          </div>
+          <% }) %>
+        </div>
+        <% } %>
+
         <form action="/eventbuchung" method="POST">
           <div class="eventbuchung-form">
+            <div class="center"><p>Wähle ein Event</p></div>
             <div class="eventbuchung-radio">
+              <% eventButton.forEach((button, idx) => { %> <% if (button.enabled
+              || (user && user.isAdmin)) { %>
               <div class="radio-item">
-                <div class="span2"><p>Wähle dein Event!</p></div>
-                <input
-                  type="radio"
-                  id="Geburtstag"
-                  name="event"
-                  value="Geburtstag"
-                  required
-                  hidden
-                />
-                <label class="radio-event" for="Geburtstag">Geburtstag</label>
-                <input
-                  type="radio"
-                  id="Hochzeit"
-                  name="event"
-                  value="Hochzeit"
-                  required
-                  hidden
-                />
-                <label class="radio-event" for="Hochzeit">Hochzeit</label>
-                <input
-                  type="radio"
-                  id="Firmenfeier"
-                  name="event"
-                  value="Firmenfeier"
-                  required
-                  hidden
-                />
-                <label class="radio-event" for="Firmenfeier">Firmenfeier</label>
-                <input
-                  type="radio"
-                  id="Beerdigung"
-                  name="event"
-                  value="Beerdigung"
-                  required
-                  hidden
-                />
-                <label class="radio-event" for="Beerdigung">Trauerfeier</label>
-                <input
-                  type="radio"
-                  id="Andere"
-                  name="event"
-                  value="Andere"
-                  required
-                  hidden
-                />
-                <label class="radio-event" for="Andere">Anderes Event</label>
+                <input type="radio" id="event-<%= button.id %>" name="event"
+                class="radio-input" value="<%= button.name %>" <% if (!(user &&
+                user.isAdmin) && idx === 0) { %> required <% } %> />
+                <label for="event-<%= button.id %>" class="radio-event">
+                  <%= button.name %>
+                </label>
               </div>
+              <% } %> <% }) %>
             </div>
+
             <div class="eventbuchung-textarea">
-              <label for="text">Beschreibe was du dir vorstellst:</label>
-              <textarea class="newBlog-Text" name="text" id="text"></textarea>
+              <label for="text">Beschreibe was du dir vorstellst:</label><br />
+              <textarea name="text" id="text" rows="4"></textarea>
             </div>
+
             <div class="input-fields-grid">
               <div class="eventbuchung-email">
                 <label for="mail">E-Mail:</label>
-                <input type="text" id="mail" name="mail" required />
+                <input type="email" id="mail" name="mail" required />
               </div>
               <div class="eventbuchung-name">
                 <label for="name">Name:</label>
                 <input type="text" id="name" name="name" required />
               </div>
               <div class="eventbuchung-tel">
-                <label for="tel">Telefonnummer:</label>
+                <label for="tel">Telefon:</label>
                 <input type="text" id="tel" name="tel" required />
               </div>
             </div>
+
             <button class="event-button" type="submit">Anfrage absenden</button>
           </div>
         </form>
@@ -98,4 +134,5 @@
     </div>
     <%- include('partials/footer')%>
   </body>
+  <script src="/js/ajax.js"></script>
 </html>

@@ -1,0 +1,117 @@
+       <form action="/eventbuchung" method="POST">
+            <div class="eventbuchung-radio">
+              <!-- <div class="radio-item">
+                <div class="span2"><p>Wähle dein Event!</p></div>
+                <input
+                  type="radio"
+                  id="Geburtstag"
+                  name="event"
+                  value="Geburtstag"
+                  required
+                  hidden
+                />
+                <label class="radio-event" for="Geburtstag">Geburtstag</label>
+                <input
+                  type="radio"
+                  id="Hochzeit"
+                  name="event"
+                  value="Hochzeit"
+                  required
+                  hidden
+                />
+                <label class="radio-event" for="Hochzeit">Hochzeit</label>
+                <input
+                  type="radio"
+                  id="Firmenfeier"
+                  name="event"
+                  value="Firmenfeier"
+                  required
+                  hidden
+                />
+                <label class="radio-event" for="Firmenfeier">Firmenfeier</label>
+                <input
+                  type="radio"
+                  id="Beerdigung"
+                  name="event"
+                  value="Beerdigung"
+                  required
+                  hidden
+                />
+                <label class="radio-event" for="Beerdigung">Trauerfeier</label>
+                <input
+                  type="radio"
+                  id="Andere"
+                  name="event"
+                  value="Andere"
+                  required
+                  hidden
+                />
+                <label class="radio-event" for="Andere">Anderes Event</label>
+              </div>
+            </div> -->
+            <div class="automatic-radio-buttons">
+              <% eventButton.forEach(button => { %> <% if (user && user.isAdmin)
+              { %>
+              <!-- Admin: Bearbeitbarer Button -->
+              <div class="admin-button-edit">
+
+
+                <% if (button.enabled) { %>
+                  <input
+                  type="text"
+                  class="name-input"
+                  value="<%= button.name %>"
+                  data-button-id="<%= button.id %>"
+                  id="<%= button.id %>"
+                />
+                <button class="update-name" data-button-id="<%= button.id %>">
+                  Name Ändern
+                </button>
+                <button
+                  class="toggle-button"
+                  data-button-id="<%= button.id %>"
+                  data-enabled="true"
+                >
+                  Ausblenden
+                </button>
+                <% } else { %>
+                <button
+                  class="toggle-button"
+                  data-button-id="<%= button.id %>"
+                  data-enabled="false"
+                >
+                  Einblenden
+                </button>
+                <% } %>
+              </div>
+
+              <!-- Admin sieht zusätzlich immer das Radio -->
+              <!-- <input
+                type="radio"
+                id="<%= button.id %>"
+                name="event"
+                value="<%= button.name %>"
+                required
+                hidden
+              />
+              <label class="radio-event" for="<%= button.id %>"
+                ><%= button.name %></label
+              > -->
+
+              <!-- <% } else if (button.enabled) { %>
+              <input
+                type="radio"
+                id="<%= button.id %>"
+                name="event"
+                value="<%= button.name %>"
+                required
+                hidden
+              />
+              <label class="radio-event" for="<%= button.id %>"
+                ><%= button.name %></label
+              > -->
+              <% } %> <% }) %>
+            </div>
+
+          </div>
+        </form>

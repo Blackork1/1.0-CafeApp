@@ -44,7 +44,13 @@
         <form class="add-category-form">
           <input type="text" name="category" placeholder="Kategorie" required />
           <input type="text" name="name" placeholder="Getränkname" required />
-          <input type="number" name="sort" placeholder="Sortierung" step="1" required/>
+          <input
+            type="number"
+            name="sort"
+            placeholder="Sortierung"
+            step="1"
+            required
+          />
           <input
             type="number"
             name="price"
@@ -79,7 +85,9 @@
             <button
               class="update-category"
               data-category="<%= category.mainCategory %>"
-            >✅</button>
+            >
+              ✅
+            </button>
           </div>
           <% } else { %>
           <h2 class="category-title"><%= category.mainCategory %></h2>
@@ -87,9 +95,8 @@
 
           <!-- Drink-Liste -->
           <ul class="drink-list">
-            <% category.drinks.forEach(drink => {
-                 if (!(user && user.isAdmin) && !drink.enabled) return;
-            %>
+            <% category.drinks.forEach(drink => { if (!(user && user.isAdmin) &&
+            !drink.enabled) return; %>
             <li class="drink-item" data-drink-id="<%= drink.id %>">
               <span class="drink-name">
                 <%= drink.name %>
@@ -103,24 +110,29 @@
                   value="<%= drink.price %>"
                   data-drink-id="<%= drink.id %>"
                 />
-                <button class="update-price" data-drink-id="<%= drink.id %>">✅</button>
-                <button class="delete-drink" data-drink-id="<%= drink.id %>">Löschen</button>
+                <button class="update-price" data-drink-id="<%= drink.id %>">
+                  ✅
+                </button>
+                <button class="delete-drink" data-drink-id="<%= drink.id %>">
+                  Löschen
+                </button>
                 <% if (drink.enabled) { %>
                 <button
                   class="toggle-drink"
                   data-drink-id="<%= drink.id %>"
                   data-enabled="true"
-                >Ausblenden</button>
+                >
+                  Ausblenden
+                </button>
                 <% } else { %>
                 <button
                   class="toggle-drink"
                   data-drink-id="<%= drink.id %>"
                   data-enabled="false"
-                >Einblenden</button>
-                <% } %>
-                <% } else { %>
-                <%= drink.price %> €
-                <% } %>
+                >
+                  Einblenden
+                </button>
+                <% } %> <% } else { %> <%= drink.price %> € <% } %>
               </span>
             </li>
             <% }); %>
@@ -160,38 +172,40 @@
     <!-- AJAX-Funktionen -->
     <script src="/js/ajaxMenu.js"></script>
 
-    <%- include('partials/footer') %>
-
-    <% if (user && user.isAdmin) { %>
+    <%- include('partials/footer') %> <% if (user && user.isAdmin) { %>
     <!-- Sortable.js für Drag & Drop auf Desktop & Mobile -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script>
-      document.querySelectorAll('.drink-list').forEach(listEl => {
+      document.querySelectorAll(".drink-list").forEach((listEl) => {
         new Sortable(listEl, {
           animation: 150,
-          ghostClass: 'sortable-ghost',
-          chosenClass: 'sortable-chosen',
-          onEnd: async evt => {
+          ghostClass: "sortable-ghost",
+          chosenClass: "sortable-chosen",
+          onEnd: async (evt) => {
             const list = evt.to;
-            const category = list.closest('.menu-card').dataset.category;
-            const newOrder = Array.from(list.children)
-              .map(li => li.dataset.drinkId);
+            const category = list.closest(".menu-card").dataset.category;
+            const newOrder = Array.from(list.children).map(
+              (li) => li.dataset.drinkId
+            );
             try {
-              const res = await fetch('/menu/reorder', {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ category, newOrder })
+              const res = await fetch("/menu/reorder", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ category, newOrder }),
               });
               if (!res.ok) {
                 const err = await res.json();
                 throw err;
               }
-              console.log('✅ Reihenfolge gespeichert');
+              console.log("✅ Reihenfolge gespeichert");
             } catch (err) {
-              console.error('❌ Fehler beim Speichern der Sortierung:', err.error || err);
-              alert('Fehler beim Speichern: ' + (err.error || err));
+              console.error(
+                "❌ Fehler beim Speichern der Sortierung:",
+                err.error || err
+              );
+              alert("Fehler beim Speichern: " + (err.error || err));
             }
-          }
+          },
         });
       });
     </script>
