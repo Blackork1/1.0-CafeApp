@@ -18,10 +18,11 @@
         text-align: center;
       }
       .main-image img {
-        border-radius: 8px;
         object-fit: fill;
-        height: 600px;
-        width: 400px;
+        height: 70vh;
+        max-height: 700px;
+        width: 90vw;
+        max-width: 400px;
         border-radius: 10px;
       }
       .extra-images {
@@ -42,7 +43,7 @@
     <div class="section overflow-hidden">
       <div class="container">
         <%- include('partials/header') %>
-        <h1 class="page-header"><%= post.heading %></h1>
+        <h2 class="page-header"><%= post.heading %></h2>
         <p>
           <%= new Date(post.date).toLocaleString('de-DE', { weekday: 'long',
           year: 'numeric', month: 'numeric', day: 'numeric' }) %>
@@ -64,7 +65,7 @@
               <% post.extra_images.forEach(function(img) { %>
               <div class="slide">
                 <div class="testimonial-card">
-                  <img 
+                  <img
                     class="img400h"
                     src="<%= img.url %>"
                     alt="Extra image for <%= post.heading %>"

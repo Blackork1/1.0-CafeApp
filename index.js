@@ -583,167 +583,20 @@ app.post("/blog/:id/delete", async (req, res) => {
 });
 
 // Event Area
-// app.get("/eventbuchung", async (req, res) => {
-//     const result = await db.query("SELECT * FROM eventbutton ORDER BY id ASC");
-//     const events = result.rows;
-//     console.log(events);
-
-
-//     res.render("eventbuchung.ejs", { user: req.user || {}, eventButton: events });
-// });
-
-// app.patch('/eventbuchung/:id/toggle', async (req, res) => {
-//     const buttonID = req.params.id;
-//     console.log(req.body);
-    
-//     const { enabled } = req.body;
-//     try {
-//         const result = await db.query(
-//             "UPDATE eventbutton SET enabled = $1 WHERE id = $2 RETURNING *",
-//             [enabled, buttonID]
-//         );
-//         if (result.rows.length === 0) return res.status(404).json({ error: "Drink not found" });
-//         res.json({ message: "Drink toggled", drink: result.rows[0] });
-//     } catch (err) {
-//         console.error("Error toggling drink:", err);
-//         res.status(500).json({ error: "Internal server error" });
-//     }
-// });
-
-// app.post('/eventbuchung/:id/update', async (req, res) => {
-//     const buttonID = req.params.id;
-//     console.log(buttonID);
-    
-//     console.log(req.body);
-
-//     const { name } = req.body;
-//     console.log(name);
-
-//     try {
-//         const result = await db.query(
-//             "UPDATE eventbutton SET name = $1 WHERE id = $2 RETURNING *",
-//             [name, buttonID]
-//         );
-//         if (result.rows.length === 0) return res.status(404).json({ error: "Drink not found" });
-//         res.json({ message: "Name updated", drink: result.rows[0] });
-//     } catch (err) {
-//         console.error("Error updating price:", err);
-//         res.status(500).json({ error: "Internal server error" });
-//     }
-// });
-
-// app.post("/eventbuchung", async (req, res) => {
-//     const { event, text, mail, name, tel } = req.body;
-
-//     req.session.event = event;
-//     req.session.name = name; // ✅ Store selected date in session
-//     req.session.save(); // ✅ Save session update
-
-
-//     try {
-//         const result = await db.query("INSERT INTO eventbuchung (event, text, mail, name, tel) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-//             [event, text, mail, name, tel]
-//         )
-
-//         const mailOptions = {
-//             from: process.env.EMAIL_USER, // Sender address
-//             to: mail,                      // Recipient's email
-//             bcc: process.env.EMAIL_USER,     // Copy to sender
-//             subject: `Buchungsanfrage Erfolgreich`, // Subject line
-//             text: `Hallo ${name},
-  
-//   Deine Anfrage wurde erfolgreich übermittelt: 🥳🎉
-//   Dein gewähltes Event: ${event}
-//   Dein Text: ${text}
-//   Deine Rufnummer: ${tel}
-
-//   Vielen Dank für deine Anfrage.
-
-//   Wir melden uns in kürze bei dir,
-//   Bernd und Manuel Ziekow
-  
-  
-//   Zur alten Backstube
-//   Hauptstraße 155, 13158 Berlin
-//   Tel: 030-47488482`
-//             ,
-//         };
-
-//         // Send the email
-//         await transporter.sendMail(mailOptions);
-//         res.redirect("/angefragt",)
-//     } catch (error) {
-//         console.error("Error inserting event into DB:", err);
-//         res.status(500).send("Error inserting blog.");
-//     }
-// })
-
-app.get("/angefragt", (req, res) => {
-    res.render("angefragt.ejs", {
-        user: req.user || req.session,
-        event: req.session.event,
-        name: req.session.name,
-    });
-})
-
-
 app.get('/eventbuchung', async (req, res) => {
     try {
-      const { rows } = await db.query('SELECT * FROM eventbutton ORDER BY id');
-      res.render('eventbuchung', {
-        user: req.user || {},      // oder aus Session
-        eventButton: rows
-      });
+        const { rows } = await db.query('SELECT * FROM eventbutton ORDER BY id');
+        res.render('eventbuchung', {
+            user: req.user || {},      // oder aus Session
+            eventButton: rows
+        });
     } catch (err) {
-      console.error(err);
-      res.status(500).send('DB-Fehler');
+        console.error(err);
+        res.status(500).send('DB-Fehler');
     }
-  });
-  
-//   // 2) Toggle enabled
-//   app.patch('/eventbuchung/:id/toggle', async (req, res) => {
-//     const id = req.params.id;
-    
-//     const enabled = req.body.enabled;
-//     if (!req.user?.isAdmin) return res.status(403).json({ error: 'Nicht autorisiert' });
-  
-//     try {
-//       const { rows } = await db.query(
-//         'UPDATE eventbutton SET enabled = $1 WHERE id = $2 RETURNING *',
-//         [enabled, id]
-//       );
-//       if (!rows[0]) return res.status(404).json({ error: 'Nicht gefunden' });
-//       res.json(rows[0]);
-//     } catch (err) {
-//       console.error(err);
-//       res.status(500).json({ error: 'Server-Error' });
-//     }
-//   });
-  
-//   // 3) Update name
-//   app.patch('/eventbuchung/:id/update', async (req, res) => {
-//     const id   = req.params.id;
-//     console.log(id);
-    
-//     const name = req.body.name;
-//     console.log(name);
-    
-//     if (!req.user?.isAdmin) return res.status(403).json({ error: 'Nicht autorisiert' });
-  
-//     try {
-//       const { rows } = await db.query(
-//         'UPDATE eventbutton SET name = $1 WHERE id = $2 RETURNING *',
-//         [name, id]
-//       );
-//       if (!rows[0]) return res.status(404).json({ error: 'Nicht gefunden' });
-//       res.json(rows[0]);
-//     } catch (err) {
-//       console.error(err);
-//       res.status(500).json({ error: 'Server-Error' });
-//     }
-//   });
+});
 
-  app.post("/eventbuchung", async (req, res) => {
+app.post("/eventbuchung", async (req, res) => {
     const { event, text, mail, name, tel } = req.body;
 
     req.session.event = event;
@@ -791,40 +644,48 @@ app.get('/eventbuchung', async (req, res) => {
 
 app.patch('/eventbuchung/:id/toggle', async (req, res) => {
     if (!req.user.isAdmin) return res.status(403).json({ error: 'Nicht autorisiert' });
-    const id      = parseInt(req.params.id,10);
+    const id = parseInt(req.params.id, 10);
     const enabled = req.body.enabled;
     console.log('Server Toggle:', id, enabled);  // DEBUG
     try {
-      const { rows } = await db.query(
-        'UPDATE eventbutton SET enabled = $1 WHERE id = $2 RETURNING *',
-        [enabled, id]
-      );
-      if (!rows[0]) return res.status(404).json({ error: 'Nicht gefunden' });
-      res.json(rows[0]);
+        const { rows } = await db.query(
+            'UPDATE eventbutton SET enabled = $1 WHERE id = $2 RETURNING *',
+            [enabled, id]
+        );
+        if (!rows[0]) return res.status(404).json({ error: 'Nicht gefunden' });
+        res.json(rows[0]);
     } catch (e) {
-      console.error(e);
-      res.status(500).json({ error: 'Server-Fehler' });
+        console.error(e);
+        res.status(500).json({ error: 'Server-Fehler' });
     }
-  });
-  
-  // PATCH update name
-  app.patch('/eventbuchung/:id/update', async (req, res) => {
+});
+
+// PATCH update name
+app.patch('/eventbuchung/:id/update', async (req, res) => {
     if (!req.user.isAdmin) return res.status(403).json({ error: 'Nicht autorisiert' });
-    const id   = parseInt(req.params.id,10);
+    const id = parseInt(req.params.id, 10);
     const name = req.body.name;
     console.log('Server Update:', id, name);     // DEBUG
     try {
-      const { rows } = await db.query(
-        'UPDATE eventbutton SET name = $1 WHERE id = $2 RETURNING *',
-        [name, id]
-      );
-      if (!rows[0]) return res.status(404).json({ error: 'Nicht gefunden' });
-      res.json(rows[0]);
+        const { rows } = await db.query(
+            'UPDATE eventbutton SET name = $1 WHERE id = $2 RETURNING *',
+            [name, id]
+        );
+        if (!rows[0]) return res.status(404).json({ error: 'Nicht gefunden' });
+        res.json(rows[0]);
     } catch (e) {
-      console.error(e);
-      res.status(500).json({ error: 'Server-Fehler' });
+        console.error(e);
+        res.status(500).json({ error: 'Server-Fehler' });
     }
-  });
+});
+
+app.get("/angefragt", (req, res) => {
+    res.render("angefragt.ejs", {
+        user: req.user || req.session,
+        event: req.session.event,
+        name: req.session.name,
+    });
+})
 
 //Menu Area
 // GET /menu: Fetch menu items, group by category, and render the page
