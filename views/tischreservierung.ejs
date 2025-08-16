@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tischreservierung</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/images/apple-touch-icon.png"
+    />
+    <link
+      rel="canonical"
+      href="https://www.zuraltenbackstube.de/tischreservierung"
+    />
+    <meta
+      name="description"
+      content="Hier kannst du dein Tisch bei uns reservieren"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+
+  <style>
+    .radio-item {
+      position: relative;
+    }
+    .radio-input {
+      opacity: 0;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      cursor: pointer;
+    }
+
+    /* Admin-Controls oben */
+    .admin-controls-container {
+      margin-bottom: 1.5rem;
+    }
+    .admin-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0.25rem;
+    }
+    .admin-controls .name-input {
+      width: 150px;
+    }
+
+    .eventbuchung-textarea textarea {
+      height: 100px;
+    }
+  </style>
+  <body>
+    <div class="section">
+      <%- include('partials/header') %>
+      <div class="container">
+        <h3 class="center p-b-20" style="padding-top: 20px">
+          Willst du einen Tisch bei uns reservieren?
+        </h3>
+        <p class="center p-b-20">
+          Gib deine Daten ein und wähle einen Tag aus. Ich melde mich dann bei
+          dir.
+        </p>
+        <% if (user && user.isAdmin) { %>
+        <div class="admin-controls-container">
+          <% eventButton.forEach(button => { %>
+          <div class="admin-controls" data-id="<%= button.id %>">
+            <!-- Textfeld zum Ändern des Namens -->
+            <input type="text" class="name-input" value="<%= button.name %>" />
+            <!-- Name ändern -->
+            <button type="button" class="update-name">Name ändern</button>
+            <!-- Ein/Ausblenden -->
+            <button
+              type="button"
+              class="toggle-button"
+              data-enabled="<%= button.enabled %>"
+            >
+              <%= button.enabled ? 'Ausblenden' : 'Einblenden' %>
+            </button>
+          </div>
+          <% }) %>
+        </div>
+        <% } %>
+
+        <form action="/tischreservierung" method="POST">
+          <div class="eventbuchung-form">
+            <div class="center">
+              <p>
+                Mit wie vielen Leuten möchtest du kommen? <br />
+                Hast du besondere Wünsche?
+              </p>
+            </div>
+
+            <div class="eventbuchung-textarea" style="text-align: center;">
+              <label for="text"></label
+              ><br />
+              <textarea name="text" id="text" rows="1" style="max-width: 90%; margin: 0px auto 20px auto;"></textarea>
+            </div>
+
+            <div class="input-fields-grid">
+              <div class="eventbuchung-email" >
+                <label for="mail">E-Mail:</label>
+                <input type="email" id="mail" name="mail" required />
+              </div>
+              <div class="eventbuchung-name">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required />
+              </div>
+              <div class="eventbuchung-tel">
+                <label for="tel">Telefon:</label>
+                <input type="text" id="tel" name="tel" required />
+              </div>
+              <div class="eventbuchung-date">
+                <label for="date">Datum:</label>
+                <input type="date" id="date" name="date" required />
+              </div>
+              <div class="eventbuchung-time">
+                <label for="time">Uhrzeit:</label>
+                <input type="time" id="time" name="time" required />
+              </div>
+            </div>
+
+            <button class="event-button" type="submit">Anfrage absenden</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <%- include('partials/footer')%>
+  </body>
+  <script src="/js/ajax.js"></script>
+</html>

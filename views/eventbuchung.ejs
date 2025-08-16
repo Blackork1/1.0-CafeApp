@@ -53,12 +53,11 @@
     <div class="section">
       <%- include('partials/header') %>
       <div class="container">
-        <h1 class="center p-b-40">Eventbuchung</h1>
-        <h3 class="center p-b-20">
+        <h3 class="center p-b-20" style="padding-top: 20px;">
           Willst du eine Feier bei mir veranstalten?
         </h3>
         <p class="center p-b-20">
-          Such dir zunächst eine Eventart aus und schreibe mir deine
+          Such dir zunächst eine Anlass aus und schreibe mir deine
           Vorstellungen. Ich melde mich bei dir, dann besprechen wir alles
           weitere 🎉
         </p>
@@ -85,7 +84,7 @@
 
         <form action="/eventbuchung" method="POST">
           <div class="eventbuchung-form">
-            <div class="center"><p>Wähle ein Event</p></div>
+            <div class="center"><p>Wähle ein Anlass</p></div>
             <div class="eventbuchung-radio">
               <% eventButton.forEach((button, idx) => { %> <% if (button.enabled
               || (user && user.isAdmin)) { %>

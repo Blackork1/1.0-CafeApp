@@ -582,6 +582,67 @@ app.post("/blog/:id/delete", async (req, res) => {
     }
 });
 
+//Tischreservierung
+app.get('/tischreservierung', async (req, res) => {
+    try {
+        const { rows } = await db.query('SELECT * FROM eventbutton ORDER BY id');
+        res.render('tischreservierung', {
+            user: req.user || {},      // oder aus Session
+            eventButton: rows
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('DB-Fehler');
+    }
+});
+
+app.post("/tischreservierung", async (req, res) => {
+    const { date, text, mail, name, tel, time } = req.body;
+
+    req.session.date = date;
+    req.session.time = time;
+    req.session.name = name; // ✅ Store selected date in session
+    req.session.save(); // ✅ Save session update
+
+
+    try {
+        const result = await db.query("INSERT INTO tischreservierung (date, text, mail, name, tel, time) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+            [date, text, mail, name, tel, time]
+        )
+
+        const mailOptions = {
+            from: process.env.EMAIL_USER, // Sender address
+            to: mail,                      // Recipient's email
+            bcc: process.env.EMAIL_USER,     // Copy to sender
+            subject: `Buchungsanfrage Erfolgreich`, // Subject line
+            text: `Hallo ${name},
+  
+  Deine Anfrage wurde erfolgreich übermittelt: 🥳🎉
+  Dein gewählter Tag: ${date} um ${time}
+  Dein Text: ${text}
+  Deine Rufnummer: ${tel}
+
+  Vielen Dank für deine Anfrage.
+
+  Wir melden uns in kürze bei dir,
+  Bernd und Manuel Ziekow
+  
+  
+  Zur alten Backstube
+  Hauptstraße 155, 13158 Berlin
+  Tel: 030-47488482`
+            ,
+        };
+
+        // Send the email
+        await transporter.sendMail(mailOptions);
+        res.redirect("/tischangefragt",)
+    } catch (error) {
+        console.error("Error inserting event into DB:", err);
+        res.status(500).send("Error inserting blog.");
+    }
+})
+
 // Event Area
 app.get('/eventbuchung', async (req, res) => {
     try {

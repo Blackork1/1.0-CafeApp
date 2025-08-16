@@ -1,92 +1,136 @@
 <!DOCTYPE html>
 <html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="author" content="Blocksdorf, webseitendesignberlin@gmail.com" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zur alten Backstube Berlin</title>
+    <meta
+      name="description"
+      content="Willkommen in der alten Backstube Rosenthal – Genieße traditionelle Rezepte in gemütlicher Atmosphäre. Tischreservierung - Eventplanungen - Getränkekarte"
+    />
+    <meta
+      name="keywords"
+      content="Cafe, Kaffee Rosenthal, Alte Backstube, Cafe near"
+    />
+    <meta property="og:site_name" content="Zur alten Backstube" />
+    <meta property="og:url" content="https://www.zuraltenbackstube.de" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/images/apple-touch-icon.png"
+    />
+    <link rel="canonical" href="https://www.zuraltenbackstube.de" />
+    <link rel="stylesheet" href="/styles.css?v=<%= Date.now() %>" />
+    <style>
+      /* Styles for the scrolling banner */
+      .banner-container {
+        overflow: hidden;
+        white-space: nowrap;
+        background: none;
+        /* Use your theme color */
+        padding: 20px 0 0 0;
+        margin-bottom: -60px;
+        display: block;
+      }
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="author" content="Blocksdorf, webseitendesignberlin@gmail.com" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zur alten Backstube Berlin</title>
-  <meta name="description"
-    content="Willkommen in der alten Backstube Rosenthal – Genieße traditionelle Rezepte in gemütlicher Atmosphäre. Tischreservierung - Eventplanungen - Getränkekarte" />
-  <meta name="keywords" content="Cafe, Kaffee Rosenthal, Alte Backstube, Cafe near" />
-  <meta property="og:site_name" content="Zur alten Backstube" />
-  <meta property="og:url" content="https://www.zuraltenbackstube.de" />
-  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
-  <link rel="canonical" href="https://www.zuraltenbackstube.de" />
-  <link rel="stylesheet" href="/styles.css" />
-  <style>
-    /* Styles for the scrolling banner */
-    .banner-container {
-      overflow: hidden;
-      white-space: nowrap;
-      background: none;
-      /* Use your theme color */
-      padding: 20px 0 0 0;
-      margin-bottom: -60px;
-      display: block;
-    }
-
-    .banner-text {
-      display: inline-block;
-      padding-left: 100%;
-      animation: scrollText linear infinite;
-      /* animation-duration: 10s; kann dynamisch angepasst werden */
-      font-size: 2rem;
-      color: var(--main-bg-color);
-      left: 100%;
-    }
-
-    @keyframes scrollText {
-      0% {
+      .banner-text {
+        display: inline-block;
+        padding-left: 100%;
+        animation: scrollText linear infinite;
+        /* animation-duration: 10s; kann dynamisch angepasst werden */
+        font-size: 2rem;
+        color: var(--main-bg-color);
         left: 100%;
-        transform: translateX(0);
       }
 
-      100% {
-        left: 50%;
-        transform: translateX(-100%);
+      @keyframes scrollText {
+        0% {
+          left: 100%;
+          transform: translateX(0);
+        }
+
+        100% {
+          left: 50%;
+          transform: translateX(-100%);
+        }
       }
-    }
 
-    /* Admin panel for editing the banner */
-    .banner-admin {
-      margin: 10px auto;
-      text-align: center;
-      padding: 10px;
-      background: #f8f8f8;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      max-width: 500px;
-    }
+      /* Admin panel for editing the banner */
+      .banner-admin {
+        margin: 10px auto;
+        text-align: center;
+        padding: 10px;
+        background: #f8f8f8;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        max-width: 500px;
+      }
 
-    .banner-admin input[type="text"] {
-      padding: 5px;
-      width: 70%;
-      margin-bottom: 5px;
-    }
+      .banner-admin input[type="text"] {
+        padding: 5px;
+        width: 70%;
+        margin-bottom: 5px;
+      }
 
-    .banner-admin button {
-      padding: 5px 10px;
-      margin: 5px;
-      background-color: var(--main-button-color);
-      color: var(--main-bg-color);
-      border: none;
-      border-radius: 3px;
-      cursor: pointer;
-    }
+      .banner-admin button {
+        padding: 5px 10px;
+        margin: 5px;
+        background-color: var(--main-button-color);
+        color: var(--main-bg-color);
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+      }
 
-    .hidden {
-      display: none;
-    }
+      .hidden {
+        display: none;
+      }
 
-    .show {
-      display: block;
-    }
-  </style>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <link rel="preload" as="image" href="/images/landingimage.WEBP" type="image/webp" />
-  <script type="application/ld+json">
+      .show {
+        display: block;
+      }
+
+      .autoplay-video {
+        max-width: 1280px;
+        margin: 0 auto;
+        text-align: center;
+      }
+      .video-wrap {
+        display: inline-block;
+        width: 100%;
+      }
+      .video-wrap video {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+      }
+
+      .video-audio-hint {
+        margin-top: 8px;
+      }
+      #audioToggle {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font: inherit;
+        color: var(--color-primary, #0b2a46);
+        text-decoration: underline;
+      }
+      #audioToggle:hover {
+        text-decoration: none;
+      }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link
+      rel="preload"
+      as="image"
+      href="/images/landingimage.WEBP"
+      type="image/webp"
+    />
+    <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "LocalBusiness",
@@ -105,151 +149,213 @@
         "openingHours": "Sa-So 13:00-17:00"
       }
     </script>
-</head>
+  </head>
 
-<body class="index-body">
-  <div class="hero">
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TQWQWK8S" height="0" width="0"
-        style="display: none; visibility: hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet" />
-    <div class="container">
-      <div class="navigation" id="navigation">
-        <div class="logo">
-          <a style="color: var(--main-bg-color)" href="/">Home</a>
-        </div>
-        <div class="nav-right">
-          <img src="/images/Nav-Bar-Icon-Home.svg" alt="Menu Icon" class="menu-icon" id="menu-icon" />
-          <div class="links heroLinks" id="nav-links">
-            <% if(user.isAdmin){%>
+  <body class="index-body">
+    <div class="hero">
+      <noscript
+        ><iframe
+          src="https://www.googletagmanager.com/ns.html?id=GTM-TQWQWK8S"
+          height="0"
+          width="0"
+          style="display: none; visibility: hidden"
+        ></iframe
+      ></noscript>
+      <!-- End Google Tag Manager (noscript) -->
+      <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap"
+        rel="stylesheet"
+      />
+      <div class="container">
+        <div class="navigation" id="navigation">
+          <div class="logo">
+            <a style="color: var(--main-bg-color)" href="/">Home</a>
+          </div>
+          <div class="nav-right">
+            <img
+              src="/images/Nav-Bar-Icon-Home.svg"
+              alt="Menu Icon"
+              class="menu-icon"
+              id="menu-icon"
+            />
+            <div class="links heroLinks" id="nav-links">
+              <% if(user.isAdmin){%>
               <!-- <a href="/allReservations">Alle Reservierungen</a> -->
               <a class="heroLinks" href="/newBlog">Neue Veranstaltung</a>
               <a class="heroLinks" href="/logout">Log-Out</a>
               <% } %>
-                <a class="heroLinks" href="/geschichte">Geschichte</a>
-                <a class="heroLinks" href="/blog">Aktuelles</a>
-                <a class="heroLinks" href="/menu">Getränkekarte</a>
-                <a class="heroLinks" href="/eventbuchung">Feier buchen</a>
-                <!-- <a href="/reservation" class="reserve-button">Reservierung</a> -->
+              <a class="heroLinks" href="/geschichte">Geschichte</a>
+              <a class="heroLinks" href="/blog">Aktuelles</a>
+              <a class="heroLinks" href="/menu">Getränkekarte</a>
+              <a class="heroLinks" href="/tischreservierung">Tischreservierung</a>
+              <a class="heroLinks" href="/eventbuchung">Feier buchen</a>
+              <!-- <a href="/reservation" class="reserve-button">Reservierung</a> -->
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <% if (bannerEnabled) { %>
+      <% if (bannerEnabled) { %>
       <!-- Scrolling Banner -->
-      <div class="banner-container" class="<%= bannerEnabled ? 'show' : 'hidden' %>">
-        <div class="banner-text" id="scroll-text">
-          <%= bannerText %>
-        </div>
+      <div
+        class="banner-container"
+        class="<%= bannerEnabled ? 'show' : 'hidden' %>"
+      >
+        <div class="banner-text" id="scroll-text"><%= bannerText %></div>
       </div>
       <%} %>
-        <!-- Admin Control Panel for the Banner -->
-        <% if (user && user.isAdmin) { %>
-          <div class="banner-admin">
-            <form id="banner-form">
-              <input type="text" name="bannerText" placeholder="Neuer Banner-Text" value="<%= bannerText %>" />
-              <button type="submit">Text aktualisieren</button>
-              <button type="button" id="toggle-banner">
-                <%= bannerEnabled ? 'Banner ausblenden' : 'Banner einblenden' %>
-              </button>
-            </form>
+      <!-- Admin Control Panel for the Banner -->
+      <% if (user && user.isAdmin) { %>
+      <div class="banner-admin">
+        <form id="banner-form">
+          <input
+            type="text"
+            name="bannerText"
+            placeholder="Neuer Banner-Text"
+            value="<%= bannerText %>"
+          />
+          <button type="submit">Text aktualisieren</button>
+          <button type="button" id="toggle-banner">
+            <%= bannerEnabled ? 'Banner ausblenden' : 'Banner einblenden' %>
+          </button>
+        </form>
+      </div>
+      <% } %>
+      <div class="container">
+        <div class="hero-content">
+          <div>
+            <h1 class="hero-heading">Zur alten Backstube</h1>
           </div>
-          <% } %>
-            <div class="container">
-              <div class="hero-content">
-                <div>
-                  <h1 class="hero-heading">Zur alten Backstube</h1>
-                </div>
-                <div class="lower-hero">
-                  <!-- <p class="hero-text p-hero">Seit 1863</p> -->
-                  <h2 class="hero-text">
-                    Familie Ziekow in <br />
-                    5. Generation
-                  </h2>
-                  <!-- <a href="/reservation" class="reservation-button"
+          <div class="lower-hero">
+            <!-- <p class="hero-text p-hero">Seit 1863</p> -->
+            <h2 class="hero-text">
+              Familie Ziekow in <br />
+              5. Generation
+            </h2>
+            <!-- <a href="/reservation" class="reservation-button"
               >Tischreservierung</a
             > -->
-                </div>
-              </div>
-            </div>
-  </div>
-  <div class="section overflow-hidden padding-tb-40">
-    <div class="container">
-      <div class="flex-space-between">
-        <div class="main-content">
-          <h3>Unsere Historie</h3>
-          <p>
-            Bereits 1863 wurde unsere alte Backstube in Rosenthal ins Leben
-            gerufen – ein Ort, der seit jeher Begegnungen, Inspiration und
-            Genuss miteinander verbindet. In seinen ehrwürdigen Räumen,
-            geschmückt mit antiken Möbeln und liebevoll restaurierten Details,
-            spürt man den Hauch vergangener Zeiten. <br />
-            Gemeinsam mit meinem Vater betreiben wir nun in 5. Generation
-            Ziekow die alte Backstube und bieten jeden Samstag und Sonntag
-            frischen Kuchen mit einer großen Auswahl an
-            <a href="/menu">Getränken</a> an.
-          </p>
-        </div>
-        <div class="img-container right-image flex_einfliegen">
-          <img src="/images/EingangmitSchrift.webp" alt="Eingangsbereich heute" />
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="section overflow-hidden padding-tb-40">
-    <div class="container">
-      <div class="flex-space-between flex-reverse-main">
-        <div class="img-container left-image flex_einfliegen">
-          <img src="/images/2024-03-05.webp" alt="Esstisch für 2 Personen" />
-        </div>
-        <div class="main-content">
-          <h3>Was erwartet dich bei uns</h3>
-          <p>
-            Auf unsere Webseite findest du die
-            <a href="/menu">Getränkekarte</a>, die
-            <a href="/geschichte">Geschichte</a> der alten Backstube und alle
-            Informationen zu anstehenden und vergangenen Veranstaltungen bei
-            uns. Hier verpasst du nichts mehr! <br />
-            Falls neue Veranstaltungen anstehen, kannst du
-            <a href="/blog">hier</a> auf dem laufenden bleiben. <br />
-            <!-- Möchtest du einen Tisch reservieren? <br>
-              Bei uns kannst du ganz leicht für 2-Wochen im Vorraus einen Tisch deiner Wahl reservieren.
-              Neue Termine werden jeden Samstag um 08:00 Uhr freigeschaltet.  -->
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="section overflow-hidden padding-tb-40">
-    <div class="container">
-      <div class="flex-space-between">
-        <div class="main-content">
-          <h3>Aktuelles Angebot & Veranstaltungen</h3>
-          <p>
-            Wir laden dich ein, in unserem liebevoll restaurierten Ambiente
-            gemeinsam einen schönen Nachmittag zu verbrigen. Jeden Samstag und
-            Sonntag haben wir von 13 bis 17 Uhr für dich geöffnet – perfekt
-            für einen entspannten Nachmittag mit Freunden oder der Familie.
-            Darüber hinaus bieten wir unser charmantes Kaffeehaus auch als
-            Veranstaltungsort an: Ob private Feiern, Firmen-Events oder
-            kulturelle Zusammenkünfte, wir freuen uns darauf, Ihr Event in
-            einem authentischen historischen Rahmen auszurichten.
-          </p>
-          <div class="contant-buttons">
-            <a href="/eventbuchung" class="blog-button">Planen deine Feier bei uns!</a>
           </div>
         </div>
-        <div class="img-container last right-image flex_einfliegen">
-          <img src="/images/2024-07-22.webp" alt="Esstisch für 3 Personen" />
+      </div>
+    </div>
+    <div class="section overflow-hidden padding-tb-40">
+      <div class="container">
+        <div class="flex-space-between">
+          <div class="main-content">
+            <h3>Unsere Historie</h3>
+            <p>
+              Bereits 1863 wurde unsere alte Backstube in Rosenthal ins Leben
+              gerufen – ein Ort, der seit jeher Begegnungen, Inspiration und
+              Genuss miteinander verbindet. In seinen ehrwürdigen Räumen,
+              geschmückt mit antiken Möbeln und liebevoll restaurierten Details,
+              spürt man den Hauch vergangener Zeiten. <br />
+              Gemeinsam mit meinem Vater betreiben wir nun in 5. Generation
+              Ziekow die alte Backstube und bieten jeden Samstag und Sonntag
+              frischen Kuchen mit einer großen Auswahl an
+              <a href="/menu">Getränken</a> an.
+            </p>
+          </div>
+          <div class="img-container right-image flex_einfliegen">
+            <!-- <img src="/images/EingangmitSchrift.webp" alt="Eingangsbereich heute" /> -->
+            <section class="autoplay-video" aria-label="Intro-Video">
+              <div class="video-wrap">
+                <video
+                  id="heroVideo"
+                  preload="none"
+                  playsinline
+                  muted
+                  loop
+                  poster="/images/video-poster.png"
+                  width="1280"
+                  height="720"
+                >
+                  <!-- WebM zuerst (besser komprimiert), MP4 als Fallback -->
+                  <source src="/videos/hero.webm" type="video/webm" />
+                  <source src="/videos/hero.mp4" type="video/mp4" />
+                  Dein Browser unterstützt HTML5-Video nicht.
+                </video>
+
+                <div class="video-audio-hint">
+                  <button
+                    id="audioToggle"
+                    type="button"
+                    aria-pressed="false"
+                    aria-controls="heroVideo"
+                  >
+                    🔊 Ton an
+                  </button>
+                </div>
+
+                <noscript>
+                  <img
+                    src="/images/video-poster.jpg"
+                    alt="Vorschaubild des Intros"
+                    width="1280"
+                    height="720"
+                  />
+                </noscript>
+              </div>
+            </section>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <%- include('partials/footer') %>
+    <div class="section overflow-hidden padding-tb-40">
+      <div class="container">
+        <div class="flex-space-between flex-reverse-main">
+          <div class="img-container left-image flex_einfliegen">
+            <img src="/images/2024-03-05.webp" alt="Esstisch für 2 Personen" />
+          </div>
+          <div class="main-content">
+            <h3>Was erwartet dich bei uns</h3>
+            <p>
+              Auf unsere Webseite findest du die
+              <a href="/menu">Getränkekarte</a>, die
+              <a href="/geschichte">Geschichte</a> der alten Backstube und alle
+              Informationen zu anstehenden und vergangenen Veranstaltungen bei
+              uns. Hier verpasst du nichts mehr! <br />
+              Falls neue Veranstaltungen anstehen, kannst du
+              <a href="/blog">hier</a> auf dem laufenden bleiben. <br />
+              <!-- Möchtest du einen Tisch reservieren? <br>
+              Bei uns kannst du ganz leicht für 2-Wochen im Vorraus einen Tisch deiner Wahl reservieren.
+              Neue Termine werden jeden Samstag um 08:00 Uhr freigeschaltet.  -->
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section overflow-hidden padding-tb-40">
+      <div class="container">
+        <div class="flex-space-between">
+          <div class="main-content">
+            <h3>Aktuelles Angebot & Veranstaltungen</h3>
+            <p>
+              Wir laden dich ein, in unserem liebevoll restaurierten Ambiente
+              gemeinsam einen schönen Nachmittag zu verbrigen. Jeden Samstag und
+              Sonntag haben wir von 13 bis 17 Uhr für dich geöffnet – perfekt
+              für einen entspannten Nachmittag mit Freunden oder der Familie.
+              Darüber hinaus bieten wir unser charmantes Kaffeehaus auch als
+              Veranstaltungsort an: Ob private Feiern, Firmen-Events oder
+              kulturelle Zusammenkünfte, wir freuen uns darauf, Ihr Event in
+              einem authentischen historischen Rahmen auszurichten.
+            </p>
+            <div class="contant-buttons">
+              <a href="/eventbuchung" class="blog-button"
+                >Planen deine Feier bei uns!</a
+              >
+            </div>
+          </div>
+          <div class="img-container last right-image flex_einfliegen">
+            <img src="/images/2024-07-22.webp" alt="Esstisch für 3 Personen" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <%- include('partials/footer') %>
     <script src="/js/banner.js"></script>
     <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const bannerTextElement = document.getElementById('scroll-text');
+      document.addEventListener("DOMContentLoaded", () => {
+        const bannerTextElement = document.getElementById("scroll-text");
         if (!bannerTextElement) return;
 
         const textLength = bannerTextElement.textContent.length;
@@ -262,6 +368,64 @@
       });
     </script>
 
-</body>
+    <script>
+      (() => {
+        const video = document.getElementById("heroVideo");
+        const btn = document.getElementById("audioToggle");
 
+        if (!video || !btn) return;
+
+        let isVisible = false;
+
+        // Sichtbarkeit beobachten (startet/stoppt automatisch)
+        const io = new IntersectionObserver(
+          async (entries) => {
+            const e = entries[0];
+            isVisible = e.isIntersecting && e.intersectionRatio >= 0.5;
+
+            if (isVisible) {
+              try {
+                await video.play();
+              } catch {}
+            } else {
+              video.pause();
+            }
+          },
+          { threshold: [0.5] }
+        );
+        io.observe(video);
+
+        // Tab-/Fenster-Sichtbarkeit (pausiert im Hintergrund)
+        document.addEventListener("visibilitychange", () => {
+          if (document.hidden) {
+            video.pause();
+          } else if (isVisible) {
+            video.play().catch(() => {});
+          }
+        });
+
+        // Button-Label & A11y synchron halten
+        function syncBtn() {
+          const muted = video.muted;
+          btn.textContent = muted ? "🔊 Ton an" : "🔇 Ton aus";
+          btn.setAttribute("aria-pressed", String(!muted));
+        }
+        syncBtn();
+
+        // Toggle Ton an/aus (Klick ist die nötige User-Geste für Browser)
+        btn.addEventListener("click", async () => {
+          video.muted = !video.muted;
+          syncBtn();
+          if (isVisible) {
+            try {
+              await video.play();
+            } catch {}
+          }
+        });
+
+        // Falls sich Lautstärke/Mute anderweitig ändert
+        video.addEventListener("volumechange", syncBtn);
+      })();
+    </script>
+  </body>
 </html>

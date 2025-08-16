@@ -89,6 +89,8 @@ p {
 
 input[type="text"],
 input[type="email"],
+input[type="date"],
+input[type="time"],
 select {
   background-color: var(--main-bg-color); /* Light gray background */
   border: 0.5px solid var(--main-box-color-blur-2);
