@@ -49,7 +49,7 @@ h3 {
   margin-bottom: 0;
 }
 
-.p-b-20{
+.p-b-20 {
   padding-bottom: 20px !important;
 }
 
@@ -131,8 +131,8 @@ select {
 }
 
 .hero-heading,
-.hero-text, 
-.hero a{
+.hero-text,
+.hero a {
   color: var(--main-bg-color) !important;
 }
 
@@ -703,7 +703,7 @@ select {
 
 /* running time */
 
-.carousel .time { 
+.carousel .time {
   position: absolute;
   z-index: 1000;
   width: 0%;
@@ -1093,7 +1093,7 @@ input[type="radio"]:checked + .radio-label {
   object-fit: fill;
 }
 
-.img400h{
+.img400h {
   height: 400px;
 }
 .card-content-blog {
@@ -1190,7 +1190,7 @@ textarea {
 }
 
 .eventbuchung-radio .radio-item:nth-last-child(1):nth-child(odd) {
-  grid-column: span 2 /* span über alle Spalten */
+  grid-column: span 2; /* span über alle Spalten */
 }
 
 /* .radio-event:last-child {
@@ -1223,7 +1223,8 @@ input[type="radio"]:checked + .radio-event {
 }
 
 .eventbuchung-email input {
-  width: 326px;
+  max-width: 326px;
+  width: 100%;
 }
 
 .flex-name-tel {
@@ -1687,8 +1688,16 @@ body.loading {
   text-decoration: underline;
 }
 
-.kartenzahlung-image img{
+.kartenzahlung-image img {
   width: 170px;
   height: 230px;
   border-radius: 10px;
+}
+
+@container (max-width: 480px) {
+  .input-fields-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1.2fr;
+    align-items: center;
+  }
 }
