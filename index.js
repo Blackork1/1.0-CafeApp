@@ -606,9 +606,9 @@ app.post("/tischreservierung", async (req, res) => {
 
 
     try {
-        const result = await db.query("INSERT INTO tischreservierung (date, text, mail, name, tel, time) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-            [date, text, mail, name, tel, time]
-        )
+        // const result = await db.query("INSERT INTO tischreservierung (date, text, mail, name, tel, time) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+        //     [date, text, mail, name, tel, time]
+        // )
 
         const mailOptions = {
             from: process.env.EMAIL_USER, // Sender address
