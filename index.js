@@ -28,15 +28,24 @@ app.use(express.static(path.join(__dirname, 'public'), { maxAge: '30d' }));
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
 
-const transporter = nodemailer.createTransport({
-    host: "mail.manitu.de", // Manitu SMTP server
-    port: 465, // Use 587 for STARTTLS (recommended) or 465 for SSL
-    secure: true, // Set to true if using port 465
-    auth: {
-        user: process.env.EMAIL_USER, // Your full email address
-        pass: process.env.EMAIL_PASS, // Your email password
-    }
+// const transporter = nodemailer.createTransport({
+//     host: "mail.manitu.de", // Manitu SMTP server
+//     port: 465, // Use 587 for STARTTLS (recommended) or 465 for SSL
+//     secure: true, // Set to true if using port 465
+//     auth: {
+//         user: process.env.EMAIL_USER, // Your full email address
+//         pass: process.env.EMAIL_PASS, // Your email password
+//     }
+// });
+
+const createTransporter = () => nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT) || 587,
+    secure: Number(process.env.SMTP_PORT) === 465,
+    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
 });
+
+const transporter = createTransporter();
 
 const db = new pg.Client({
     connectionString: process.env.DATABASE_URL,
