@@ -66,7 +66,7 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         maxAge: 30 * 24 * 60,// Example: 30 days
-        secure: process.env.NODE_ENV === 'production' && process.env.USE_HTTPS === 'true', // ✅ FIX: Secure only if HTTPS is enforced
+        // secure: process.env.NODE_ENV === 'production' && process.env.USE_HTTPS === 'true', // ✅ FIX: Secure only if HTTPS is enforced
         httpOnly: true, // Prevents client-side JS access
         sameSite: 'lax' // Prevents CSRF attacks
     }
@@ -638,9 +638,16 @@ app.post("/tischreservierung", async (req, res) => {
         await transporter.sendMail(mailOptions);
         res.redirect("/tischangefragt",)
     } catch (error) {
-        console.error("Error inserting event into DB:", err);
+        console.error("Error inserting event into DB:", error);
         res.status(500).send("Error inserting blog.");
     }
+})
+
+app.get("/tischangefragt", (req, res) => {
+    res.render("tischangefragt.ejs", {
+        user: req.user || req.session,
+        name: req.session.name,
+    });
 })
 
 // Event Area
