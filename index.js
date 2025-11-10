@@ -597,51 +597,44 @@ app.get('/tischreservierung', async (req, res) => {
 });
 
 app.post("/tischreservierung", async (req, res) => {
-    const { date, text, mail, name, tel, time } = req.body;
+  const { date, text, mail, name, tel, time } = req.body;
+  console.log("POST /tischreservierung", { date, time, mail });
 
+  try {
+    const result = await db.query(
+      "INSERT INTO tischreservierung (date, text, mail, name, tel, time) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id",
+      [date, text, mail, name, tel, time]
+    );
+    console.log("Inserted tischreservierung id:", result.rows[0].id);
+
+    // Session speichern + redirect, unabhängig von Mail
     req.session.date = date;
     req.session.time = time;
-    req.session.name = name; // ✅ Store selected date in session
-    req.session.save(); // ✅ Save session update
+    req.session.name = name;
 
+    req.session.save(() => {
+      res.redirect("/tischangefragt");
+    });
 
-    try {
-        // const result = await db.query("INSERT INTO tischreservierung (date, text, mail, name, tel, time) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-        //     [date, text, mail, name, tel, time]
-        // )
+    // Mail asynchron im Hintergrund (kein await, eigener Catch)
+    transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: mail,
+      bcc: process.env.EMAIL_USER,
+      subject: `Buchungsanfrage Erfolgreich`,
+      text: `Hallo ${name}, ...`
+    }).then(info => {
+      console.log("Mail ok:", info.messageId);
+    }).catch(err => {
+      console.error("Mailfehler (aber Reservierung gespeichert):", err);
+    });
 
-        const mailOptions = {
-            from: process.env.EMAIL_USER, // Sender address
-            to: mail,                      // Recipient's email
-            bcc: process.env.EMAIL_USER,     // Copy to sender
-            subject: `Buchungsanfrage Erfolgreich`, // Subject line
-            text: `Hallo ${name},
-  
-  Deine Anfrage wurde erfolgreich übermittelt: 🥳🎉
-  Dein gewählter Tag: ${date} um ${time}
-  Dein Text: ${text}
-  Deine Rufnummer: ${tel}
+  } catch (err) {
+    console.error("Error inserting tischreservierung:", err);
+    res.status(500).send("Fehler bei der Reservierung.");
+  }
+});
 
-  Vielen Dank für deine Anfrage.
-
-  Wir melden uns in kürze bei dir,
-  Bernd und Manuel Ziekow
-  
-  
-  Zur alten Backstube
-  Hauptstraße 155, 13158 Berlin
-  Tel: 030-47488482`
-            ,
-        };
-
-        // Send the email
-        await transporter.sendMail(mailOptions);
-        res.redirect("/tischangefragt",)
-    } catch (error) {
-        console.error("Error inserting event into DB:", error);
-        res.status(500).send("Error inserting blog.");
-    }
-})
 
 app.get("/tischangefragt", (req, res) => {
     res.render("tischangefragt.ejs", {
