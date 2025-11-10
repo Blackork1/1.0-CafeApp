@@ -597,42 +597,52 @@ app.get('/tischreservierung', async (req, res) => {
 });
 
 app.post("/tischreservierung", async (req, res) => {
-  const { date, text, mail, name, tel, time } = req.body;
-  console.log("POST /tischreservierung", { date, time, mail });
+    const { date, text, mail, name, tel, time } = req.body;
+    console.log("POST /tischreservierung", { date, time, mail });
 
-  try {
-    const result = await db.query(
-      "INSERT INTO tischreservierung (date, text, mail, name, tel, time) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id",
-      [date, text, mail, name, tel, time]
-    );
-    console.log("Inserted tischreservierung id:", result.rows[0].id);
+    try {
+        const result = await db.query(
+            "INSERT INTO tischreservierung (date, text, mail, name, tel, time) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id",
+            [date, text, mail, name, tel, time]
+        );
+        console.log("Inserted tischreservierung id:", result.rows[0].id);
 
-    // Session speichern + redirect, unabhängig von Mail
-    req.session.date = date;
-    req.session.time = time;
-    req.session.name = name;
+        // Session speichern + redirect, unabhängig von Mail
+        req.session.date = date;
+        req.session.time = time;
+        req.session.name = name;
 
-    req.session.save(() => {
-      res.redirect("/tischangefragt");
-    });
+        transporter.verify((error, success) => {
+            if (error) {
+                console.error("❌ Nodemailer verify failed:", error);
+            } else {
+                console.log("✅ Nodemailer ready to send mail");
+            }
+        });
 
-    // Mail asynchron im Hintergrund (kein await, eigener Catch)
-    transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: mail,
-      bcc: process.env.EMAIL_USER,
-      subject: `Buchungsanfrage Erfolgreich`,
-      text: `Hallo ${name}, ...`
-    }).then(info => {
-      console.log("Mail ok:", info.messageId);
-    }).catch(err => {
-      console.error("Mailfehler (aber Reservierung gespeichert):", err);
-    });
+        req.session.save(() => {
+            res.redirect("/tischangefragt");
+        });
 
-  } catch (err) {
-    console.error("Error inserting tischreservierung:", err);
-    res.status(500).send("Fehler bei der Reservierung.");
-  }
+
+
+        // Mail asynchron im Hintergrund (kein await, eigener Catch)
+        transporter.sendMail({
+            from: process.env.EMAIL_USER,
+            to: mail,
+            bcc: process.env.EMAIL_USER,
+            subject: `Buchungsanfrage Erfolgreich`,
+            text: `Hallo ${name}, ...`
+        }).then(info => {
+            console.log("Mail ok:", info.messageId);
+        }).catch(err => {
+            console.error("Mailfehler (aber Reservierung gespeichert):", err);
+        });
+
+    } catch (err) {
+        console.error("Error inserting tischreservierung:", err);
+        res.status(500).send("Fehler bei der Reservierung.");
+    }
 });
 
 
