@@ -30,8 +30,8 @@ app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
 const transporter = nodemailer.createTransport({
     host: "mail.manitu.de", // Manitu SMTP server
-    port: 464, // Use 587 for STARTTLS (recommended) or 465 for SSL
-    secure: true, // Set to true if using port 465
+    port: 587, // Use 587 for STARTTLS (recommended) or 465 for SSL
+    secure: false, // Set to true if using port 465
     auth: {
         user: process.env.EMAIL_USER, // Your full email address
         pass: process.env.EMAIL_PASS, // Your email password
