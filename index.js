@@ -751,7 +751,6 @@ app.get("/angefragt", (req, res) => {
 app.get("/tischangefragt", (req, res) => {
     res.render("tischangefragt.ejs", {
         user: req.user || req.session,
-        event: req.session.event,
         name: req.session.name,
     });
 })
