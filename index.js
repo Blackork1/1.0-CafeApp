@@ -35,10 +35,7 @@ const transporter = nodemailer.createTransport({
     auth: {
         user: process.env.EMAIL_USER, // Your full email address
         pass: process.env.EMAIL_PASS, // Your email password
-    },
-    tls: {
-        rejectUnauthorized: false, // Allows self-signed certificates (if needed)
-    },
+    }
 });
 
 const db = new pg.Client({
