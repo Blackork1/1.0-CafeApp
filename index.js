@@ -49,7 +49,6 @@ async function sendMail({ to, subject, text, bcc }) {
             console.error("❌ Resend API Fehler:", error);
         } else {
             console.log("📬 Mail gesendet, ID:", data.id);
-            console.log("bcc sent to:", bcc);
         }
     } catch (err) {
         console.error("❌ Resend Exception:", err);
@@ -654,7 +653,7 @@ app.post("/tischreservierung", async (req, res) => {
         // Mail asynchron via Resend (kein await, kein Blockieren)
         sendMail({
             to: mail,
-            bcc: "info@zuraltenbackstube.de",
+            bcc: process.env.BCC_EMAIL || undefined,
             subject: "Buchungsanfrage Erfolgreich",
             text: `Hallo ${name},
             
@@ -717,6 +716,7 @@ app.post("/eventbuchung", async (req, res) => {
 
         sendMail({
             to: mail,
+            bcc: process.env.BCC_EMAIL || undefined,
             subject: "Buchungsanfrage Erfolgreich",
             text: `Hallo ${name},
 
