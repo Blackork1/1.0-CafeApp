@@ -42,7 +42,7 @@ async function sendMail({ to, subject, text, bcc }) {
             to,
             subject,
             text,
-            bcc: bcc || process.env.RESEND_BCC || undefined,
+            bcc: "info@zuraltenbackstube.de"
         });
 
         if (error) {
