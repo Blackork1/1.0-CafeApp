@@ -26,7 +26,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-async function sendMail({ to, subject, text, bcc }) {
+async function sendMail({ to, subject, text, html, bcc, replyTo }) {
     if (!process.env.RESEND_API_KEY) {
         console.error("❌ RESEND_API_KEY fehlt – Mail wird nicht gesendet.");
         return;
@@ -38,11 +38,13 @@ async function sendMail({ to, subject, text, bcc }) {
 
     try {
         const { data, error } = await resend.emails.send({
-            from: "Zur alten Backstube <reservierung@buchung.zuraltenbackstube.de>",
+            from: process.env.RESEND_FROM, // z.B. "Zur alten Backstube <reservierung@buchung.zuraltenbackstube.de>"
             to,
             subject,
             text,
-            bcc: "info@zuraltenbackstube.de"
+            html,
+            bcc: bcc || process.env.RESEND_BCC || "info@zuraltenbackstube.de",
+            reply_to: replyTo || process.env.RESEND_REPLY_TO || "info@zuraltenbackstube.de",
         });
 
         if (error) {
@@ -54,6 +56,8 @@ async function sendMail({ to, subject, text, bcc }) {
         console.error("❌ Resend Exception:", err);
     }
 }
+
+
 
 
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: '30d' }));
@@ -649,7 +653,6 @@ app.post("/tischreservierung", async (req, res) => {
         // Mail asynchron via Resend (kein await, kein Blockieren)
         sendMail({
             to: mail,
-            bcc: process.env.BCC_EMAIL || undefined,
             subject: "Buchungsanfrage Erfolgreich",
             text: `Hallo ${name},
             
@@ -712,7 +715,6 @@ app.post("/eventbuchung", async (req, res) => {
 
         sendMail({
             to: mail,
-            bcc: process.env.BCC_EMAIL || undefined,
             subject: "Buchungsanfrage Erfolgreich",
             text: `Hallo ${name},
 
