@@ -15,6 +15,7 @@ import { fileURLToPath } from 'url';
 import methodOverride from 'method-override';
 import compression from 'compression';
 import { v2 as cloudinary } from 'cloudinary';
+import { Resend } from 'resend';
 
 
 env.config();
@@ -23,6 +24,37 @@ const port = process.env.PORT || 3001;
 const saltRounds = 10;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+async function sendMail({ to, subject, text, bcc }) {
+    if (!process.env.RESEND_API_KEY) {
+        console.error("❌ RESEND_API_KEY fehlt – Mail wird nicht gesendet.");
+        return;
+    }
+    if (!process.env.RESEND_FROM) {
+        console.error("❌ RESEND_FROM fehlt – Mail wird nicht gesendet.");
+        return;
+    }
+
+    try {
+        const { data, error } = await resend.emails.send({
+            from: process.env.RESEND_FROM,
+            to,
+            subject,
+            text,
+            bcc: bcc || process.env.RESEND_BCC || undefined,
+        });
+
+        if (error) {
+            console.error("❌ Resend API Fehler:", error);
+        } else {
+            console.log("📬 Mail gesendet, ID:", data.id);
+        }
+    } catch (err) {
+        console.error("❌ Resend Exception:", err);
+    }
+}
+
 
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: '30d' }));
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
@@ -38,14 +70,14 @@ app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 //     }
 // });
 
-const createTransporter = () => nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT) || 587,
-    secure: Number(process.env.SMTP_PORT) === 465,
-    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
-});
+// const createTransporter = () => nodemailer.createTransport({
+//     host: process.env.SMTP_HOST,
+//     port: Number(process.env.SMTP_PORT) || 587,
+//     secure: Number(process.env.SMTP_PORT) === 465,
+//     auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+// });
 
-const transporter = createTransporter();
+// const transporter = createTransporter();
 
 const db = new pg.Client({
     connectionString: process.env.DATABASE_URL,
@@ -268,69 +300,64 @@ app.post("/select-table", async (req, res) => {
 
 // Step 3: Finalize reservation submission
 app.post("/reserve", async (req, res) => {
-    // The radio button value is in the format "YYYY-MM-DD|time"
     const { selectedTable, slot, numPeople, name, email } = req.body;
     const [selectedDate, selectedTime] = slot.split("|");
 
     try {
         const checkQuery = `SELECT * FROM booking WHERE table_id = $1 AND date = $2 AND time = $3`;
         const checkResult = await db.query(checkQuery, [selectedTable, selectedDate, selectedTime]);
+
         if (checkResult.rows.length > 0) {
             return res.send(`Sorry, Table ${selectedTable} is already booked for ${selectedDate} at ${selectedTime}. Please choose another.`);
         }
+
         const insertQuery = `
             INSERT INTO booking (table_id, date, time, places_selected, name, email)
             VALUES ($1, $2, $3, $4, $5, $6)
         `;
         await db.query(insertQuery, [selectedTable, selectedDate, selectedTime, numPeople, name, email]);
-        // Compose the email content
-        req.session.selectedTable = selectedTable;
-        req.session.selectedDate = selectedDate; // ✅ Store selected date in session
-        req.session.selectedTime = selectedTime;
 
+        // Session-Daten
+        req.session.selectedTable = selectedTable;
+        req.session.selectedDate = selectedDate;
+        req.session.selectedTime = selectedTime;
         if (req.user) {
             req.user.name = name;
-        }
-        else {
+        } else {
             req.session.name = name;
         }
-        req.session.save(); // ✅ Save session update
 
-        const mailOptions = {
-            from: process.env.EMAIL_USER, // Sender address
-            to: email,                      // Recipient's email
-            bcc: process.env.EMAIL_USER,     // Copy to sender
-            subject: `Reservierung Zur alten Backstube am ${selectedDate}`, // Subject line
+        req.session.save(() => {
+            res.redirect("/booked");
+        });
+
+        // Mail asynchron
+        sendMail({
+            to: email,
+            subject: `Reservierung Zur alten Backstube am ${selectedDate}`,
             text: `Hallo ${name},
-  
-  Deine Reservierung wurde bestätigt: 🥳🎉
-  Tisch: ${selectedTable}
-  Tag: ${selectedDate}
-  Zeit: ${selectedTime}
-  Anzahl an Gästen: ${numPeople}
-  
-  Vielen Dank.
 
-  Wir freuen uns auf dich,
-  Bernd und Manuel Ziekow
-  
+Deine Reservierung wurde bestätigt. 🎉
 
-  
-  Zur alten Backstube
-  Hauptstraße 155, 13158 Berlin
-  Tel: 030-47488482`
-            ,
-        };
+Tisch: ${selectedTable}
+Tag: ${selectedDate}
+Zeit: ${selectedTime}
+Gäste: ${numPeople}
 
-        // Send the email
-        await transporter.sendMail(mailOptions);
-        res.redirect("/booked",)
-        // res.send(`Reservation confirmed for ${name} at Table ${selectedTable} on ${selectedDate} at ${selectedTime} for ${numPeople} people.`);
+Wir freuen uns auf dich!
+
+Bernd und Manuel Ziekow
+Zur alten Backstube
+Hauptstraße 155, 13158 Berlin
+Tel: 030-47488482`
+        });
+
     } catch (err) {
-        console.error("Database error:", err);
+        console.error("Database error (reserve):", err);
         res.status(500).send("An error occurred while processing your reservation.");
     }
 });
+
 
 app.get("/allReservations", async (req, res) => {
     try {
@@ -613,36 +640,34 @@ app.post("/tischreservierung", async (req, res) => {
         );
         console.log("Inserted tischreservierung id:", result.rows[0].id);
 
-        // Session speichern + redirect, unabhängig von Mail
+        // Session für Bestätigungsseite
         req.session.date = date;
         req.session.time = time;
         req.session.name = name;
 
-        transporter.verify((error, success) => {
-            if (error) {
-                console.error("❌ Nodemailer verify failed:", error);
-            } else {
-                console.log("✅ Nodemailer ready to send mail");
-            }
-        });
-
         req.session.save(() => {
+            // User sofort weiterleiten
             res.redirect("/tischangefragt");
         });
 
-
-
-        // Mail asynchron im Hintergrund (kein await, eigener Catch)
-        transporter.sendMail({
-            from: process.env.EMAIL_USER,
+        // Mail asynchron via Resend (kein await, kein Blockieren)
+        sendMail({
             to: mail,
-            bcc: process.env.EMAIL_USER,
-            subject: `Buchungsanfrage Erfolgreich`,
-            text: `Hallo ${name}, ...`
-        }).then(info => {
-            console.log("Mail ok:", info.messageId);
-        }).catch(err => {
-            console.error("Mailfehler (aber Reservierung gespeichert):", err);
+            subject: "Buchungsanfrage Erfolgreich",
+            text: `Hallo ${name},
+
+Deine Anfrage wurde erfolgreich übermittelt. 🎉
+
+Tag: ${date} um ${time}
+Text: ${text}
+Rufnummer: ${tel}
+
+Wir melden uns in Kürze bei dir.
+
+Bernd und Manuel Ziekow
+Zur alten Backstube
+Hauptstraße 155, 13158 Berlin
+Tel: 030-47488482`
         });
 
     } catch (err) {
@@ -650,6 +675,7 @@ app.post("/tischreservierung", async (req, res) => {
         res.status(500).send("Fehler bei der Reservierung.");
     }
 });
+
 
 
 app.get("/tischangefragt", (req, res) => {
@@ -686,36 +712,28 @@ app.post("/eventbuchung", async (req, res) => {
             [event, text, mail, name, tel]
         )
 
-        const mailOptions = {
-            from: process.env.EMAIL_USER, // Sender address
-            to: mail,                      // Recipient's email
-            bcc: process.env.EMAIL_USER,     // Copy to sender
-            subject: `Buchungsanfrage Erfolgreich`, // Subject line
+        sendMail({
+            to: mail,
+            subject: "Buchungsanfrage Erfolgreich",
             text: `Hallo ${name},
-  
-  Deine Anfrage wurde erfolgreich übermittelt: 🥳🎉
-  Dein gewähltes Event: ${event}
-  Dein Text: ${text}
-  Deine Rufnummer: ${tel}
 
-  Vielen Dank für deine Anfrage.
+Deine Event-Anfrage wurde erfolgreich übermittelt. 🎉
 
-  Wir melden uns in kürze bei dir,
-  Bernd und Manuel Ziekow
-  
-  
-  Zur alten Backstube
-  Hauptstraße 155, 13158 Berlin
-  Tel: 030-47488482`
-            ,
-        };
+Event: ${event}
+Text: ${text}
+Rufnummer: ${tel}
 
-        // Send the email
-        await transporter.sendMail(mailOptions);
+Wir melden uns in Kürze bei dir.
+
+Bernd und Manuel Ziekow
+Zur alten Backstube
+Hauptstraße 155, 13158 Berlin
+Tel: 030-47488482`
+        });
         res.redirect("/angefragt",)
     } catch (error) {
-        console.error("Error inserting event into DB:", err);
-        res.status(500).send("Error inserting blog.");
+        console.error("Error inserting event into DB:", error);
+        res.status(500).send("Fehler bei der Eventanfrage.");
     }
 })
 
