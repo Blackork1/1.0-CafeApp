@@ -39,13 +39,13 @@ async function sendMail({ to, subject, text, html, bcc, replyTo }) {
 
     try {
         const { data, error } = await resend.emails.send({
-            from: "Zur alten Backstube <reservierung@buchung.zuraltenbackstube.de>"
+            from: "Zur alten Backstube <reservierung@buchung.zuraltenbackstube.de>",
             to,
             subject,
             text,
             html,
             bcc: "info@zuraltenbackstube.de",
-            reply_to: "info@zuraltenbackstube.de",
+            reply_to: "info@zuraltenbackstube.de"
         });
 
         if (error) {
