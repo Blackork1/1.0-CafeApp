@@ -38,7 +38,7 @@ async function sendMail({ to, subject, text, bcc }) {
 
     try {
         const { data, error } = await resend.emails.send({
-            from: process.env.RESEND_FROM,
+            from: "Zur alten Backstube <reservierung@buchung.zuraltenbackstube.de>",
             to,
             subject,
             text,
