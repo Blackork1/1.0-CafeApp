@@ -34,7 +34,7 @@ async function sendMail({ to, subject, text, html, bcc, replyTo }) {
     if (!process.env.RESEND_FROM) {
         console.error("❌ RESEND_FROM fehlt – Mail wird nicht gesendet.");
         return;
-        
+
     }
 
     try {
@@ -109,7 +109,7 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         maxAge: 30 * 24 * 60,// Example: 30 days
-        // secure: process.env.NODE_ENV === 'production' && process.env.USE_HTTPS === 'true', // ✅ FIX: Secure only if HTTPS is enforced
+        secure: process.env.NODE_ENV === 'production' && process.env.USE_HTTPS === 'true', // ✅ FIX: Secure only if HTTPS is enforced
         httpOnly: true, // Prevents client-side JS access
         sameSite: 'lax' // Prevents CSRF attacks
     }
