@@ -658,16 +658,17 @@ app.post("/tischreservierung", async (req, res) => {
             text: `Hallo ${name},
             
 
-Deine Anfrage wurde erfolgreich übermittelt. 🎉
+Deine Anfrage wurde erfolgreich übermittelt 🎉
 
 Tag: ${date} um ${time}
 Text: ${text}
 Rufnummer: ${tel}
 
-Wir melden uns in Kürze bei dir.
+Wir melden uns in Kürze bei dir 🥂
 
-Bernd und Manuel Ziekow
-Zur alten Backstube
+Bernd und Manuel Ziekow 🍀
+
+Zur alten Backstube 
 Hauptstraße 155, 13158 Berlin
 Tel: 030-47488482`
         });
@@ -719,15 +720,16 @@ app.post("/eventbuchung", async (req, res) => {
             subject: "Buchungsanfrage Erfolgreich",
             text: `Hallo ${name},
 
-Deine Event-Anfrage wurde erfolgreich übermittelt. 🎉
+Deine Event-Anfrage wurde erfolgreich übermittelt 🎉
 
 Event: ${event}
 Text: ${text}
 Rufnummer: ${tel}
 
-Wir melden uns in Kürze bei dir.
+Wir melden uns in Kürze bei dir 🥂
 
-Bernd und Manuel Ziekow
+Bernd und Manuel Ziekow 🍀
+
 Zur alten Backstube
 Hauptstraße 155, 13158 Berlin
 Tel: 030-47488482`
