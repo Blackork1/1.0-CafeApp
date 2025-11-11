@@ -711,7 +711,7 @@ app.post("/eventbuchung", async (req, res) => {
 
     try {
         const result = await db.query("INSERT INTO eventbuchung (event, text, mail, name, tel) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-            [event, text, mail, name, tel]
+            [event, text, mail, name, tel] 
         )
 
         sendMail({
