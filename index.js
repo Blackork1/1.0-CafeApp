@@ -34,6 +34,7 @@ async function sendMail({ to, subject, text, html, bcc, replyTo }) {
     if (!process.env.RESEND_FROM) {
         console.error("❌ RESEND_FROM fehlt – Mail wird nicht gesendet.");
         return;
+        
     }
 
     try {
