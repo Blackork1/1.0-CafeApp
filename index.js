@@ -45,7 +45,7 @@ async function sendMail({ to, subject, text, html, bcc, replyTo }) {
             text,
             html,
             bcc: "info@zuraltenbackstube.de",
-            reply_to: "info@zuraltenbackstube.de"
+            replyTo: "info@zuraltenbackstube.de"
         });
 
         if (error) {
