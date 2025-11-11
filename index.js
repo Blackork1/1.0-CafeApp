@@ -633,22 +633,18 @@ app.post("/tischreservierung", async (req, res) => {
     const { date, text, mail, name, tel, time } = req.body;
     console.log("POST /tischreservierung", { date, time, mail });
 
+    // Session für Bestätigungsseite
+    req.session.date = date;
+    req.session.time = time;
+    req.session.name = name;
+    req.session.save();
+
     try {
         const result = await db.query(
             "INSERT INTO tischreservierung (date, text, mail, name, tel, time) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id",
             [date, text, mail, name, tel, time]
         );
         console.log("Inserted tischreservierung id:", result.rows[0].id);
-
-        // Session für Bestätigungsseite
-        req.session.date = date;
-        req.session.time = time;
-        req.session.name = name;
-
-        req.session.save(() => {
-            // User sofort weiterleiten
-            res.redirect("/tischangefragt");
-        });
 
         // Mail asynchron via Resend (kein await, kein Blockieren)
         sendMail({
@@ -671,7 +667,7 @@ Zur alten Backstube
 Hauptstraße 155, 13158 Berlin
 Tel: 030-47488482`
         });
-
+        res.redirect("/tischangefragt");
     } catch (err) {
         console.error("Error inserting tischreservierung:", err);
         res.status(500).send("Fehler bei der Reservierung.");
@@ -711,7 +707,7 @@ app.post("/eventbuchung", async (req, res) => {
 
     try {
         const result = await db.query("INSERT INTO eventbuchung (event, text, mail, name, tel) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-            [event, text, mail, name, tel] 
+            [event, text, mail, name, tel]
         )
 
         sendMail({
