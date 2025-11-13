@@ -26,7 +26,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-async function sendMail({ to, subject, text, html, bcc, replyTo }) {
+async function sendMail({ to, subject, text, html, replyTo }) {
     if (!process.env.RESEND_API_KEY) {
         console.error("❌ RESEND_API_KEY fehlt – Mail wird nicht gesendet.");
         return;
@@ -34,7 +34,6 @@ async function sendMail({ to, subject, text, html, bcc, replyTo }) {
     if (!process.env.RESEND_FROM) {
         console.error("❌ RESEND_FROM fehlt – Mail wird nicht gesendet.");
         return;
-
     }
 
     try {
@@ -44,10 +43,37 @@ async function sendMail({ to, subject, text, html, bcc, replyTo }) {
             subject,
             text,
             html,
-            bcc: "info@zuraltenbackstube.de",
             replyTo: "info@zuraltenbackstube.de"
         });
 
+        if (error) {
+            console.error("❌ Resend API Fehler:", error);
+        } else {
+            console.log("📬 Mail gesendet, ID:", data.id);
+        }
+    } catch (err) {
+        console.error("❌ Resend Exception:", err);
+    }
+}
+
+async function sendMailHost({ to, subject, text, html, replyTo }) {
+    if (!process.env.RESEND_API_KEY) {
+        console.error("❌ RESEND_API_KEY fehlt – Mail wird nicht gesendet.");
+        return;
+    }
+    if (!process.env.RESEND_FROM) {
+        console.error("❌ RESEND_FROM fehlt – Mail wird nicht gesendet.");
+        return;
+    }
+    try {
+        const { data, error } = await resend.emails.send({
+            from: "Zur alten Backstube <reservierung@buchung.zuraltenbackstube.de>",
+            to: "info@zuraltenbackstube.de",
+            subject,
+            text,
+            html,
+            replyTo,
+        });
         if (error) {
             console.error("❌ Resend API Fehler:", error);
         } else {
@@ -651,12 +677,31 @@ app.post("/tischreservierung", async (req, res) => {
         );
         console.log("Inserted tischreservierung id:", result.rows[0].id);
 
-        // Mail asynchron via Resend (kein await, kein Blockieren)
+        sendMailHost({
+            to: "info@zuraltenbackstube.de",
+            subject: "Neue Tischreservierung Anfrage",
+            replyTo: mail,
+            text: `Hallo ${name},
+
+Deine Anfrage wurde erfolgreich übermittelt 🎉
+
+Tag: ${date} um ${time}
+Text: ${text}
+Rufnummer: ${tel}
+
+Wir melden uns in Kürze bei dir 🥂
+
+Bernd und Manuel Ziekow 🍀
+
+Zur alten Backstube 
+Hauptstraße 155, 13158 Berlin
+Tel: 030-47488482`
+        });
+
         sendMail({
             to: mail,
             subject: "Buchungsanfrage Erfolgreich",
             text: `Hallo ${name},
-            
 
 Deine Anfrage wurde erfolgreich übermittelt 🎉
 
@@ -714,6 +759,27 @@ app.post("/eventbuchung", async (req, res) => {
         const result = await db.query("INSERT INTO eventbuchung (event, text, mail, name, tel) VALUES ($1, $2, $3, $4, $5) RETURNING *",
             [event, text, mail, name, tel]
         )
+
+        sendMailHost({
+            to: "info@zuraltenbackstube.de",
+            subject: "Neue Event-Anfrage",
+            replyTo: mail,
+            text: `Hallo ${name},
+
+Deine Event-Anfrage wurde erfolgreich übermittelt 🎉
+
+Event: ${event}
+Text: ${text}
+Rufnummer: ${tel}
+
+Wir melden uns in Kürze bei dir 🥂
+
+Bernd und Manuel Ziekow 🍀
+
+Zur alten Backstube
+Hauptstraße 155, 13158 Berlin
+Tel: 030-47488482`
+        });
 
         sendMail({
             to: mail,
