@@ -16,6 +16,8 @@ import methodOverride from 'method-override';
 import compression from 'compression';
 import { v2 as cloudinary } from 'cloudinary';
 import { Resend } from 'resend';
+const { Pool } = pg;
+
 
 
 env.config();
@@ -25,6 +27,95 @@ const saltRounds = 10;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const resend = new Resend(process.env.RESEND_API_KEY);
+
+
+app.use(express.static(path.join(__dirname, 'public'), { maxAge: '30d' }));
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
+
+const db = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
+    },
+    max: 10,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 5000,
+});
+
+db.on('error', (err) => {
+    console.error('❌ Unerwarteter PG-Pool-Fehler:', err);
+    // NICHT process.exit() hier – sonst ist bei jedem kurzen Huster die App tot
+});
+
+console.log("PG-Pool initialisiert");
+
+app.set('trust proxy', 1);
+
+const PgSessionStore = pgSession(session);
+app.use(session({
+    store: new PgSessionStore({
+        pool: db,                      // <- denselben Pool verwenden
+        tableName: 'session',
+        createTableIfMissing: true,
+    }),
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        // 30 Tage: in ms!
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        secure: process.env.NODE_ENV === 'production' && process.env.USE_HTTPS === 'true',
+        httpOnly: true,
+        sameSite: 'lax',
+    }
+}));
+
+// Deine eigene Cloudinary Konfiguration
+cloudinary.config({
+    cloud_name: 'dndmew9my',
+    api_key: '643484217454591',
+    api_secret: 'aDbRqeTeI1s5W9qPyS3BnpjT-jU' // Click 'View API Keys' above to copy your API secret
+});
+
+app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static("public"));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(express.json());
+app.use(methodOverride('_method'));
+app.use(compression());
+
+
+// Multer-Konfiguration: Dateien werden im Arbeitsspeicher gehalten
+const storage = multer.memoryStorage();
+const upload = multer({
+    storage: storage,
+    // Optional: Maximale Dateigröße z. B. 5 MB festlegen
+    limits: { fileSize: 5 * 1024 * 1024 },
+    fileFilter: function (req, file, cb) {
+        // Allow only jpeg and png files
+        if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+            cb(null, true);
+        } else {
+            cb(new Error('Only .jpeg and .png files are allowed!'), false);
+        }
+    },
+});
+// Function to get weekend dates (next 4 weeks) in YYYY-MM-DD format
+// Helper: Get banner settings from the database
+async function getBannerSettings() {
+    try {
+        const textResult = await db.query("SELECT value FROM settings WHERE key = 'bannerText'");
+        const bannerText = textResult.rows.length ? textResult.rows[0].value : 'Willkommen auf unserer Seite!';
+        const enabledResult = await db.query("SELECT value FROM settings WHERE key = 'bannerEnabled'");
+        const bannerEnabled = enabledResult.rows.length ? (enabledResult.rows[0].value === 'true') : true;
+        return { bannerText, bannerEnabled };
+    } catch (err) {
+        console.error('Error fetching banner settings:', err);
+        return { bannerText: '', bannerEnabled: true };
+    }
+}
 
 async function sendMail({ to, subject, text, html, replyTo }) {
     if (!process.env.RESEND_API_KEY) {
@@ -81,110 +172,6 @@ async function sendMailHost({ to, subject, text, html, replyTo }) {
         }
     } catch (err) {
         console.error("❌ Resend Exception:", err);
-    }
-}
-
-
-
-
-app.use(express.static(path.join(__dirname, 'public'), { maxAge: '30d' }));
-app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
-
-
-// const transporter = nodemailer.createTransport({
-//     host: "mail.manitu.de", // Manitu SMTP server
-//     port: 465, // Use 587 for STARTTLS (recommended) or 465 for SSL
-//     secure: true, // Set to true if using port 465
-//     auth: {
-//         user: process.env.EMAIL_USER, // Your full email address
-//         pass: process.env.EMAIL_PASS, // Your email password
-//     }
-// });
-
-// const createTransporter = () => nodemailer.createTransport({
-//     host: process.env.SMTP_HOST,
-//     port: Number(process.env.SMTP_PORT) || 587,
-//     secure: Number(process.env.SMTP_PORT) === 465,
-//     auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
-// });
-
-// const transporter = createTransporter();
-
-const db = new pg.Client({
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false // Needed for Railway's managed PostgreSQL instances
-    }
-});
-
-db.connect()
-    .then(() => console.log("Connected to Railway PostgreSQL"))
-    .catch(err => console.error("Connection error:", err));
-
-
-app.set('trust proxy', 1);
-const PgSessionStore = pgSession(session);
-app.use(session({
-    store: new PgSessionStore({
-        conString: process.env.DATABASE_URL,
-        tableName: 'session',  // default is "session"
-        createTableIfMissing: true, // Automatically create the session table if missing
-    }),
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        maxAge: 30 * 24 * 60,// Example: 30 days
-        secure: process.env.NODE_ENV === 'production' && process.env.USE_HTTPS === 'true', // ✅ FIX: Secure only if HTTPS is enforced
-        httpOnly: true, // Prevents client-side JS access
-        sameSite: 'lax' // Prevents CSRF attacks
-    }
-}));
-
-// Deine eigene Cloudinary Konfiguration
-cloudinary.config({
-    cloud_name: 'dndmew9my',
-    api_key: '643484217454591',
-    api_secret: 'aDbRqeTeI1s5W9qPyS3BnpjT-jU' // Click 'View API Keys' above to copy your API secret
-});
-
-app.set('view engine', 'ejs');
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static("public"));
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(express.json());
-app.use(methodOverride('_method'));
-app.use(compression());
-
-
-// Multer-Konfiguration: Dateien werden im Arbeitsspeicher gehalten
-const storage = multer.memoryStorage();
-const upload = multer({
-    storage: storage,
-    // Optional: Maximale Dateigröße z. B. 5 MB festlegen
-    limits: { fileSize: 5 * 1024 * 1024 },
-    fileFilter: function (req, file, cb) {
-        // Allow only jpeg and png files
-        if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-            cb(null, true);
-        } else {
-            cb(new Error('Only .jpeg and .png files are allowed!'), false);
-        }
-    },
-});
-// Function to get weekend dates (next 4 weeks) in YYYY-MM-DD format
-// Helper: Get banner settings from the database
-async function getBannerSettings() {
-    try {
-        const textResult = await db.query("SELECT value FROM settings WHERE key = 'bannerText'");
-        const bannerText = textResult.rows.length ? textResult.rows[0].value : 'Willkommen auf unserer Seite!';
-        const enabledResult = await db.query("SELECT value FROM settings WHERE key = 'bannerEnabled'");
-        const bannerEnabled = enabledResult.rows.length ? (enabledResult.rows[0].value === 'true') : true;
-        return { bannerText, bannerEnabled };
-    } catch (err) {
-        console.error('Error fetching banner settings:', err);
-        return { bannerText: '', bannerEnabled: true };
     }
 }
 
