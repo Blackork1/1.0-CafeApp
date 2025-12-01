@@ -226,6 +226,7 @@ select {
   max-width: 100%;
   object-fit: cover;
   border-radius: 12px;
+  max-height: 500px;
 }
 
 .left-image {
