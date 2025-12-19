@@ -37,9 +37,9 @@ const db = new Pool({
     ssl: {
         rejectUnauthorized: false
     },
-    max: 5,
+    max: 10,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 1000,
+    connectionTimeoutMillis: 5000,
 });
 
 db.on('error', (err) => {
@@ -57,14 +57,13 @@ app.use(session({
         pool: db,                      // <- denselben Pool verwenden
         tableName: 'session',
         createTableIfMissing: true,
-        pruneSessionInterval: 60 * 60, // Alle Stunde abgelaufene Sessions löschen
     }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
-        // 1 Stunde: in ms!
-        maxAge: 60 * 60 * 1000,
+        // 30 Tage: in ms!
+        maxAge: 30 * 24 * 60 * 60 * 1000,
         secure: process.env.NODE_ENV === 'production' && process.env.USE_HTTPS === 'true',
         httpOnly: true,
         sameSite: 'lax',
