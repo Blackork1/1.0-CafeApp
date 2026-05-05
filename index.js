@@ -16,17 +16,24 @@ import methodOverride from 'method-override';
 import compression from 'compression';
 import { v2 as cloudinary } from 'cloudinary';
 import { Resend } from 'resend';
+import { createSpamProtection } from './lib/spamProtection.js';
 const { Pool } = pg;
 
 
 
 env.config();
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3333;
 const saltRounds = 10;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const resend = new Resend(process.env.RESEND_API_KEY);
+const spamProtection = createSpamProtection({
+    minSubmitMs: Number(process.env.SPAM_PROTECTION_MIN_MS) || 3000,
+    maxSubmitMs: Number(process.env.SPAM_PROTECTION_MAX_MS) || 2 * 60 * 60 * 1000,
+    windowMs: Number(process.env.SPAM_PROTECTION_WINDOW_MS) || 10 * 60 * 1000,
+    maxAttempts: Number(process.env.SPAM_PROTECTION_MAX_ATTEMPTS) || 5,
+});
 
 
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: '30d' }));
@@ -173,6 +180,23 @@ async function sendMailHost({ to, subject, text, html, replyTo }) {
     } catch (err) {
         console.error("❌ Resend Exception:", err);
     }
+}
+
+function getClientIp(req) {
+    return req.ip || req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown';
+}
+
+function rejectSpamSubmission(req, res, formName, spamCheck) {
+    const ip = getClientIp(req);
+    console.warn('Blocked suspicious form submission:', {
+        formName,
+        reason: spamCheck.reason,
+        ip,
+    });
+
+    return res
+        .status(spamCheck.status || 400)
+        .send('Deine Anfrage konnte nicht verarbeitet werden. Bitte lade die Seite neu und versuche es erneut.');
 }
 
 // Step 1: Show table selection
@@ -637,9 +661,11 @@ app.post("/blog/:id/delete", async (req, res) => {
 app.get('/tischreservierung', async (req, res) => {
     try {
         const { rows } = await db.query('SELECT * FROM eventbutton ORDER BY id');
+        const spamChallenge = spamProtection.createChallenge(req.session, 'tischreservierung');
         res.render('tischreservierung', {
             user: req.user || {},      // oder aus Session
-            eventButton: rows
+            eventButton: rows,
+            spamChallenge
         });
     } catch (err) {
         console.error(err);
@@ -648,6 +674,17 @@ app.get('/tischreservierung', async (req, res) => {
 });
 
 app.post("/tischreservierung", async (req, res) => {
+    const spamCheck = spamProtection.verifySubmission({
+        session: req.session,
+        formName: 'tischreservierung',
+        body: req.body,
+        ip: getClientIp(req),
+    });
+
+    if (!spamCheck.ok) {
+        return rejectSpamSubmission(req, res, 'tischreservierung', spamCheck);
+    }
+
     const { date, text, mail, name, tel, time } = req.body;
     console.log("POST /tischreservierung", { date, time, mail });
 
@@ -724,9 +761,11 @@ app.get("/tischangefragt", (req, res) => {
 app.get('/eventbuchung', async (req, res) => {
     try {
         const { rows } = await db.query('SELECT * FROM eventbutton ORDER BY id');
+        const spamChallenge = spamProtection.createChallenge(req.session, 'eventbuchung');
         res.render('eventbuchung', {
             user: req.user || {},      // oder aus Session
-            eventButton: rows
+            eventButton: rows,
+            spamChallenge
         });
     } catch (err) {
         console.error(err);
@@ -735,6 +774,17 @@ app.get('/eventbuchung', async (req, res) => {
 });
 
 app.post("/eventbuchung", async (req, res) => {
+    const spamCheck = spamProtection.verifySubmission({
+        session: req.session,
+        formName: 'eventbuchung',
+        body: req.body,
+        ip: getClientIp(req),
+    });
+
+    if (!spamCheck.ok) {
+        return rejectSpamSubmission(req, res, 'eventbuchung', spamCheck);
+    }
+
     const { event, text, mail, name, tel } = req.body;
 
     req.session.event = event;

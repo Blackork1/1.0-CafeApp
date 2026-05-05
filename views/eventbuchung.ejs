@@ -48,6 +48,15 @@
     .admin-controls .name-input {
       width: 150px;
     }
+
+    .spam-protection-field {
+      position: absolute;
+      left: -10000px;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
   </style>
   <body>
     <div class="section">
@@ -83,6 +92,20 @@
         <% } %>
 
         <form action="/eventbuchung" method="POST">
+          <input
+            type="text"
+            name="<%= spamChallenge.honeypotField %>"
+            value=""
+            autocomplete="off"
+            tabindex="-1"
+            aria-hidden="true"
+            class="spam-protection-field"
+          />
+          <input
+            type="hidden"
+            name="<%= spamChallenge.tokenField %>"
+            value="<%= spamChallenge.token %>"
+          />
           <div class="eventbuchung-form">
             <div class="center"><p>Wähle ein Anlass</p></div>
             <div class="eventbuchung-radio">
